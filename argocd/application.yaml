@@ -1,0 +1,284 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: netapp-mcp-server
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: netapp-mcp-server
+    app.kubernetes.io/component: application
+    app.kubernetes.io/part-of: netapp-integration
+    environment: production
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
+    argocd.argoproj.io/compare-options: ServerSideDiff=true
+    argocd.argoproj.io/sync-options: PrunePropagationPolicy=foreground,PruneLast=true
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  # Project configuration
+  project: netapp-integration
+  
+  # Source configuration
+  source:
+    # Git repository containing Helm chart
+    repoURL: https://github.com/your-org/netapp-mcp-server
+    path: helm/netapp-mcp
+    targetRevision: main
+    
+    # Helm configuration
+    helm:
+      # Release name
+      releaseName: netapp-mcp-server
+      
+      # Values files to use
+      valueFiles:
+        - values.yaml
+        - values-production.yaml
+      
+      # Parameter overrides
+      parameters:
+        - name: image.tag
+          value: "1.0.0"
+        - name: knative.enabled
+          value: "true"
+        - name: rbac.create
+          value: "true"
+        - name: serviceAccount.create
+          value: "true"
+        - name: monitoring.serviceMonitor.enabled
+          value: "true"
+        - name: networkPolicy.enabled
+          value: "true"
+      
+      # Helm values (inline)
+      values: |
+        # Production overrides
+        knative:
+          template:
+            annotations:
+              autoscaling.knative.dev/minScale: "2"
+              autoscaling.knative.dev/maxScale: "20"
+              autoscaling.knative.dev/target: "50"
+        
+        container:
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+        
+        monitoring:
+          serviceMonitor:
+            enabled: true
+            labels:
+              prometheus: kube-prometheus
+        
+        networkPolicy:
+          enabled: true
+        
+        app:
+          logLevel: "INFO"
+          extraEnv:
+            ENVIRONMENT: "production"
+            CLUSTER_NAME: "production-k8s"
+  
+  # Destination configuration
+  destination:
+    # Target cluster
+    server: https://kubernetes.default.svc
+    # Target namespace
+    namespace: netapp-mcp
+  
+  # Sync policy
+  syncPolicy:
+    # Automatic sync configuration
+    automated:
+      # Enable auto-sync
+      prune: true
+      # Self-heal on configuration drift
+      selfHeal: true
+      # Allow empty resources
+      allowEmpty: false
+    
+    # Sync options
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true
+      - RespectIgnoreDifferences=true
+    
+    # Retry configuration
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+  
+  # Revision history
+  revisionHistoryLimit: 10
+  
+  # Ignore differences configuration
+  ignoreDifferences:
+    - group: serving.knative.dev
+      kind: Service
+      name: netapp-mcp-server
+      jsonPointers:
+        - /spec/template/metadata/annotations/serving.knative.dev~1creator
+        - /spec/template/metadata/annotations/serving.knative.dev~1lastModifier
+    - group: ""
+      kind: Secret
+      jsonPointers:
+        - /data
+    - group: apps
+      kind: Deployment
+      jsonPointers:
+        - /spec/template/metadata/annotations/deployment.kubernetes.io~1revision
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: netapp-integration
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: netapp-integration
+    app.kubernetes.io/component: project
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  description: NetApp Integration Platform Project
+  
+  # Source repositories
+  sourceRepos:
+    - https://github.com/your-org/netapp-mcp-server
+    - https://github.com/your-org/netapp-temporal-workflows
+    - https://charts.bitnami.com/bitnami
+    - https://prometheus-community.github.io/helm-charts
+  
+  # Destination clusters and namespaces
+  destinations:
+    - namespace: netapp-mcp
+      server: https://kubernetes.default.svc
+    - namespace: netapp-mcp-dev
+      server: https://kubernetes.default.svc
+    - namespace: netapp-mcp-staging
+      server: https://kubernetes.default.svc
+    - namespace: temporal-system
+      server: https://kubernetes.default.svc
+    - namespace: monitoring
+      server: https://kubernetes.default.svc
+  
+  # Cluster resource whitelist
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+    - group: rbac.authorization.k8s.io
+      kind: ClusterRole
+    - group: rbac.authorization.k8s.io
+      kind: ClusterRoleBinding
+    - group: admissionregistration.k8s.io
+      kind: ValidatingAdmissionWebhook
+    - group: admissionregistration.k8s.io
+      kind: MutatingAdmissionWebhook
+  
+  # Namespace resource whitelist
+  namespaceResourceWhitelist:
+    - group: ""
+      kind: ConfigMap
+    - group: ""
+      kind: Secret
+    - group: ""
+      kind: Service
+    - group: ""
+      kind: ServiceAccount
+    - group: apps
+      kind: Deployment
+    - group: apps
+      kind: ReplicaSet
+    - group: ""
+      kind: Pod
+    - group: serving.knative.dev
+      kind: Service
+    - group: networking.k8s.io
+      kind: NetworkPolicy
+    - group: rbac.authorization.k8s.io
+      kind: Role
+    - group: rbac.authorization.k8s.io
+      kind: RoleBinding
+    - group: monitoring.coreos.com
+      kind: ServiceMonitor
+    - group: monitoring.coreos.com
+      kind: PrometheusRule
+    - group: policy
+      kind: PodDisruptionBudget
+    - group: autoscaling
+      kind: HorizontalPodAutoscaler
+  
+  # RBAC configuration
+  roles:
+    - name: admin
+      description: Administrative access to NetApp integration project
+      policies:
+        - p, proj:netapp-integration:admin, applications, *, netapp-integration/*, allow
+        - p, proj:netapp-integration:admin, repositories, *, *, allow
+        - p, proj:netapp-integration:admin, certificates, *, *, allow
+      groups:
+        - netapp-admins
+        - platform-team
+    
+    - name: developer
+      description: Developer access to NetApp integration project
+      policies:
+        - p, proj:netapp-integration:developer, applications, get, netapp-integration/*, allow
+        - p, proj:netapp-integration:developer, applications, sync, netapp-integration/*, allow
+        - p, proj:netapp-integration:developer, applications, action/*, netapp-integration/*, allow
+        - p, proj:netapp-integration:developer, repositories, get, *, allow
+      groups:
+        - netapp-developers
+        - integration-team
+    
+    - name: readonly
+      description: Read-only access to NetApp integration project
+      policies:
+        - p, proj:netapp-integration:readonly, applications, get, netapp-integration/*, allow
+        - p, proj:netapp-integration:readonly, repositories, get, *, allow
+        - p, proj:netapp-integration:readonly, certificates, get, *, allow
+      groups:
+        - netapp-viewers
+        - monitoring-team
+  
+  # Orphaned resources monitoring
+  orphanedResources:
+    warn: true
+    ignore:
+      - group: ""
+        kind: ConfigMap
+        name: kube-root-ca.crt
+      - group: ""
+        kind: Secret
+        name: default-token-*
+  
+  # Signature keys for verification
+  signatureKeys:
+    - keyID: "netapp-integration-key"
+  
+  # Sync windows
+  syncWindows:
+    - kind: allow
+      schedule: "0 8 * * MON-FRI"
+      duration: 8h
+      applications:
+        - "*"
+      manualSync: true
+    - kind: deny
+      schedule: "0 0 * * SAT,SUN"
+      duration: 24h
+      applications:
+        - "*"
+      manualSync: false

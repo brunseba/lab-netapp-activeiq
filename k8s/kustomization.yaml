@@ -1,0 +1,110 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+metadata:
+  name: netapp-mcp-server
+  annotations:
+    description: "Kustomization for NetApp ActiveIQ MCP Server deployment"
+
+# Namespace for all resources
+namespace: netapp-mcp
+
+# Common labels applied to all resources
+commonLabels:
+  app: netapp-mcp-server
+  version: v1.0.0
+  component: mcp-server
+  managed-by: kustomize
+
+# Common annotations applied to all resources
+commonAnnotations:
+  deployment.kubernetes.io/created-by: "netapp-integration"
+  deployment.kubernetes.io/description: "NetApp ActiveIQ Unified Manager MCP Server"
+
+# Resources to include
+resources:
+  - rbac.yaml
+  - secret.yaml
+  - configmap.yaml
+  - knative-service.yaml
+
+# Images to customize
+images:
+  - name: netapp-mcp-server
+    newTag: latest
+    # Uncomment and modify for specific registry
+    # newName: registry.company.com/netapp/mcp-server
+
+# ConfigMap generator (optional - if you prefer generating from files)
+# configMapGenerator:
+#   - name: netapp-mcp-config
+#     files:
+#       - configs/app.properties
+#       - configs/monitoring.yaml
+#       - configs/features.yaml
+
+# Secret generator (optional - if you prefer generating from files)
+# secretGenerator:
+#   - name: netapp-activeiq-credentials
+#     type: Opaque
+#     files:
+#       - credentials/.env
+
+# Resource patches
+patchesStrategicMerge:
+  # Uncomment to apply environment-specific patches
+  # - patches/production.yaml
+  # - patches/staging.yaml
+
+# JSON/YAML patches
+patches:
+  # Example: Modify resource limits for different environments
+  - target:
+      kind: Service
+      name: netapp-mcp-server
+      group: serving.knative.dev
+      version: v1
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: "1Gi"
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: "1000m"
+
+# Replacements for environment-specific values
+replacements:
+  - source:
+      kind: ConfigMap
+      name: netapp-mcp-config
+      fieldPath: data.app\.properties
+    targets:
+      - select:
+          kind: Service
+          name: netapp-mcp-server
+          group: serving.knative.dev
+        fieldPaths:
+          - spec.template.metadata.annotations.[autoscaling.knative.dev/target]
+
+# Generators
+generators: []
+
+# Transformers
+transformers: []
+
+# Variables for templating
+vars:
+  - name: SERVICE_NAME
+    objref:
+      kind: Service
+      name: netapp-mcp-server
+      apiVersion: serving.knative.dev/v1
+    fieldref:
+      fieldpath: metadata.name
+  - name: NAMESPACE
+    objref:
+      kind: Namespace
+      name: netapp-mcp
+      apiVersion: v1
+    fieldref:
+      fieldpath: metadata.name

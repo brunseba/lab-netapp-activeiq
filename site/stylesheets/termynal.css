@@ -1,0 +1,307 @@
+/* ===== Termynal Terminal Animation Styles ===== */
+
+.termynal {
+  width: 100%;
+  max-width: 100%;
+  background: #252a33;
+  color: #eee;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  margin: 24px 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.termynal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 32px;
+  background: linear-gradient(135deg, #e74c3c, #f39c12, #27ae60);
+  background-size: 64px 32px;
+  background-repeat: repeat-x;
+}
+
+.termynal .terminal-header {
+  background: #1e2329;
+  padding: 8px 16px;
+  border-bottom: 1px solid #3c4043;
+  display: flex;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.termynal .terminal-title {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  margin-left: 12px;
+}
+
+.termynal .terminal-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.termynal .terminal-button {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+}
+
+.termynal .terminal-button.close { background: #ff5f56; }
+.termynal .terminal-button.minimize { background: #ffbd2e; }
+.termynal .terminal-button.maximize { background: #27ca3f; }
+
+.termynal .terminal-body {
+  padding: 16px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 200px;
+}
+
+.termynal [data-termynal] {
+  white-space: pre-wrap;
+  position: relative;
+  display: block;
+}
+
+.termynal [data-ty="input"]:before {
+  content: '$ ';
+  color: #50fa7b;
+  font-weight: bold;
+}
+
+.termynal [data-ty="progress"]:before {
+  content: '';
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 8px;
+  width: 0;
+  height: 0;
+  border-left: 4px solid #50fa7b;
+  border-top: 2px solid transparent;
+  border-bottom: 2px solid transparent;
+  animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.termynal [data-ty] {
+  display: block;
+  line-height: 2;
+}
+
+.termynal [data-ty]:before {
+  content: '';
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.termynal [data-ty="input"] {
+  color: #fff;
+}
+
+.termynal [data-ty="input"]:after {
+  content: '';
+  display: inline-block;
+  vertical-align: middle;
+  width: 8px;
+  height: 16px;
+  background: #fff;
+  margin-left: 4px;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.termynal [data-ty="progress"] {
+  color: #ffb86c;
+}
+
+.termynal .ty-cursor {
+  background: #fff;
+  color: #252a33;
+  position: relative;
+  display: inline;
+}
+
+.termynal .ty-cursor:after {
+  content: '';
+  background: #fff;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 2px;
+  animation: blink 1s infinite;
+}
+
+/* Command output styling */
+.termynal .output {
+  color: #8be9fd;
+  margin-left: 0;
+}
+
+.termynal .output.success {
+  color: #50fa7b;
+}
+
+.termynal .output.error {
+  color: #ff5555;
+}
+
+.termynal .output.warning {
+  color: #f1fa8c;
+}
+
+.termynal .comment {
+  color: #6272a4;
+  font-style: italic;
+}
+
+/* API response styling */
+.termynal .json-response {
+  color: #8be9fd;
+  background: #44475a;
+  padding: 8px;
+  border-radius: 4px;
+  margin: 8px 0;
+  border-left: 4px solid #50fa7b;
+}
+
+.termynal .json-key {
+  color: #ff79c6;
+}
+
+.termynal .json-string {
+  color: #f1fa8c;
+}
+
+.termynal .json-number {
+  color: #bd93f9;
+}
+
+.termynal .json-boolean {
+  color: #50fa7b;
+}
+
+/* HTTP method indicators in terminal */
+.termynal .http-method {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-right: 8px;
+}
+
+.termynal .http-method.get { background: #50fa7b; color: #282a36; }
+.termynal .http-method.post { background: #8be9fd; color: #282a36; }
+.termynal .http-method.patch { background: #ffb86c; color: #282a36; }
+.termynal .http-method.delete { background: #ff5555; color: #282a36; }
+
+/* Status code styling */
+.termynal .status-code {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+.termynal .status-code.success { background: #50fa7b; color: #282a36; }
+.termynal .status-code.error { background: #ff5555; color: #282a36; }
+.termynal .status-code.warning { background: #ffb86c; color: #282a36; }
+
+/* Interactive elements */
+.termynal .interactive {
+  background: #44475a;
+  border: 1px solid #6272a4;
+  border-radius: 4px;
+  padding: 8px;
+  margin: 8px 0;
+}
+
+.termynal .interactive input {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-family: inherit;
+  font-size: inherit;
+  outline: none;
+  width: 100%;
+}
+
+.termynal .interactive input:focus {
+  background: rgba(255,255,255,0.1);
+}
+
+/* Loading animation */
+.termynal .loading-dots:after {
+  content: '';
+  display: inline-block;
+  width: 0;
+  animation: dots 1.5s infinite step-start;
+}
+
+@keyframes dots {
+  0%, 20% { content: ''; width: 0; }
+  40% { content: '.'; width: 6px; }
+  60% { content: '..'; width: 12px; }
+  80%, 100% { content: '...'; width: 18px; }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .termynal {
+    margin: 16px 0;
+    border-radius: 6px;
+  }
+  
+  .termynal .terminal-body {
+    padding: 12px;
+    font-size: 13px;
+  }
+  
+  .termynal .terminal-header {
+    padding: 6px 12px;
+  }
+  
+  .termynal .terminal-title {
+    font-size: 13px;
+  }
+}
+
+/* Dark theme adjustments */
+[data-md-color-scheme="slate"] .termynal {
+  background: #1a1d23;
+  border: 1px solid #3c4043;
+}
+
+[data-md-color-scheme="slate"] .termynal .terminal-header {
+  background: #0f1419;
+}
+
+[data-md-color-scheme="slate"] .termynal .json-response {
+  background: #2d3748;
+}
+
+/* Light theme adjustments */
+[data-md-color-scheme="default"] .termynal {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}

@@ -1,0 +1,115 @@
+{{- if .Values.networkPolicy.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "netapp-mcp-server.networkPolicyName" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "netapp-mcp-server.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "netapp-mcp-server.selectorLabels" . | nindent 6 }}
+  policyTypes:
+    {{- toYaml .Values.networkPolicy.policyTypes | nindent 4 }}
+  {{- if .Values.networkPolicy.ingress }}
+  ingress:
+    {{- toYaml .Values.networkPolicy.ingress | nindent 4 }}
+  {{- end }}
+  {{- if .Values.networkPolicy.egress }}
+  egress:
+    {{- toYaml .Values.networkPolicy.egress | nindent 4 }}
+  {{- end }}
+{{- end }}
+---
+{{- if .Values.monitoring.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "netapp-mcp-server.serviceMonitorName" . }}
+  namespace: {{ default .Release.Namespace .Values.monitoring.serviceMonitor.namespace | quote }}
+  labels:
+    {{- include "netapp-mcp-server.labels" . | nindent 4 }}
+    {{- with .Values.monitoring.serviceMonitor.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.monitoring.serviceMonitor.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "netapp-mcp-server.selectorLabels" . | nindent 6 }}
+  endpoints:
+  - port: http
+    path: {{ .Values.monitoring.serviceMonitor.path }}
+    interval: {{ .Values.monitoring.serviceMonitor.interval }}
+    scrapeTimeout: {{ .Values.monitoring.serviceMonitor.scrapeTimeout }}
+    {{- if ne .Values.monitoring.serviceMonitor.targetPort 8080 }}
+    targetPort: {{ .Values.monitoring.serviceMonitor.targetPort }}
+    {{- end }}
+{{- end }}
+---
+{{- if .Values.tests.enabled }}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "netapp-mcp-server.fullname" . }}-test"
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "netapp-mcp-server.labels" . | nindent 4 }}
+    app.kubernetes.io/component: test
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-weight": "5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  restartPolicy: Never
+  containers:
+  - name: test
+    image: {{ .Values.tests.image.registry }}/{{ .Values.tests.image.repository }}:{{ .Values.tests.image.tag }}
+    imagePullPolicy: {{ .Values.tests.image.pullPolicy }}
+    command:
+    - /bin/sh
+    - -c
+    - |
+      set -e
+      echo "Testing NetApp MCP Server connectivity..."
+      
+      # Get service URL (for Knative)
+      {{- if .Values.knative.enabled }}
+      SERVICE_URL="http://{{ include "netapp-mcp-server.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local"
+      {{- else }}
+      SERVICE_URL="http://{{ include "netapp-mcp-server.fullname" . }}:{{ .Values.service.port }}"
+      {{- end }}
+      
+      echo "Service URL: $SERVICE_URL"
+      
+      # Wait for service to be ready
+      for i in $(seq 1 30); do
+        if curl -s -f --max-time 10 "$SERVICE_URL/health" > /dev/null 2>&1; then
+          echo "✓ Service is responding"
+          break
+        fi
+        echo "Waiting for service... ($i/30)"
+        sleep 5
+      done
+      
+      # Test basic connectivity
+      if curl -s -f --max-time 10 "$SERVICE_URL/health"; then
+        echo "✓ Health check passed"
+      else
+        echo "✗ Health check failed"
+        exit 1
+      fi
+      
+      echo "All tests passed!"
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 65534
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+{{- end }}

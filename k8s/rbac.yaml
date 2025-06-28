@@ -1,0 +1,123 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: netapp-mcp
+  labels:
+    name: netapp-mcp
+    app: netapp-mcp-server
+    component: namespace
+  annotations:
+    description: "Namespace for NetApp ActiveIQ MCP Server"
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: netapp-mcp-sa
+  namespace: netapp-mcp
+  labels:
+    app: netapp-mcp-server
+    component: serviceaccount
+  annotations:
+    description: "Service account for NetApp ActiveIQ MCP Server"
+automountServiceAccountToken: false
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: netapp-mcp-role
+  namespace: netapp-mcp
+  labels:
+    app: netapp-mcp-server
+    component: rbac
+rules:
+# Allow reading secrets for configuration
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "list"]
+  resourceNames: ["netapp-activeiq-credentials", "netapp-ca-cert"]
+# Allow reading configmaps for configuration
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get", "list"]
+# Allow reading pods for health checks and debugging
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list"]
+# Allow reading services for service discovery
+- apiGroups: [""]
+  resources: ["services"]
+  verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: netapp-mcp-rolebinding
+  namespace: netapp-mcp
+  labels:
+    app: netapp-mcp-server
+    component: rbac
+subjects:
+- kind: ServiceAccount
+  name: netapp-mcp-sa
+  namespace: netapp-mcp
+roleRef:
+  kind: Role
+  name: netapp-mcp-role
+  apiGroup: rbac.authorization.k8s.io
+---
+# Network Policy for security (optional)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: netapp-mcp-network-policy
+  namespace: netapp-mcp
+  labels:
+    app: netapp-mcp-server
+    component: network-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: netapp-mcp-server
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  # Allow ingress from Knative system
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: knative-serving
+    ports:
+    - protocol: TCP
+      port: 8080
+  # Allow ingress from same namespace
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: netapp-mcp
+    ports:
+    - protocol: TCP
+      port: 8080
+  egress:
+  # Allow DNS resolution
+  - to: []
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53
+  # Allow HTTPS to NetApp ActiveIQ
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 443
+  # Allow HTTP for health checks
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 80
+  # Allow access to Kubernetes API server
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 6443

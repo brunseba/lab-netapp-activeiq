@@ -1,0 +1,58 @@
+apiVersion: v2
+name: netapp-mcp-server
+description: NetApp ActiveIQ Unified Manager MCP Server for AI assistants
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+
+keywords:
+  - netapp
+  - activeiq
+  - mcp
+  - model-context-protocol
+  - ai-assistant
+  - storage
+  - knative
+  - serverless
+
+home: https://github.com/your-org/netapp-mcp-server
+sources:
+  - https://github.com/your-org/netapp-mcp-server
+
+maintainers:
+  - name: NetApp Integration Team
+    email: netapp-integration@company.com
+    url: https://github.com/your-org
+
+annotations:
+  category: Integration
+  licenses: Apache-2.0
+  images: |
+    - name: netapp-mcp-server
+      image: netapp-mcp-server:1.0.0
+  artifacthub.io/changes: |
+    - kind: added
+      description: Initial release of NetApp ActiveIQ MCP Server
+    - kind: added
+      description: Knative Service deployment support
+    - kind: added
+      description: Auto-scaling configuration
+    - kind: added
+      description: Security and RBAC configuration
+  artifacthub.io/containsSecurityUpdates: "false"
+  artifacthub.io/prerelease: "false"
+  artifacthub.io/recommendations: |
+    - url: https://knative.dev/docs/
+  artifacthub.io/links: |
+    - name: Chart Source
+      url: https://github.com/your-org/netapp-mcp-server/tree/main/helm
+    - name: NetApp ActiveIQ Documentation
+      url: https://docs.netapp.com/us-en/active-iq-unified-manager/
+
+dependencies: []
+
+# Minimum Kubernetes version
+kubeVersion: ">=1.24.0"
+
+# Chart engine version
+engine: gotpl

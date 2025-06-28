@@ -1,0 +1,312 @@
+# Production environment values for netapp-mcp-server
+# This file contains production-specific overrides
+
+# Image configuration for production
+image:
+  registry: registry.company.com
+  repository: netapp/mcp-server
+  tag: "1.0.0"
+  pullPolicy: IfNotPresent
+  pullSecrets:
+    - registry-credentials
+
+# Knative Service configuration for production
+knative:
+  enabled: true
+  service:
+    annotations:
+      serving.knative.dev/creator: "argocd-production"
+      serving.knative.dev/lastModifier: "argocd-production"
+  template:
+    annotations:
+      # Production autoscaling
+      autoscaling.knative.dev/minScale: "2"
+      autoscaling.knative.dev/maxScale: "20"
+      autoscaling.knative.dev/target: "50"
+      autoscaling.knative.dev/targetUtilizationPercentage: "60"
+      autoscaling.knative.dev/scaleDownDelay: "60s"
+      autoscaling.knative.dev/scaleUpDelay: "0s"
+      autoscaling.knative.dev/stableWindow: "120s"
+      # Production optimizations
+      run.googleapis.com/cpu-throttling: "false"
+      run.googleapis.com/execution-environment: "gen2"
+    # Production timeouts
+    timeoutSeconds: 600
+    responseStartTimeoutSeconds: 60
+    idleTimeoutSeconds: 900
+
+# Container configuration for production
+container:
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "500m"
+    limits:
+      memory: "1Gi"
+      cpu: "1000m"
+  
+  # Production environment variables
+  env:
+    - name: ENVIRONMENT
+      value: "production"
+    - name: CLUSTER_NAME
+      value: "production-k8s"
+    - name: PYTHONUNBUFFERED
+      value: "1"
+    - name: HTTPX_POOL_CONNECTIONS
+      value: "20"
+    - name: HTTPX_POOL_MAX_KEEPALIVE
+      value: "10"
+
+# NetApp configuration for production
+netapp:
+  # Use external secret managed by external-secrets operator
+  existingSecret: "netapp-activeiq-prod-credentials"
+  secretKeys:
+    baseUrl: "NETAPP_BASE_URL"
+    username: "NETAPP_USERNAME"
+    password: "NETAPP_PASSWORD"
+    verifySSL: "NETAPP_VERIFY_SSL"
+    timeout: "NETAPP_TIMEOUT"
+
+# Application configuration for production
+app:
+  logLevel: "INFO"
+  serviceName: "netapp-mcp-server"
+  serviceVersion: "1.0.0"
+  extraEnv:
+    METRICS_ENABLED: "true"
+    TRACE_ENABLED: "true"
+    PROFILING_ENABLED: "false"
+
+# Health checks for production
+healthChecks:
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 60
+    periodSeconds: 30
+    timeoutSeconds: 15
+    failureThreshold: 3
+    successThreshold: 1
+  
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 10
+    failureThreshold: 3
+    successThreshold: 1
+  
+  startupProbe:
+    enabled: true
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 10
+    failureThreshold: 60
+    successThreshold: 1
+
+# RBAC for production
+rbac:
+  create: true
+  rules:
+    - apiGroups: [""]
+      resources: ["secrets"]
+      verbs: ["get", "list"]
+      resourceNames: ["netapp-activeiq-prod-credentials"]
+    - apiGroups: [""]
+      resources: ["configmaps"]
+      verbs: ["get", "list"]
+    - apiGroups: [""]
+      resources: ["pods"]
+      verbs: ["get", "list"]
+    - apiGroups: [""]
+      resources: ["services"]
+      verbs: ["get", "list"]
+
+# Service Account for production
+serviceAccount:
+  create: true
+  annotations:
+    eks.amazonaws.com/role-arn: "arn:aws:iam::123456789012:role/netapp-mcp-server-prod"
+  automountServiceAccountToken: false
+
+# ConfigMap with production settings
+configMap:
+  create: true
+  data:
+    app.properties: |
+      service.name=netapp-mcp-server
+      service.version=1.0.0
+      server.port=8080
+      logging.level=INFO
+      environment=production
+      cluster.name=production-k8s
+    
+    features.yaml: |
+      features:
+        cluster_analytics: true
+        volume_analytics: true
+        node_monitoring: true
+        svm_management: true
+        workload_monitoring: true
+        event_monitoring: true
+        job_monitoring: true
+        real_time_metrics: true
+        historical_metrics: true
+        performance_trending: true
+        capacity_planning: true
+        temporal_integration: true
+        ssl_verification: true
+        certificate_validation: true
+        debug_mode: false
+    
+    monitoring.yaml: |
+      monitoring:
+        enabled: true
+        metrics:
+          collection_interval: 30s
+          retention: 7d
+        logging:
+          level: INFO
+          structured: true
+          format: json
+        tracing:
+          enabled: true
+          sampling_rate: 0.1
+
+# Secret configuration (disabled since using external secret)
+secret:
+  create: false
+
+# Network Policy for production
+networkPolicy:
+  enabled: true
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: knative-serving
+        - namespaceSelector:
+            matchLabels:
+              name: monitoring
+        - namespaceSelector:
+            matchLabels:
+              name: temporal-system
+      ports:
+        - protocol: TCP
+          port: 8080
+  egress:
+    # DNS resolution
+    - to: []
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    # HTTPS to NetApp ActiveIQ
+    - to: []
+      ports:
+        - protocol: TCP
+          port: 443
+    # Kubernetes API
+    - to: []
+      ports:
+        - protocol: TCP
+          port: 6443
+
+# Pod Security Context for production
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+  seccompProfile:
+    type: RuntimeDefault
+  supplementalGroups: []
+
+# Monitoring configuration for production
+monitoring:
+  serviceMonitor:
+    enabled: true
+    namespace: monitoring
+    labels:
+      prometheus: kube-prometheus
+      app: netapp-mcp-server
+    annotations:
+      prometheus.io/scrape: "true"
+    interval: 30s
+    scrapeTimeout: 10s
+    path: /metrics
+    targetPort: 8080
+
+# Production node scheduling
+nodeSelector:
+  kubernetes.io/arch: amd64
+  node-type: worker
+
+# Tolerations for production nodes
+tolerations:
+  - key: "dedicated"
+    operator: "Equal"
+    value: "netapp-integration"
+    effect: "NoSchedule"
+
+# Affinity rules for production
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values: ["netapp-mcp-server"]
+          topologyKey: kubernetes.io/hostname
+
+# Priority class for production
+priorityClassName: "high-priority"
+
+# Pod annotations for production
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "8080"
+  prometheus.io/path: "/metrics"
+  fluentbit.io/parser: "json"
+  backup.velero.io/backup-volumes: "false"
+
+# Pod labels for production
+podLabels:
+  environment: production
+  tier: integration
+  component: mcp-server
+  version: "1.0.0"
+
+# Extra volumes for production
+extraVolumes:
+  - name: tmp
+    emptyDir: {}
+  - name: cache
+    emptyDir:
+      sizeLimit: 1Gi
+
+# Extra volume mounts for production
+extraVolumeMounts:
+  - name: tmp
+    mountPath: /tmp
+    readOnly: false
+  - name: cache
+    mountPath: /app/cache
+    readOnly: false
+
+# Tests enabled for production validation
+tests:
+  enabled: true
+  image:
+    registry: registry.company.com
+    repository: curlimages/curl
+    tag: "7.85.0"
+    pullPolicy: IfNotPresent

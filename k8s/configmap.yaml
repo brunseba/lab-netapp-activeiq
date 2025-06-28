@@ -1,0 +1,148 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: netapp-mcp-config
+  namespace: netapp-mcp
+  labels:
+    app: netapp-mcp-server
+    component: configuration
+    version: v1.0.0
+  annotations:
+    description: "Configuration for NetApp ActiveIQ MCP Server"
+data:
+  # Application configuration
+  app.properties: |
+    # NetApp ActiveIQ MCP Server Configuration
+    service.name=netapp-mcp-server
+    service.version=1.0.0
+    service.description=NetApp ActiveIQ Unified Manager MCP Server
+    
+    # Server configuration
+    server.port=8080
+    server.host=0.0.0.0
+    
+    # Logging configuration
+    logging.level=INFO
+    logging.format=%(asctime)s - %(name)s - %(levelname)s - %(message)s
+    
+    # Health check configuration
+    health.check.enabled=true
+    health.check.interval=30
+    
+    # Performance configuration
+    performance.monitoring.enabled=true
+    performance.metrics.collection.interval=60
+    
+    # Security configuration
+    security.ssl.verify=true
+    security.timeout=30
+    
+  # Monitoring configuration
+  monitoring.yaml: |
+    monitoring:
+      enabled: true
+      endpoints:
+        health: "/health"
+        metrics: "/metrics"
+        readiness: "/ready"
+        liveness: "/live"
+      
+      intervals:
+        health_check: 30s
+        metrics_collection: 60s
+        log_rotation: 24h
+      
+      alerts:
+        - name: "high_memory_usage"
+          threshold: 80
+          action: "log"
+        - name: "high_cpu_usage"
+          threshold: 85
+          action: "log"
+        - name: "connection_failures"
+          threshold: 5
+          action: "restart"
+  
+  # Feature flags
+  features.yaml: |
+    features:
+      # API features
+      cluster_analytics: true
+      volume_analytics: true
+      node_monitoring: true
+      svm_management: true
+      workload_monitoring: true
+      event_monitoring: true
+      job_monitoring: true
+      
+      # Performance features
+      real_time_metrics: true
+      historical_metrics: true
+      performance_trending: true
+      capacity_planning: true
+      
+      # Integration features
+      temporal_integration: true
+      webhook_support: false
+      event_streaming: false
+      
+      # Security features
+      ssl_verification: true
+      certificate_validation: true
+      token_authentication: false
+      rbac_authorization: true
+  
+  # API endpoints configuration
+  api.yaml: |
+    api:
+      base_path: "/api"
+      version: "v2"
+      
+      endpoints:
+        clusters: "/datacenter/cluster/clusters"
+        nodes: "/datacenter/cluster/nodes"
+        svms: "/datacenter/svm/svms"
+        volumes: "/datacenter/storage/volumes"
+        aggregates: "/datacenter/storage/aggregates"
+        workloads: "/storage-provider/workloads"
+        events: "/management-server/events"
+        jobs: "/management-server/jobs"
+        system: "/admin/system"
+      
+      rate_limits:
+        requests_per_minute: 100
+        concurrent_requests: 10
+        timeout_seconds: 30
+      
+      retry_policy:
+        max_retries: 3
+        backoff_factor: 2
+        max_delay: 60
+  
+  # Knative configuration
+  knative.yaml: |
+    knative:
+      service:
+        min_scale: 1
+        max_scale: 10
+        target_concurrency: 100
+        timeout: 300
+        idle_timeout: 600
+      
+      autoscaling:
+        metric: "concurrency"
+        target: 70
+        scale_up_delay: "0s"
+        scale_down_delay: "30s"
+        stable_window: "60s"
+      
+      networking:
+        visibility: "cluster-local"
+        domain_mapping: false
+        custom_domain: ""
+      
+      security:
+        run_as_user: 1000
+        run_as_group: 1000
+        fs_group: 1000
+        read_only_root_filesystem: false

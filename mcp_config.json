@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "netapp-activeiq": {
+      "command": "python",
+      "args": [
+        "/Users/brun_s/Documents/veille-technologique/Professionel/donnees-d-entree/PE-AsProduct/netapp/mcp_server.py"
+      ],
+      "env": {
+        "NETAPP_BASE_URL": "https://your-netapp-aiqum.example.com/api",
+        "NETAPP_USERNAME": "your-username",
+        "NETAPP_PASSWORD": "your-password"
+      }
+    }
+  }
+}

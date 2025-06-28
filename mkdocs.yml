@@ -1,0 +1,299 @@
+site_name: NetApp ActiveIQ MCP Server
+site_description: Model Context Protocol server for NetApp ActiveIQ Unified Manager - Comprehensive Documentation
+site_author: NetApp Integration Team
+site_url: https://netapp-mcp-server.docs/
+
+# Repository
+repo_name: netapp/activeiq-mcp-server
+repo_url: https://github.com/netapp/activeiq-mcp-server
+edit_uri: edit/main/docs/
+
+# Copyright
+copyright: Copyright &copy; 2024 NetApp API Documentation
+
+# Configuration
+theme:
+  name: material
+  language: en
+  palette:
+    # Palette toggle for light mode
+    - scheme: default
+      primary: blue
+      accent: orange
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Palette toggle for dark mode
+    - scheme: slate
+      primary: blue
+      accent: orange
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  
+  # Features
+  features:
+    - announce.dismiss
+    - content.action.edit
+    - content.action.view
+    - content.code.annotate
+    - content.code.copy
+    - content.tabs.link
+    - content.tooltips
+    - header.autohide
+    - navigation.expand
+    - navigation.footer
+    - navigation.indexes
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.instant.progress
+    - navigation.path
+    - navigation.prune
+    - navigation.sections
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+    - toc.integrate
+
+  # Custom styling
+  icon:
+    logo: material/api
+    repo: fontawesome/brands/github
+    edit: material/pencil
+    view: material/eye
+    admonition:
+      note: octicons/tag-16
+      abstract: octicons/checklist-16
+      info: octicons/info-16
+      tip: octicons/squirrel-16
+      success: octicons/check-16
+      question: octicons/question-16
+      warning: octicons/alert-16
+      failure: octicons/x-circle-16
+      danger: octicons/zap-16
+      bug: octicons/bug-16
+      example: octicons/beaker-16
+      quote: octicons/quote-16
+
+  # Custom CSS
+  extra_css:
+    - stylesheets/extra.css
+    - stylesheets/termynal.css
+
+  # Custom JavaScript
+  extra_javascript:
+    - https://unpkg.com/mermaid@11.4.0/dist/mermaid.min.js
+    - javascripts/extra.js
+    - javascripts/termynal.js
+    - javascripts/mermaid-config.js
+
+# Plugins
+plugins:
+  - search:
+      separator: '[\s\-,:!=\[\]()"/]+|(?!\b)(?=[A-Z][a-z])|(?!\b)(?=[A-Z][A-Z])'
+  - minify:
+      minify_html: true
+  - git-revision-date-localized:
+      type: date
+      timezone: UTC
+      locale: en
+      fallback_to_build_date: true
+      enable_creation_date: true
+  - mermaid2:
+      version: '11.4.0'
+      arguments:
+        theme: |
+          ^(JSON.parse(__md_get('__palette').index == 1)) ?
+          'dark' : 'light'
+        themeVariables:
+          primaryColor: '#2196f3'
+          primaryTextColor: '#ffffff'
+          primaryBorderColor: '#1976d2'
+          lineColor: '#666666'
+          secondaryColor: '#ff9800'
+          tertiaryColor: '#4caf50'
+        flowchart:
+          htmlLabels: true
+          curve: 'linear'
+        sequence:
+          actorMargin: 50
+          boxMargin: 10
+          boxTextMargin: 5
+          noteMargin: 10
+          messageMargin: 35
+        gantt:
+          numberSectionStyles: 4
+
+# Extensions
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - toc:
+      permalink: true
+      title: On this page
+  - tables
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink:
+      repo_url_shorthand: true
+      user: netapp
+      repo: activeiq-mcp-server
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:mermaid2.fence_mermaid
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+# Navigation
+nav:
+  - 🏠 Home:
+    - 📖 Overview: index.md
+    - 🧭 Navigation Guide: navigation.md
+    - 📋 Documentation Summary: README.md
+  
+  - 🚀 Getting Started:
+    - 🔍 System Overview: getting-started/overview.md
+    - ⚡ Quick Setup: getting-started/quick-start.md
+    - 📦 Installation: getting-started/installation.md
+    - ⚙️ Knative Functions Quick Start: getting-started/knative-functions-quickstart.md
+  
+  - 🔌 NetApp ActiveIQ API:
+    - 📄 API Overview: netapp-activeiq-api-overview.md
+    - 🔗 API Endpoints: api-endpoints.md
+    - 📊 Data Models: data-models.md
+    - 📝 API Use Cases: api-use-cases-table.md
+  
+  - 💼 DevOps Use Cases:
+    - 📈 Storage Monitoring: use-cases/storage-monitoring.md
+    - 🏗️ Infrastructure Management: use-cases/infrastructure-management.md
+    - 📊 Performance Analysis: use-cases/performance-analysis.md
+    - 🔔 Event Management: use-cases/event-management.md
+    - 💾 Backup & Recovery: use-cases/backup-recovery.md
+    - 📐 Capacity Planning: use-cases/capacity-planning.md
+    - 🖥️ SVM Management: use-cases/svm-management.md
+    - 💽 Volume Operations: use-cases/volume-operations.md
+  
+  - 💻 Implementation Examples:
+    - 🔰 Basic Examples: examples.md
+    - 🚀 Advanced Workflows: advanced-use-cases.md
+    - 🐍 Python Automation: examples/basic-usage.md
+  
+  - 🏛️ Architecture & Design:
+    - 🎯 Target Operating Model: architecture/target-operating-model.md
+    - ⚙️ Knative Function TOM: architecture/knative-function-tom.md
+    - ⚙️ FAAS Function TOM: architecture/faas-function-tom.md
+    - 📐 Technical Documentation: architecture/technical-documentation.md
+    - 🏗️ System Design: architecture/system-design.md
+    - 🔧 Function-Based Architecture: deployment/function-based-architecture.md
+  
+  - 🚀 Deployment Guides:
+    - 📋 Installation Guide: getting-started/installation.md
+    - ☸️ Knative Deployment: deployment/KNATIVE_DEPLOYMENT.md
+    - ⚡ Knative Functions: deployment/knative-functions-deployment.md
+    - 🏗️ ArgoCD Helm Deployment: deployment/ARGOCD_HELM_DEPLOYMENT.md
+    - ⚙️ Development Setup: DEVELOPMENT.md
+  
+  - ⏱️ Temporal Workflows:
+    - 🔄 Workflow Integration: temporal-integration.md
+    - 🛡️ Durable Execution: DEVELOPMENT.md
+  
+  - 🌐 API Management (APIM):
+    - 📋 API Management Strategy: api-management/api-management-strategy.md
+    - ⚙️ Gravitee.io Configuration: api-management/gravitee-api-definitions.json
+    - 📄 OpenAPI Specification: api-management/openapi-storage-management.yaml
+    - 🚀 Deployment Guide: api-management/gravitee-deployment.yaml
+    - 🔧 MCP Tools Reference: api/mcp-tools.md
+    - 🔌 Optional MCP Integration: MCP_SERVER_README.md
+  
+  - 🤖 Day-2 AI Operations:
+    - 🧠 AI Assistant Integration: advanced-use-cases.md
+    - 📈 Predictive Analytics: use-cases/capacity-planning.md
+    - 🎯 Automated Operations: use-cases/event-management.md
+
+# Extra configuration
+extra:
+  version:
+    provider: mike
+    default: latest
+  
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/netapp/activeiq-mcp-server
+      name: GitHub Repository
+    - icon: fontawesome/brands/docker
+      link: https://hub.docker.com/r/netapp/activeiq-mcp-server
+      name: Docker Hub
+    - icon: fontawesome/solid/globe
+      link: https://docs.netapp.com/us-en/active-iq/
+      name: Official NetApp Documentation
+    - icon: material/protocol
+      link: https://modelcontextprotocol.io/
+      name: Model Context Protocol
+  
+  analytics:
+    provider: google
+    property: G-XXXXXXXXXX  # Replace with actual GA tracking ID
+    feedback:
+      title: Was this page helpful?
+      ratings:
+        - icon: material/emoticon-happy-outline
+          name: This page was helpful
+          data: 1
+          note: >
+            Thanks for your feedback!
+        - icon: material/emoticon-sad-outline
+          name: This page could be improved
+          data: 0
+          note: >
+            Thanks for your feedback! Help us improve this page by
+            <a href="https://github.com/netapp/activeiq-api-docs/issues/new/?title=[Feedback]+{title}+-+{url}" target="_blank" rel="noopener">telling us what you found helpful or what could be improved</a>.
+  
+  tags:
+    MCP: mcp
+    Protocol: protocol
+    NetApp: netapp
+    ActiveIQ: activeiq
+    Server: server
+    API: api
+    Python: python
+    Automation: automation
+    Storage: storage
+    AI: ai
+    Temporal: temporal
+    Docker: docker
+    Kubernetes: kubernetes
+
+# Validation
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn

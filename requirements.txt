@@ -1,0 +1,44 @@
+# MkDocs Core
+mkdocs>=1.5.3
+mkdocs-material>=9.4.8
+
+# Theme and UI Enhancements
+mkdocs-material[imaging]>=9.4.8
+
+# Navigation and Organization
+mkdocs-awesome-pages-plugin>=2.9.2
+mkdocs-section-index>=0.3.6
+
+# Content Enhancement
+mkdocs-macros-plugin>=1.0.5
+mkdocs-mermaid2-plugin>=1.1.1
+mkdocs-git-revision-date-localized-plugin>=1.2.2
+mkdocs-minify-plugin>=0.7.1
+
+# Search Enhancements
+mkdocs-search>=1.4.0
+
+# Code and Syntax Highlighting
+pymdown-extensions>=10.3.1
+Pygments>=2.16.1
+
+# Performance and Optimization
+mkdocs-optimize-plugin>=0.5.0
+mkdocs-htmlproofer-plugin>=0.13.0
+
+# Additional Extensions
+markdown>=3.5.1
+markdown-include>=0.8.1
+mkdocs-markdownextradata-plugin>=0.2.5
+
+# Development Dependencies
+mkdocs-serve>=1.5.3
+livereload>=2.6.3
+
+# Optional but Recommended
+mkdocs-pdf-export-plugin>=0.5.10
+mkdocs-print-site-plugin>=2.3.6
+mkdocs-exclude-plugin>=1.0.2
+
+# For GitHub Pages deployment
+ghp-import>=2.1.0

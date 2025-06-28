@@ -1,0 +1,279 @@
+{{- if .Values.knative.enabled }}
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: {{ include "netapp-mcp-server.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "netapp-mcp-server.labels" . | nindent 4 }}
+    {{- with .Values.knative.service.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- include "netapp-mcp-server.annotations" . | nindent 4 }}
+    {{- with .Values.knative.service.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  template:
+    metadata:
+      labels:
+        {{- include "netapp-mcp-server.selectorLabels" . | nindent 8 }}
+        {{- with .Values.knative.template.labels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        {{- with .Values.knative.template.annotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.knative.template.timeoutSeconds }}
+      timeoutSeconds: {{ . }}
+      {{- end }}
+      {{- with .Values.knative.template.responseStartTimeoutSeconds }}
+      responseStartTimeoutSeconds: {{ . }}
+      {{- end }}
+      {{- with .Values.knative.template.idleTimeoutSeconds }}
+      idleTimeoutSeconds: {{ . }}
+      {{- end }}
+      
+      containers:
+      - name: {{ .Values.container.name }}
+        image: {{ include "netapp-mcp-server.image" . }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        
+        {{- with .Values.container.command }}
+        command:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with .Values.container.args }}
+        args:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        
+        ports:
+        - name: http1
+          containerPort: {{ .Values.container.port }}
+          protocol: TCP
+        
+        env:
+        {{- if .Values.netapp.existingSecret }}
+        - name: NETAPP_BASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.netapp.existingSecret }}
+              key: {{ .Values.netapp.secretKeys.baseUrl }}
+        - name: NETAPP_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.netapp.existingSecret }}
+              key: {{ .Values.netapp.secretKeys.username }}
+        - name: NETAPP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.netapp.existingSecret }}
+              key: {{ .Values.netapp.secretKeys.password }}
+        - name: NETAPP_VERIFY_SSL
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.netapp.existingSecret }}
+              key: {{ .Values.netapp.secretKeys.verifySSL }}
+        - name: NETAPP_TIMEOUT
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.netapp.existingSecret }}
+              key: {{ .Values.netapp.secretKeys.timeout }}
+        {{- else }}
+        - name: NETAPP_BASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "netapp-mcp-server.secretName" . }}
+              key: NETAPP_BASE_URL
+        - name: NETAPP_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "netapp-mcp-server.secretName" . }}
+              key: NETAPP_USERNAME
+        - name: NETAPP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "netapp-mcp-server.secretName" . }}
+              key: NETAPP_PASSWORD
+        - name: NETAPP_VERIFY_SSL
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "netapp-mcp-server.secretName" . }}
+              key: NETAPP_VERIFY_SSL
+        - name: NETAPP_TIMEOUT
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "netapp-mcp-server.secretName" . }}
+              key: NETAPP_TIMEOUT
+        {{- end }}
+        - name: LOG_LEVEL
+          value: {{ .Values.app.logLevel | quote }}
+        - name: SERVICE_NAME
+          value: {{ .Values.app.serviceName | quote }}
+        - name: SERVICE_VERSION
+          value: {{ .Values.app.serviceVersion | quote }}
+        - name: KUBERNETES_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        {{- range $key, $value := .Values.app.extraEnv }}
+        - name: {{ $key }}
+          value: {{ $value | quote }}
+        {{- end }}
+        {{- with .Values.container.env }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- with .Values.extraEnvVars }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        
+        {{- if or .Values.container.envFrom .Values.extraEnvVarsSecret .Values.extraEnvVarsCM }}
+        envFrom:
+        {{- if .Values.configMap.create }}
+        - configMapRef:
+            name: {{ include "netapp-mcp-server.configMapName" . }}
+        {{- end }}
+        {{- with .Values.container.envFrom }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- if .Values.extraEnvVarsSecret }}
+        - secretRef:
+            name: {{ .Values.extraEnvVarsSecret }}
+        {{- end }}
+        {{- if .Values.extraEnvVarsCM }}
+        - configMapRef:
+            name: {{ .Values.extraEnvVarsCM }}
+        {{- end }}
+        {{- end }}
+        
+        resources:
+          {{- toYaml .Values.container.resources | nindent 10 }}
+        
+        securityContext:
+          {{- toYaml .Values.container.securityContext | nindent 10 }}
+        
+        {{- if .Values.healthChecks.livenessProbe.enabled }}
+        livenessProbe:
+          {{- with .Values.healthChecks.livenessProbe.exec }}
+          exec:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          initialDelaySeconds: {{ .Values.healthChecks.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.healthChecks.livenessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.healthChecks.livenessProbe.timeoutSeconds }}
+          failureThreshold: {{ .Values.healthChecks.livenessProbe.failureThreshold }}
+          successThreshold: {{ .Values.healthChecks.livenessProbe.successThreshold }}
+        {{- end }}
+        
+        {{- if .Values.healthChecks.readinessProbe.enabled }}
+        readinessProbe:
+          {{- with .Values.healthChecks.readinessProbe.exec }}
+          exec:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          initialDelaySeconds: {{ .Values.healthChecks.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.healthChecks.readinessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.healthChecks.readinessProbe.timeoutSeconds }}
+          failureThreshold: {{ .Values.healthChecks.readinessProbe.failureThreshold }}
+          successThreshold: {{ .Values.healthChecks.readinessProbe.successThreshold }}
+        {{- end }}
+        
+        {{- if .Values.healthChecks.startupProbe.enabled }}
+        startupProbe:
+          {{- with .Values.healthChecks.startupProbe.exec }}
+          exec:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          initialDelaySeconds: {{ .Values.healthChecks.startupProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.healthChecks.startupProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.healthChecks.startupProbe.timeoutSeconds }}
+          failureThreshold: {{ .Values.healthChecks.startupProbe.failureThreshold }}
+          successThreshold: {{ .Values.healthChecks.startupProbe.successThreshold }}
+        {{- end }}
+        
+        volumeMounts:
+        {{- with .Values.container.volumeMounts }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- with .Values.extraVolumeMounts }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        
+        {{- with .Values.lifecycle }}
+        lifecycle:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+      
+      {{- with .Values.extraContainers }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
+      
+      {{- with .Values.initContainers }}
+      initContainers:
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
+      
+      {{- if or .Values.volumes .Values.extraVolumes }}
+      volumes:
+      {{- with .Values.volumes }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
+      {{- with .Values.extraVolumes }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
+      {{- end }}
+      
+      {{- if .Values.serviceAccount.create }}
+      serviceAccountName: {{ include "netapp-mcp-server.serviceAccountName" . }}
+      {{- end }}
+      
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      
+      {{- with .Values.priorityClassName }}
+      priorityClassName: {{ . }}
+      {{- end }}
+      
+      {{- if or .Values.image.pullSecrets .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+      {{- range .Values.image.pullSecrets }}
+      - name: {{ . }}
+      {{- end }}
+      {{- range .Values.global.imagePullSecrets }}
+      - name: {{ . }}
+      {{- end }}
+      {{- end }}
+{{- end }}

@@ -1,0 +1,1164 @@
+openapi: 3.0.3
+info:
+  title: NetApp Storage Management API
+  description: |
+    Comprehensive NetApp storage management capabilities exposed through secure API gateway.
+    This API provides complete storage lifecycle management including volume operations, 
+    SVM management, performance monitoring, and capacity planning.
+    
+    ## Security
+    
+    All endpoints require OAuth 2.0 authentication with appropriate scopes:
+    - `storage:read` - Read access to storage resources
+    - `storage:write` - Write access to storage resources  
+    - `storage:admin` - Administrative access to storage resources
+    
+    ## Rate Limits
+    
+    - Basic Plan: 100 requests/minute, 10,000 requests/day
+    - Professional Plan: 1,000 requests/minute, 100,000 requests/day
+    - Enterprise Plan: 5,000 requests/minute, 1,000,000 requests/day
+    
+  version: "1.0.0"
+  contact:
+    name: Storage Platform Team
+    email: storage-platform@company.com
+    url: https://docs.company.com/storage-api
+  license:
+    name: Proprietary
+    url: https://company.com/licenses/api
+  termsOfService: https://company.com/terms
+
+servers:
+  - url: https://api.netapp-storage.company.com/v1/storage
+    description: Production API Gateway
+  - url: https://api-staging.netapp-storage.company.com/v1/storage
+    description: Staging Environment
+  - url: https://api-dev.netapp-storage.company.com/v1/storage
+    description: Development Environment
+
+security:
+  - OAuth2:
+      - storage:read
+  - ApiKeyAuth: []
+
+paths:
+  /health:
+    get:
+      summary: Health Check
+      description: Check API gateway and backend service health
+      operationId: healthCheck
+      tags:
+        - Health
+      security: []
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /clusters:
+    get:
+      summary: List Storage Clusters
+      description: Retrieve list of all NetApp storage clusters
+      operationId: listClusters
+      tags:
+        - Cluster Management
+      security:
+        - OAuth2:
+            - storage:read
+      parameters:
+        - $ref: '#/components/parameters/LimitParam'
+        - $ref: '#/components/parameters/OffsetParam'
+        - $ref: '#/components/parameters/FilterParam'
+      responses:
+        '200':
+          description: List of storage clusters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClusterList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+  /clusters/{clusterId}:
+    get:
+      summary: Get Cluster Details
+      description: Retrieve detailed information about a specific cluster
+      operationId: getCluster
+      tags:
+        - Cluster Management
+      security:
+        - OAuth2:
+            - storage:read
+      parameters:
+        - $ref: '#/components/parameters/ClusterIdParam'
+      responses:
+        '200':
+          description: Cluster details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cluster'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /clusters/{clusterId}/performance:
+    get:
+      summary: Get Cluster Performance Metrics
+      description: Retrieve performance metrics for a specific cluster
+      operationId: getClusterPerformance
+      tags:
+        - Performance Monitoring
+      security:
+        - OAuth2:
+            - storage:read
+      parameters:
+        - $ref: '#/components/parameters/ClusterIdParam'
+        - $ref: '#/components/parameters/TimeRangeParam'
+        - $ref: '#/components/parameters/MetricsParam'
+      responses:
+        '200':
+          description: Performance metrics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PerformanceMetrics'
+
+  /volumes:
+    get:
+      summary: List Storage Volumes
+      description: Retrieve list of storage volumes with filtering options
+      operationId: listVolumes
+      tags:
+        - Volume Operations
+      security:
+        - OAuth2:
+            - storage:read
+      parameters:
+        - $ref: '#/components/parameters/LimitParam'
+        - $ref: '#/components/parameters/OffsetParam'
+        - $ref: '#/components/parameters/FilterParam'
+        - name: svm_id
+          in: query
+          description: Filter by Storage Virtual Machine ID
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of storage volumes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VolumeList'
+
+    post:
+      summary: Create Storage Volume
+      description: Create a new storage volume with specified configuration
+      operationId: createVolume
+      tags:
+        - Volume Operations
+      security:
+        - OAuth2:
+            - storage:write
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VolumeCreateRequest'
+      responses:
+        '201':
+          description: Volume created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Volume'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /volumes/{volumeId}:
+    get:
+      summary: Get Volume Details
+      description: Retrieve detailed information about a specific volume
+      operationId: getVolume
+      tags:
+        - Volume Operations
+      security:
+        - OAuth2:
+            - storage:read
+      parameters:
+        - $ref: '#/components/parameters/VolumeIdParam'
+      responses:
+        '200':
+          description: Volume details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Volume'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    patch:
+      summary: Update Volume
+      description: Update volume configuration (size, QoS policies, etc.)
+      operationId: updateVolume
+      tags:
+        - Volume Operations
+      security:
+        - OAuth2:
+            - storage:write
+      parameters:
+        - $ref: '#/components/parameters/VolumeIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VolumeUpdateRequest'
+      responses:
+        '200':
+          description: Volume updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Volume'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+    delete:
+      summary: Delete Volume
+      description: Delete a storage volume (requires admin privileges)
+      operationId: deleteVolume
+      tags:
+        - Volume Operations
+      security:
+        - OAuth2:
+            - storage:admin
+      parameters:
+        - $ref: '#/components/parameters/VolumeIdParam'
+      responses:
+        '204':
+          description: Volume deleted successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /volumes/{volumeId}/snapshots:
+    get:
+      summary: List Volume Snapshots
+      description: Retrieve list of snapshots for a specific volume
+      operationId: listVolumeSnapshots
+      tags:
+        - Backup & Recovery
+      security:
+        - OAuth2:
+            - storage:read
+      parameters:
+        - $ref: '#/components/parameters/VolumeIdParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - $ref: '#/components/parameters/OffsetParam'
+      responses:
+        '200':
+          description: List of volume snapshots
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SnapshotList'
+
+    post:
+      summary: Create Volume Snapshot
+      description: Create a point-in-time snapshot of the volume
+      operationId: createVolumeSnapshot
+      tags:
+        - Backup & Recovery
+      security:
+        - OAuth2:
+            - storage:write
+      parameters:
+        - $ref: '#/components/parameters/VolumeIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SnapshotCreateRequest'
+      responses:
+        '201':
+          description: Snapshot created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Snapshot'
+
+  /svms:
+    get:
+      summary: List Storage Virtual Machines
+      description: Retrieve list of Storage Virtual Machines (SVMs)
+      operationId: listSVMs
+      tags:
+        - SVM Management
+      security:
+        - OAuth2:
+            - storage:read
+      parameters:
+        - $ref: '#/components/parameters/LimitParam'
+        - $ref: '#/components/parameters/OffsetParam'
+        - $ref: '#/components/parameters/FilterParam'
+      responses:
+        '200':
+          description: List of Storage Virtual Machines
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SVMList'
+
+    post:
+      summary: Create Storage Virtual Machine
+      description: Create a new Storage Virtual Machine with specified configuration
+      operationId: createSVM
+      tags:
+        - SVM Management
+      security:
+        - OAuth2:
+            - storage:admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SVMCreateRequest'
+      responses:
+        '201':
+          description: SVM created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SVM'
+
+  /svms/{svmId}:
+    get:
+      summary: Get SVM Details
+      description: Retrieve detailed information about a specific SVM
+      operationId: getSVM
+      tags:
+        - SVM Management
+      security:
+        - OAuth2:
+            - storage:read
+      parameters:
+        - $ref: '#/components/parameters/SVMIdParam'
+      responses:
+        '200':
+          description: SVM details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SVM'
+
+  /capacity/forecasting:
+    post:
+      summary: Generate Capacity Forecast
+      description: Generate capacity forecast using AI-powered analytics
+      operationId: generateCapacityForecast
+      tags:
+        - Capacity Planning
+      security:
+        - OAuth2:
+            - storage:read
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CapacityForecastRequest'
+      responses:
+        '200':
+          description: Capacity forecast generated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CapacityForecast'
+
+  /analytics/performance:
+    post:
+      summary: Performance Analytics
+      description: Generate AI-powered performance analytics and optimization recommendations
+      operationId: generatePerformanceAnalytics
+      tags:
+        - Analytics & AI
+      security:
+        - OAuth2:
+            - analytics:access
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PerformanceAnalyticsRequest'
+      responses:
+        '200':
+          description: Performance analytics generated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PerformanceAnalytics'
+
+  /workflows:
+    post:
+      summary: Execute Storage Workflow
+      description: Execute a Temporal workflow for complex storage operations
+      operationId: executeWorkflow
+      tags:
+        - Workflow Execution
+      security:
+        - OAuth2:
+            - storage:write
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkflowExecutionRequest'
+      responses:
+        '202':
+          description: Workflow execution started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowExecution'
+
+  /workflows/{workflowId}:
+    get:
+      summary: Get Workflow Status
+      description: Retrieve status and results of a workflow execution
+      operationId: getWorkflowStatus
+      tags:
+        - Workflow Execution
+      security:
+        - OAuth2:
+            - storage:read
+      parameters:
+        - name: workflowId
+          in: path
+          required: true
+          description: Workflow execution ID
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Workflow status and results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowStatus'
+
+components:
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://oauth.company.com/oauth/authorize
+          tokenUrl: https://oauth.company.com/oauth/token
+          scopes:
+            storage:read: Read access to storage resources
+            storage:write: Write access to storage resources
+            storage:admin: Administrative access to storage resources
+            backup:manage: Backup and recovery management
+            analytics:access: Access to analytics and AI features
+    
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+
+  parameters:
+    ClusterIdParam:
+      name: clusterId
+      in: path
+      required: true
+      description: Unique identifier for the storage cluster
+      schema:
+        type: string
+        format: uuid
+    
+    VolumeIdParam:
+      name: volumeId
+      in: path
+      required: true
+      description: Unique identifier for the storage volume
+      schema:
+        type: string
+        format: uuid
+    
+    SVMIdParam:
+      name: svmId
+      in: path
+      required: true
+      description: Unique identifier for the Storage Virtual Machine
+      schema:
+        type: string
+        format: uuid
+    
+    LimitParam:
+      name: limit
+      in: query
+      description: Maximum number of items to return
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 1000
+        default: 100
+    
+    OffsetParam:
+      name: offset
+      in: query
+      description: Number of items to skip
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+    
+    FilterParam:
+      name: filter
+      in: query
+      description: Filter expression for results
+      schema:
+        type: string
+    
+    TimeRangeParam:
+      name: timeRange
+      in: query
+      description: Time range for metrics (e.g., 1h, 24h, 7d)
+      schema:
+        type: string
+        enum: [1h, 6h, 24h, 7d, 30d]
+        default: 24h
+    
+    MetricsParam:
+      name: metrics
+      in: query
+      description: Comma-separated list of metrics to include
+      schema:
+        type: array
+        items:
+          type: string
+        style: form
+        explode: false
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    TooManyRequests:
+      description: Too many requests
+      headers:
+        X-RateLimit-Remaining:
+          description: Number of requests remaining in current period
+          schema:
+            type: integer
+        X-RateLimit-Reset:
+          description: Time when rate limit resets (Unix timestamp)
+          schema:
+            type: integer
+        Retry-After:
+          description: Seconds to wait before retrying
+          schema:
+            type: integer
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+        timestamp:
+          type: string
+          format: date-time
+        services:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              status:
+                type: string
+                enum: [healthy, degraded, unhealthy]
+              response_time:
+                type: number
+                description: Response time in milliseconds
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: Error code
+        message:
+          type: string
+          description: Human-readable error message
+        details:
+          type: object
+          description: Additional error details
+        request_id:
+          type: string
+          description: Unique request identifier
+
+    Cluster:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        state:
+          type: string
+          enum: [online, offline, degraded]
+        version:
+          type: string
+        node_count:
+          type: integer
+        total_capacity:
+          type: integer
+          description: Total capacity in bytes
+        used_capacity:
+          type: integer
+          description: Used capacity in bytes
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    ClusterList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Cluster'
+        total:
+          type: integer
+        limit:
+          type: integer
+        offset:
+          type: integer
+
+    Volume:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        svm_id:
+          type: string
+          format: uuid
+        size:
+          type: integer
+          description: Volume size in bytes
+        used_size:
+          type: integer
+          description: Used space in bytes
+        state:
+          type: string
+          enum: [online, offline, restricted]
+        security_style:
+          type: string
+          enum: [unix, ntfs, mixed, unified]
+        qos_policy:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    VolumeList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Volume'
+        total:
+          type: integer
+        limit:
+          type: integer
+        offset:
+          type: integer
+
+    VolumeCreateRequest:
+      type: object
+      required:
+        - name
+        - svm_id
+        - size
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        svm_id:
+          type: string
+          format: uuid
+        size:
+          type: integer
+          minimum: 1048576
+          description: Volume size in bytes (minimum 1MB)
+        security_style:
+          type: string
+          enum: [unix, ntfs, mixed, unified]
+          default: unix
+        qos_policy:
+          type: string
+        data_protection:
+          type: boolean
+          default: true
+
+    VolumeUpdateRequest:
+      type: object
+      properties:
+        size:
+          type: integer
+          minimum: 1048576
+        qos_policy:
+          type: string
+        auto_size:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+            max_size:
+              type: integer
+
+    SVM:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        cluster_id:
+          type: string
+          format: uuid
+        state:
+          type: string
+          enum: [running, stopped, starting, stopping]
+        protocols:
+          type: array
+          items:
+            type: string
+            enum: [nfs, cifs, iscsi, fcp, nvme]
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    SVMList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/SVM'
+        total:
+          type: integer
+        limit:
+          type: integer
+        offset:
+          type: integer
+
+    SVMCreateRequest:
+      type: object
+      required:
+        - name
+        - cluster_id
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        cluster_id:
+          type: string
+          format: uuid
+        protocols:
+          type: array
+          items:
+            type: string
+            enum: [nfs, cifs, iscsi, fcp, nvme]
+        network_config:
+          type: object
+          properties:
+            data_interfaces:
+              type: array
+              items:
+                type: object
+                properties:
+                  ip_address:
+                    type: string
+                    format: ipv4
+                  netmask:
+                    type: string
+                    format: ipv4
+                  gateway:
+                    type: string
+                    format: ipv4
+
+    Snapshot:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        volume_id:
+          type: string
+          format: uuid
+        size:
+          type: integer
+          description: Snapshot size in bytes
+        created_at:
+          type: string
+          format: date-time
+
+    SnapshotList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Snapshot'
+        total:
+          type: integer
+        limit:
+          type: integer
+        offset:
+          type: integer
+
+    SnapshotCreateRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        comment:
+          type: string
+          maxLength: 500
+
+    PerformanceMetrics:
+      type: object
+      properties:
+        resource_id:
+          type: string
+          format: uuid
+        resource_type:
+          type: string
+          enum: [cluster, svm, volume]
+        metrics:
+          type: object
+          properties:
+            iops:
+              type: array
+              items:
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                    format: date-time
+                  value:
+                    type: number
+            throughput:
+              type: array
+              items:
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                    format: date-time
+                  value:
+                    type: number
+            latency:
+              type: array
+              items:
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                    format: date-time
+                  value:
+                    type: number
+
+    CapacityForecastRequest:
+      type: object
+      required:
+        - resource_id
+        - forecast_horizon
+      properties:
+        resource_id:
+          type: string
+          format: uuid
+        resource_type:
+          type: string
+          enum: [cluster, svm, volume]
+          default: cluster
+        forecast_horizon:
+          type: string
+          enum: [30d, 90d, 180d, 365d]
+        confidence_level:
+          type: number
+          minimum: 0.5
+          maximum: 0.99
+          default: 0.95
+
+    CapacityForecast:
+      type: object
+      properties:
+        resource_id:
+          type: string
+          format: uuid
+        forecast_horizon:
+          type: string
+        confidence_level:
+          type: number
+        predictions:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+              predicted_usage:
+                type: number
+              confidence_interval:
+                type: object
+                properties:
+                  lower:
+                    type: number
+                  upper:
+                    type: number
+        recommendations:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              description:
+                type: string
+              priority:
+                type: string
+                enum: [low, medium, high, critical]
+
+    PerformanceAnalyticsRequest:
+      type: object
+      required:
+        - resource_id
+        - analysis_type
+      properties:
+        resource_id:
+          type: string
+          format: uuid
+        resource_type:
+          type: string
+          enum: [cluster, svm, volume]
+          default: cluster
+        analysis_type:
+          type: string
+          enum: [optimization, anomaly_detection, workload_analysis]
+        time_range:
+          type: string
+          enum: [1h, 6h, 24h, 7d, 30d]
+          default: 24h
+
+    PerformanceAnalytics:
+      type: object
+      properties:
+        resource_id:
+          type: string
+          format: uuid
+        analysis_type:
+          type: string
+        insights:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              description:
+                type: string
+              severity:
+                type: string
+                enum: [info, warning, critical]
+              confidence:
+                type: number
+                minimum: 0
+                maximum: 1
+        recommendations:
+          type: array
+          items:
+            type: object
+            properties:
+              action:
+                type: string
+              description:
+                type: string
+              impact:
+                type: string
+              effort:
+                type: string
+                enum: [low, medium, high]
+
+    WorkflowExecutionRequest:
+      type: object
+      required:
+        - workflow_type
+        - parameters
+      properties:
+        workflow_type:
+          type: string
+          enum: [volume_migration, svm_migration, backup_restore, performance_optimization]
+        parameters:
+          type: object
+          description: Workflow-specific parameters
+        priority:
+          type: string
+          enum: [low, normal, high, urgent]
+          default: normal
+        callback_url:
+          type: string
+          format: uri
+          description: Optional webhook URL for completion notification
+
+    WorkflowExecution:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        workflow_type:
+          type: string
+        status:
+          type: string
+          enum: [pending, running, completed, failed, cancelled]
+        progress:
+          type: integer
+          minimum: 0
+          maximum: 100
+        created_at:
+          type: string
+          format: date-time
+        started_at:
+          type: string
+          format: date-time
+        completed_at:
+          type: string
+          format: date-time
+
+    WorkflowStatus:
+      allOf:
+        - $ref: '#/components/schemas/WorkflowExecution'
+        - type: object
+          properties:
+            result:
+              type: object
+              description: Workflow execution result (available when completed)
+            error:
+              type: object
+              description: Error details (available when failed)
+              properties:
+                code:
+                  type: string
+                message:
+                  type: string
+                details:
+                  type: object
+
+tags:
+  - name: Health
+    description: API health and status endpoints
+  - name: Cluster Management
+    description: NetApp storage cluster operations
+  - name: Volume Operations
+    description: Storage volume lifecycle management
+  - name: SVM Management
+    description: Storage Virtual Machine operations
+  - name: Performance Monitoring
+    description: Performance metrics and monitoring
+  - name: Capacity Planning
+    description: Capacity forecasting and planning
+  - name: Backup & Recovery
+    description: Data protection and recovery operations
+  - name: Analytics & AI
+    description: AI-powered analytics and insights
+  - name: Workflow Execution
+    description: Temporal workflow execution and monitoring
+
+externalDocs:
+  description: Full API documentation and tutorials
+  url: https://docs.company.com/storage-api

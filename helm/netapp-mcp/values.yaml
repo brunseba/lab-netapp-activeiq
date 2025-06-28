@@ -1,0 +1,401 @@
+# Default values for netapp-mcp-server.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Global configuration
+global:
+  # Image registry for all images
+  imageRegistry: ""
+  # Image pull secrets for private registries
+  imagePullSecrets: []
+  # Storage class for persistent volumes
+  storageClass: ""
+
+# Image configuration
+image:
+  registry: docker.io
+  repository: netapp-mcp-server
+  tag: "1.0.0"
+  pullPolicy: IfNotPresent
+  # Image pull secrets (overrides global)
+  pullSecrets: []
+
+# Service configuration
+service:
+  # Service name (defaults to release name)
+  name: ""
+  # Service type (ClusterIP for Knative)
+  type: ClusterIP
+  # Service port
+  port: 8080
+  # Target port on container
+  targetPort: 8080
+  # Service annotations
+  annotations: {}
+  # Service labels
+  labels: {}
+
+# Knative Service configuration
+knative:
+  enabled: true
+  service:
+    # Knative service annotations
+    annotations:
+      serving.knative.dev/creator: "helm-chart"
+      serving.knative.dev/lastModifier: "helm-chart"
+    # Knative service labels
+    labels: {}
+    
+  # Revision template configuration
+  template:
+    # Revision template annotations
+    annotations:
+      # Autoscaling configuration
+      autoscaling.knative.dev/minScale: "1"
+      autoscaling.knative.dev/maxScale: "10"
+      autoscaling.knative.dev/target: "100"
+      autoscaling.knative.dev/targetUtilizationPercentage: "70"
+      autoscaling.knative.dev/scaleDownDelay: "30s"
+      autoscaling.knative.dev/scaleUpDelay: "0s"
+      autoscaling.knative.dev/stableWindow: "60s"
+      # Resource optimization
+      run.googleapis.com/cpu-throttling: "false"
+      run.googleapis.com/execution-environment: "gen2"
+    
+    # Revision template labels
+    labels: {}
+    
+    # Container timeout (max time for handling a request)
+    timeoutSeconds: 300
+    # Response headers timeout
+    responseStartTimeoutSeconds: 30
+    # Idle timeout (scale to zero after this time)
+    idleTimeoutSeconds: 600
+
+# Container configuration
+container:
+  # Container name
+  name: netapp-mcp-server
+  # Container port
+  port: 8080
+  # Container command (optional)
+  command: []
+  # Container args (optional)
+  args: []
+  
+  # Environment variables
+  env: []
+  # Environment variables from ConfigMap/Secret
+  envFrom: []
+  
+  # Resource requests and limits
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+  
+  # Security context
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: false
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    capabilities:
+      drop:
+        - ALL
+  
+  # Volume mounts
+  volumeMounts: []
+
+# NetApp ActiveIQ configuration
+netapp:
+  # NetApp ActiveIQ URL
+  baseUrl: "https://your-netapp-aiqum.example.com/api"
+  # NetApp username
+  username: "admin"
+  # NetApp password (will be stored in secret)
+  password: "password"
+  # SSL verification
+  verifySSL: true
+  # Request timeout
+  timeout: 30
+  
+  # Existing secret name (if provided, above credentials are ignored)
+  existingSecret: ""
+  # Secret keys for existing secret
+  secretKeys:
+    baseUrl: "NETAPP_BASE_URL"
+    username: "NETAPP_USERNAME"
+    password: "NETAPP_PASSWORD"
+    verifySSL: "NETAPP_VERIFY_SSL"
+    timeout: "NETAPP_TIMEOUT"
+
+# Application configuration
+app:
+  # Logging level
+  logLevel: "INFO"
+  # Service name
+  serviceName: "netapp-mcp-server"
+  # Service version
+  serviceVersion: "1.0.0"
+  # Additional environment variables
+  extraEnv: {}
+
+# Health checks configuration
+healthChecks:
+  # Liveness probe
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 30
+    periodSeconds: 30
+    timeoutSeconds: 10
+    failureThreshold: 3
+    successThreshold: 1
+    exec:
+      command:
+        - python
+        - -c
+        - "import asyncio; import sys; sys.exit(0)"
+  
+  # Readiness probe
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 15
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+    successThreshold: 1
+    exec:
+      command:
+        - python
+        - -c
+        - "import asyncio; import sys; sys.exit(0)"
+  
+  # Startup probe
+  startupProbe:
+    enabled: true
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 30
+    successThreshold: 1
+    exec:
+      command:
+        - python
+        - -c
+        - "import asyncio; import sys; sys.exit(0)"
+
+# RBAC configuration
+rbac:
+  # Create RBAC resources
+  create: true
+  # RBAC rules
+  rules:
+    - apiGroups: [""]
+      resources: ["secrets"]
+      verbs: ["get", "list"]
+    - apiGroups: [""]
+      resources: ["configmaps"]
+      verbs: ["get", "list"]
+    - apiGroups: [""]
+      resources: ["pods"]
+      verbs: ["get", "list"]
+    - apiGroups: [""]
+      resources: ["services"]
+      verbs: ["get", "list"]
+
+# Service Account configuration
+serviceAccount:
+  # Create service account
+  create: true
+  # Service account name (defaults to release name)
+  name: ""
+  # Service account annotations
+  annotations: {}
+  # Service account labels
+  labels: {}
+  # Auto mount service account token
+  automountServiceAccountToken: false
+
+# ConfigMap configuration
+configMap:
+  # Create ConfigMap
+  create: true
+  # ConfigMap name (defaults to release name)
+  name: ""
+  # ConfigMap data
+  data:
+    app.properties: |
+      service.name={{ .Values.app.serviceName }}
+      service.version={{ .Values.app.serviceVersion }}
+      server.port={{ .Values.container.port }}
+      logging.level={{ .Values.app.logLevel }}
+    
+    features.yaml: |
+      features:
+        cluster_analytics: true
+        volume_analytics: true
+        node_monitoring: true
+        svm_management: true
+        workload_monitoring: true
+        event_monitoring: true
+        job_monitoring: true
+        real_time_metrics: true
+        historical_metrics: true
+        performance_trending: true
+        capacity_planning: true
+        temporal_integration: true
+        ssl_verification: true
+        certificate_validation: true
+
+# Secret configuration
+secret:
+  # Create secret
+  create: true
+  # Secret name (defaults to release name)
+  name: ""
+  # Secret type
+  type: Opaque
+  # Secret annotations
+  annotations: {}
+  # Secret labels
+  labels: {}
+
+# Network Policy configuration
+networkPolicy:
+  # Create network policy
+  enabled: false
+  # Policy type
+  policyTypes:
+    - Ingress
+    - Egress
+  # Ingress rules
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: knative-serving
+      ports:
+        - protocol: TCP
+          port: 8080
+  # Egress rules
+  egress:
+    - to: []
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+        - protocol: TCP
+          port: 443
+        - protocol: TCP
+          port: 80
+
+# Pod Security Context
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+  seccompProfile:
+    type: RuntimeDefault
+
+# Volumes configuration
+volumes: []
+
+# Persistence configuration
+persistence:
+  enabled: false
+  # Storage class
+  storageClass: ""
+  # Access mode
+  accessMode: ReadWriteOnce
+  # Size
+  size: 8Gi
+  # Annotations
+  annotations: {}
+
+# Monitoring configuration
+monitoring:
+  # Enable ServiceMonitor for Prometheus
+  serviceMonitor:
+    enabled: false
+    # ServiceMonitor namespace
+    namespace: ""
+    # ServiceMonitor labels
+    labels: {}
+    # ServiceMonitor annotations
+    annotations: {}
+    # Scrape interval
+    interval: 30s
+    # Scrape timeout
+    scrapeTimeout: 10s
+    # Metrics path
+    path: /metrics
+    # Target port
+    targetPort: 8080
+
+# Ingress configuration (for non-Knative deployments)
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: netapp-mcp.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+# Node selector
+nodeSelector: {}
+
+# Tolerations
+tolerations: []
+
+# Affinity
+affinity: {}
+
+# Priority class
+priorityClassName: ""
+
+# Pod annotations
+podAnnotations: {}
+
+# Pod labels
+podLabels: {}
+
+# Lifecycle hooks
+lifecycle: {}
+
+# Extra containers
+extraContainers: []
+
+# Init containers
+initContainers: []
+
+# Extra volumes
+extraVolumes: []
+
+# Extra volume mounts
+extraVolumeMounts: []
+
+# Extra environment variables
+extraEnvVars: []
+
+# Extra environment variables from ConfigMap/Secret
+extraEnvVarsSecret: ""
+extraEnvVarsCM: ""
+
+# Tests configuration
+tests:
+  enabled: true
+  image:
+    registry: docker.io
+    repository: curlimages/curl
+    tag: latest
+    pullPolicy: IfNotPresent
