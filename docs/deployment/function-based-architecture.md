@@ -15,7 +15,7 @@ graph TB
         B --> C[NetApp CLI/GUI Tools]
         B --> D[Manual Scripts]
         B --> E[Documentation]
-        
+
         subgraph "Challenges"
             F[Always Running]
             G[Fixed Resources]
@@ -32,7 +32,7 @@ graph TB
     subgraph "Knative Function Architecture"
         A[AI Assistant] --> B[Knative Gateway]
         B --> C[Function Router]
-        
+
         subgraph "Auto-Scaling Functions"
             D[Storage Monitor Function]
             E[Volume Provisioner Function]
@@ -40,13 +40,13 @@ graph TB
             G[Performance Analyzer Function]
             H[Backup Controller Function]
         end
-        
+
         C --> D
         C --> E
         C --> F
         C --> G
         C --> H
-        
+
         subgraph "Benefits"
             I[Scale to Zero]
             J[Auto-Scaling]
@@ -130,7 +130,7 @@ sequenceDiagram
     participant GW as Knative Gateway
     participant SM as Storage Monitor Function
     participant API as NetApp API
-    
+
     AI->>GW: "Show me volume utilization"
     GW->>SM: Route to Storage Monitor
     Note over SM: Function scales from 0 to 1
@@ -151,7 +151,7 @@ sequenceDiagram
     participant SM as Storage Monitor
     participant PM as Performance Monitor
     participant API as NetApp API
-    
+
     AI->>GW: "Create optimized volume for database"
     GW->>VM: Route to Volume Manager
     VM->>SM: Check capacity availability
@@ -175,13 +175,13 @@ graph LR
     A[NetApp Event] --> B[Event Bus]
     B --> C[Event Filter]
     C --> D[Function Trigger]
-    
+
     subgraph "Conditional Function Activation"
         D --> E[Critical Alert Function]
         D --> F[Capacity Alert Function]
         D --> G[Performance Alert Function]
     end
-    
+
     E --> H[Incident Response]
     F --> I[Auto-Scaling Action]
     G --> J[Performance Tuning]
@@ -209,7 +209,7 @@ def calculate_monthly_costs():
         'networking': 30,    # Network costs
         'total': 230
     }
-    
+
     # Function-based deployment
     function_cost = {
         'compute_time': 45,      # Pay per execution
@@ -218,10 +218,10 @@ def calculate_monthly_costs():
         'knative_overhead': 5,   # Platform costs
         'total': 75
     }
-    
+
     savings = traditional_cost['total'] - function_cost['total']
     savings_percentage = (savings / traditional_cost['total']) * 100
-    
+
     return {
         'traditional': traditional_cost,
         'functions': function_cost,
@@ -289,21 +289,21 @@ class PredictiveScaler:
             'peak_days': ['monday', 'tuesday', 'wednesday'],
             'maintenance_windows': ['sunday_2am']
         }
-    
+
     def predict_scaling_needs(self, current_time):
         hour = current_time.hour
         day = current_time.strftime('%A').lower()
-        
+
         # Pre-scale for business hours
         if self.patterns['business_hours'][0] <= hour <= self.patterns['business_hours'][1]:
             if day in self.patterns['peak_days']:
                 return {'min_scale': 2, 'max_scale': 20}
             else:
                 return {'min_scale': 1, 'max_scale': 10}
-        
+
         # Scale to zero during off-hours
         return {'min_scale': 0, 'max_scale': 5}
-    
+
     def apply_scaling_config(self, service_name, scaling_config):
         # Update Knative service annotations
         annotations = {
@@ -364,7 +364,7 @@ async def create_volume_with_tracing(volume_config: dict) -> str:
     with tracer.start_as_current_span("create_volume") as span:
         span.set_attribute("volume.size", volume_config.get("size"))
         span.set_attribute("volume.svm", volume_config.get("svm"))
-        
+
         try:
             # Function execution
             result = await netapp_client.create_volume(volume_config)
@@ -481,11 +481,11 @@ class CanaryController:
     def __init__(self):
         self.success_threshold = 0.95  # 95% success rate
         self.error_threshold = 0.05    # 5% error rate
-        
+
     async def promote_canary(self, service_name, canary_revision):
         # Monitor canary metrics for 10 minutes
         metrics = await self.monitor_canary(canary_revision, duration=600)
-        
+
         if metrics['success_rate'] >= self.success_threshold:
             # Promote canary to 100% traffic
             await self.update_traffic_split(service_name, {
@@ -496,7 +496,7 @@ class CanaryController:
             # Rollback canary
             await self.rollback_canary(service_name)
             return False
-    
+
     async def monitor_canary(self, revision, duration):
         # Collect metrics from Prometheus
         query = f'sum(rate(function_requests_total{{revision="{revision}"}}[5m]))'
@@ -522,13 +522,13 @@ class NetAppClientPool:
     def __init__(self):
         self.pool = asyncio.Queue(maxsize=10)
         self.initialize_pool()
-    
+
     async def initialize_pool(self):
         for _ in range(5):  # Pre-create 5 connections
             client = NetAppClient()
             await client.connect()
             await self.pool.put(client)
-    
+
     async def get_client(self):
         if self.pool.empty():
             # Create new client if pool is empty
@@ -536,7 +536,7 @@ class NetAppClientPool:
             await client.connect()
             return client
         return await self.pool.get()
-    
+
     async def return_client(self, client):
         if not client.is_connected():
             await client.reconnect()

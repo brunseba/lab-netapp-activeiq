@@ -137,7 +137,7 @@ All GET endpoints support these common query parameters:
 
 All endpoints require HTTP Basic Authentication with one of these roles:
 - Operator
-- Storage Administrator  
+- Storage Administrator
 - Application Administrator
 
 ## Content Type

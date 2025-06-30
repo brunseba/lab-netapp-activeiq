@@ -9,7 +9,7 @@ Before starting, ensure you have:
 - ✅ **Docker** installed and running
 - ✅ **NetApp ActiveIQ Unified Manager** accessible
 - ✅ **Valid credentials** with appropriate permissions
-- ✅ **Python 3.8+** (for development setup)
+- ✅ **Python 3.10+** (for development setup)
 
 ## Option 1: Docker Quick Start (Recommended)
 
@@ -29,7 +29,7 @@ NETAPP_UM_HOST=your-unified-manager.company.com
 NETAPP_USERNAME=admin
 NETAPP_PASSWORD=your-secure-password
 
-# MCP Server Configuration  
+# MCP Server Configuration
 MCP_SERVER_PORT=8080
 MCP_SERVER_HOST=0.0.0.0
 LOG_LEVEL=INFO
@@ -134,7 +134,7 @@ curl -X POST http://localhost:8080/tools/get_volumes \
       "args": ["exec", "-i", "netapp-mcp-server", "python", "-m", "netapp_mcp_server", "--stdio"],
       "env": {
         "NETAPP_UM_HOST": "your-unified-manager.company.com",
-        "NETAPP_USERNAME": "admin", 
+        "NETAPP_USERNAME": "admin",
         "NETAPP_PASSWORD": "your-secure-password"
       }
     }
@@ -159,7 +159,7 @@ After setup, verify everything is working:
 
 - [ ] Server starts without errors
 - [ ] Health endpoint returns 200 OK
-- [ ] NetApp connection test succeeds  
+- [ ] NetApp connection test succeeds
 - [ ] MCP tools are listed correctly
 - [ ] Sample queries return data
 - [ ] AI assistant can communicate with server
@@ -200,7 +200,7 @@ docker exec netapp-mcp-server env | grep NETAPP
 Now that your server is running:
 
 1. **[Learn the Architecture](../architecture/system-design.md)** - Understand how it works
-2. **[Explore API Tools](../api/mcp-tools.md)** - See all available operations  
+2. **[Explore API Tools](../api/mcp-tools.md)** - See all available operations
 3. **[Try Examples](../examples/basic-usage.md)** - Follow guided examples
 4. **[Deploy to Production](../deployment/docker.md)** - Production deployment guide
 

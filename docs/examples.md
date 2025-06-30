@@ -47,9 +47,9 @@ from requests.auth import HTTPBasicAuth
 def get_clusters(um_host, username, password):
     url = f"https://{um_host}/api/v2/datacenter/cluster/clusters"
     params = {"fields": "name,uuid,version,management_ip"}
-    
+
     response = requests.get(url, auth=HTTPBasicAuth(username, password), params=params)
-    
+
     if response.status_code == 200:
         return response.json()
     else:
@@ -88,21 +88,21 @@ def generate_storage_report(um_host, username, password):
         "fields": "name,size,svm.name,cluster.name",
         "max_records": 100
     }
-    
+
     response = requests.get(url, auth=HTTPBasicAuth(username, password), params=params)
-    
+
     if response.status_code == 200:
         volumes = response.json()
-        
+
         print("Storage Capacity Report")
         print("-" * 60)
         print(f"{'Volume':<20} {'Cluster':<15} {'SVM':<15} {'Size (GB)':<10} {'Available (GB)':<15}")
         print("-" * 60)
-        
+
         for volume in volumes.get('records', []):
             size_gb = volume['size']['total'] / (1024**3)
             available_gb = volume['size']['available'] / (1024**3)
-            
+
             print(f"{volume['name']:<20} {volume['cluster']['name']:<15} "
                   f"{volume['svm']['name']:<15} {size_gb:<10.2f} {available_gb:<15.2f}")
 ```
@@ -146,22 +146,22 @@ def get_critical_events(um_host, username, password):
         "order_by": "time desc",
         "max_records": 50
     }
-    
+
     response = requests.get(url, auth=HTTPBasicAuth(username, password), params=params)
-    
+
     if response.status_code == 200:
         events = response.json()
-        
+
         print("Critical Events Dashboard")
         print("=" * 80)
-        
+
         for event in events.get('records', []):
             print(f"Event: {event['name']}")
             print(f"Source: {event['source']['name']}")
             print(f"Time: {event['time']}")
             print(f"Message: {event['message']}")
             print("-" * 40)
-    
+
     return events
 ```
 
@@ -275,31 +275,31 @@ class NetAppHealthCheck:
         self.um_host = um_host
         self.auth = HTTPBasicAuth(username, password)
         self.base_url = f"https://{um_host}/api/v2"
-    
+
     def check_cluster_health(self):
         """Check overall cluster health"""
         url = f"{self.base_url}/datacenter/cluster/clusters"
         params = {"fields": "name,state,health"}
-        
+
         response = requests.get(url, auth=self.auth, params=params)
         if response.status_code == 200:
             clusters = response.json()
-            
+
             healthy_clusters = []
             unhealthy_clusters = []
-            
+
             for cluster in clusters.get('records', []):
                 if cluster.get('health', {}).get('overall_status') == 'healthy':
                     healthy_clusters.append(cluster['name'])
                 else:
                     unhealthy_clusters.append(cluster['name'])
-            
+
             return {
                 'healthy': healthy_clusters,
                 'unhealthy': unhealthy_clusters
             }
         return None
-    
+
     def check_critical_events(self):
         """Get all unresolved critical events"""
         url = f"{self.base_url}/management-server/events"
@@ -307,22 +307,22 @@ class NetAppHealthCheck:
             "query": "severity:critical AND state:new",
             "fields": "name,source.name,time"
         }
-        
+
         response = requests.get(url, auth=self.auth, params=params)
         if response.status_code == 200:
             return response.json().get('records', [])
         return []
-    
+
     def check_storage_capacity(self, threshold_percent=90):
         """Check volumes approaching capacity threshold"""
         url = f"{self.base_url}/datacenter/storage/volumes"
         params = {"fields": "name,size,svm.name,cluster.name"}
-        
+
         response = requests.get(url, auth=self.auth, params=params)
         if response.status_code == 200:
             volumes = response.json()
             high_capacity_volumes = []
-            
+
             for volume in volumes.get('records', []):
                 size = volume.get('size', {})
                 if size.get('total', 0) > 0:
@@ -334,17 +334,17 @@ class NetAppHealthCheck:
                             'svm': volume['svm']['name'],
                             'used_percent': round(used_percent, 2)
                         })
-            
+
             return high_capacity_volumes
         return []
-    
+
     def generate_report(self):
         """Generate comprehensive health report"""
         print("NetApp Unified Manager Health Check Report")
         print("=" * 60)
         print(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         print()
-        
+
         # Cluster Health
         cluster_health = self.check_cluster_health()
         if cluster_health:
@@ -354,14 +354,14 @@ class NetAppHealthCheck:
             if cluster_health['unhealthy']:
                 print(f"  Unhealthy clusters: {', '.join(cluster_health['unhealthy'])}")
             print()
-        
+
         # Critical Events
         critical_events = self.check_critical_events()
         print(f"Critical Events: {len(critical_events)} unresolved")
         for event in critical_events[:5]:  # Show first 5
             print(f"  - {event['name']} on {event['source']['name']}")
         print()
-        
+
         # Storage Capacity
         high_capacity = self.check_storage_capacity()
         print(f"High Capacity Volumes (>90%): {len(high_capacity)}")
@@ -379,7 +379,7 @@ if __name__ == "__main__":
 ```python
 def make_api_request(url, auth, method='GET', data=None, retries=3):
     """Make API request with proper error handling and retries"""
-    
+
     for attempt in range(retries):
         try:
             if method == 'GET':
@@ -388,7 +388,7 @@ def make_api_request(url, auth, method='GET', data=None, retries=3):
                 response = requests.post(url, auth=auth, json=data, timeout=30)
             elif method == 'PATCH':
                 response = requests.patch(url, auth=auth, json=data, timeout=30)
-            
+
             # Handle different response codes
             if response.status_code == 200:
                 return response.json()
@@ -411,7 +411,7 @@ def make_api_request(url, auth, method='GET', data=None, retries=3):
                 print(f"Unexpected status code: {response.status_code}")
                 print(f"Response: {response.text}")
                 return None
-                
+
         except requests.exceptions.Timeout:
             print(f"Request timeout (attempt {attempt + 1}/{retries})")
             if attempt < retries - 1:
@@ -422,7 +422,7 @@ def make_api_request(url, auth, method='GET', data=None, retries=3):
             if attempt < retries - 1:
                 time.sleep(2 ** attempt)
                 continue
-    
+
     print(f"Failed after {retries} attempts")
     return None
 ```

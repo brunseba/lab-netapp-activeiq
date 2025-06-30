@@ -18,7 +18,7 @@ data:
     ############################################################################################################
     # Gravitee.io Gateway - Configuration file
     ############################################################################################################
-    
+
     # Gateway HTTP server
     http:
       port: 8082
@@ -28,7 +28,7 @@ data:
       compressionSupported: true
       pool:
         workers: 4
-    
+
     # Gateway management configuration
     management:
       type: http
@@ -39,7 +39,7 @@ data:
         connectTimeout: 10000
         username: admin
         password: ${GRAVITEE_MANAGEMENT_PASSWORD:admin}
-    
+
     # Gateway rate limiting configuration
     ratelimit:
       type: redis
@@ -48,7 +48,7 @@ data:
         port: ${REDIS_PORT:6379}
         password: ${REDIS_PASSWORD:}
         timeout: 2000
-    
+
     # Gateway cache configuration
     cache:
       type: ehcache
@@ -57,7 +57,7 @@ data:
         maxElementsInMemory: 1000
         timeToIdleSeconds: 600
         timeToLiveSeconds: 600
-    
+
     # Gateway analytics configuration
     analytics:
       type: elasticsearch
@@ -68,7 +68,7 @@ data:
         security:
           username: ${ELASTICSEARCH_USERNAME:}
           password: ${ELASTICSEARCH_PASSWORD:}
-    
+
     # Gateway security configuration
     security:
       keystore:
@@ -79,12 +79,12 @@ data:
         type: ${GRAVITEE_SECURITY_TRUSTSTORE_TYPE:PKCS12}
         path: ${GRAVITEE_SECURITY_TRUSTSTORE_PATH:}
         password: ${GRAVITEE_SECURITY_TRUSTSTORE_PASSWORD:}
-    
+
     # Gateway cluster configuration
     cluster:
       hazelcast:
         config-path: ${GRAVITEE_CLUSTER_HAZELCAST_CONFIG_PATH:${gravitee.home}/config/hazelcast.xml}
-    
+
     # Gateway handlers configuration
     handlers:
       request:

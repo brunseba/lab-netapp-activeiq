@@ -6,7 +6,7 @@ This guide provides instructions for developing and maintaining the NetApp Activ
 
 ### Prerequisites
 
-- Python 3.8+ (recommended: Python 3.11)
+- Python 3.10+ (recommended: Python 3.12)
 - pip (Python package installer)
 - Git
 
@@ -156,7 +156,7 @@ sequenceDiagram
     participant User
     participant API
     participant Storage
-    
+
     User->>API: Create SVM Request
     API->>Storage: Initialize SVM
     Storage-->>API: SVM Created

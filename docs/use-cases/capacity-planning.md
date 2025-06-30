@@ -27,7 +27,7 @@ sequenceDiagram
     AI-->>Temporal: Growth Forecasts & Recommendations
     Temporal->>APIM: Capacity Planning Report
     APIM-->>DevOps: Planning Dashboard & Alerts
-    
+
     Note over AI: Continuous Learning
     AI->>Temporal: Updated Prediction Models
     AI->>DevOps: Proactive Capacity Alerts
@@ -149,7 +149,7 @@ class CapacityPlanner:
     def __init__(self):
         self.apim = APIMClient()
         self.mcp_client = NetAppMCPClient()
-    
+
     async def get_capacity_forecast(self, cluster_id: str, forecast_days: int = 90):
         """Generate capacity forecast for specified timeframe"""
         forecast_request = {
@@ -162,10 +162,10 @@ class CapacityPlanner:
                 "include_scenarios": True
             }
         }
-        
+
         response = await self.apim.execute_temporal_workflow(forecast_request)
         return response.capacity_forecast
-    
+
     async def analyze_capacity_trends(self, timeframe_days: int = 30):
         """Analyze capacity trends across all monitored systems"""
         trend_request = {
@@ -178,10 +178,10 @@ class CapacityPlanner:
                 "generate_insights": True
             }
         }
-        
+
         response = await self.apim.execute_temporal_workflow(trend_request)
         return response.trend_analysis
-    
+
     async def get_optimization_recommendations(self, cluster_id: str):
         """Get AI-powered capacity optimization recommendations"""
         optimization_request = {
@@ -194,7 +194,7 @@ class CapacityPlanner:
                 "risk_tolerance": "medium"
             }
         }
-        
+
         response = await self.apim.execute_temporal_workflow(optimization_request)
         return response.optimization_recommendations
 ```
@@ -205,7 +205,7 @@ class CapacityPlanner:
 class AutomatedCapacityManager:
     async def setup_capacity_automation(self):
         """Configure automated capacity management"""
-        
+
         # Automated thin provisioning optimization
         await self.apim.register_capacity_handler({
             "trigger_type": "low_efficiency_detected",
@@ -214,7 +214,7 @@ class AutomatedCapacityManager:
             "approval_required": False,
             "notification_channels": ["slack", "email"]
         })
-        
+
         # Automated volume migration for balance
         await self.apim.register_capacity_handler({
             "trigger_type": "aggregate_imbalance",
@@ -223,7 +223,7 @@ class AutomatedCapacityManager:
             "approval_required": True,
             "approver_role": "storage_admin"
         })
-        
+
         # Emergency capacity provisioning
         await self.apim.register_capacity_handler({
             "trigger_type": "critical_capacity_threshold",
@@ -233,7 +233,7 @@ class AutomatedCapacityManager:
             "approver_role": "capacity_manager",
             "escalation_timeout": "10_minutes"
         })
-    
+
     async def execute_capacity_expansion(self, expansion_plan):
         """Execute automated capacity expansion"""
         expansion_workflow = {
@@ -246,7 +246,7 @@ class AutomatedCapacityManager:
                 "rollback_plan": expansion_plan.get("rollback_plan")
             }
         }
-        
+
         return await self.apim.execute_temporal_workflow(expansion_workflow)
 ```
 
@@ -267,28 +267,28 @@ The AI Assistant provides advanced capacity planning capabilities:
 class AICapacityAnalytics:
     async def predict_capacity_needs(self, cluster_metrics):
         """AI-driven capacity need prediction"""
-        
+
         # Analyze historical capacity patterns
         capacity_analysis = await self.ai_assistant.analyze_capacity_patterns(
             cluster_metrics=cluster_metrics,
             historical_period="12_months",
             include_seasonal_patterns=True
         )
-        
+
         # Generate capacity predictions
         predictions = await self.ai_assistant.generate_capacity_predictions(
             capacity_analysis=capacity_analysis,
             prediction_horizons=["30_days", "90_days", "365_days"],
             confidence_levels=[80, 90, 95]
         )
-        
+
         # Optimize capacity allocation
         optimizations = await self.ai_assistant.optimize_capacity_allocation(
             current_state=cluster_metrics,
             predictions=predictions,
             business_constraints=await self.get_business_constraints()
         )
-        
+
         # Execute approved optimizations
         for optimization in optimizations.approved_actions:
             await self.apim.execute_temporal_workflow({
@@ -296,13 +296,13 @@ class AICapacityAnalytics:
                 "parameters": optimization.parameters,
                 "ai_confidence": optimization.confidence_score
             })
-        
+
         return {
             "capacity_analysis": capacity_analysis,
             "predictions": predictions,
             "optimizations": optimizations
         }
-    
+
     async def detect_capacity_anomalies(self, system_metrics):
         """Detect capacity usage anomalies"""
         anomaly_detection = await self.ai_assistant.detect_anomalies(
@@ -310,7 +310,7 @@ class AICapacityAnalytics:
             detection_algorithms=["statistical", "ml_based", "pattern_matching"],
             sensitivity_level="medium"
         )
-        
+
         # Investigate detected anomalies
         for anomaly in anomaly_detection.high_priority_anomalies:
             investigation_result = await self.ai_assistant.investigate_anomaly(
@@ -318,7 +318,7 @@ class AICapacityAnalytics:
                 context_data=await self.get_system_context(),
                 root_cause_analysis=True
             )
-            
+
             # Take appropriate action based on investigation
             if investigation_result.requires_immediate_action:
                 await self.apim.execute_temporal_workflow({
@@ -329,7 +329,7 @@ class AICapacityAnalytics:
                         "auto_approve": investigation_result.confidence > 0.9
                     }
                 })
-        
+
         return anomaly_detection
 ```
 
@@ -348,7 +348,7 @@ predictive_capacity_workflows:
       - growth_trend_analysis
       - seasonal_pattern_identification
       - anomaly_detection_results
-  
+
   - name: capacity_demand_forecasting
     trigger: monthly
     ai_model: ensemble_forecasting
@@ -359,7 +359,7 @@ predictive_capacity_workflows:
       - capacity_demand_forecasts
       - procurement_recommendations
       - budget_planning_data
-  
+
   - name: optimization_strategy_generation
     trigger: configuration_change
     ai_model: multi_objective_optimization
@@ -407,23 +407,23 @@ capacity_thresholds:
       alert_frequency: daily
       notification_channels: [email]
       recipients: [storage_team]
-    
+
     - threshold: 80%
       alert_frequency: every_4_hours
       notification_channels: [slack, email]
       recipients: [storage_team, devops_team]
-  
+
   critical_levels:
     - threshold: 85%
       alert_frequency: hourly
       notification_channels: [pagerduty, slack, email]
       recipients: [oncall_engineer, storage_team]
-    
+
     - threshold: 90%
       alert_frequency: every_15_minutes
       notification_channels: [pagerduty, phone, slack]
       recipients: [oncall_engineer, storage_manager]
-  
+
   emergency_levels:
     - threshold: 95%
       alert_frequency: immediate
@@ -443,14 +443,14 @@ predictive_alerts:
       channels: [email, slack]
       recipients: [capacity_planning_team]
       escalation: 7_days_no_action
-  
+
   - alert_name: growth_acceleration_detected
     trigger: growth_rate_increase_above_baseline
     threshold: 50%_increase
     notification:
       channels: [slack, email]
       recipients: [storage_team, business_analysts]
-  
+
   - alert_name: seasonal_capacity_peak_approaching
     trigger: seasonal_pattern_analysis
     advance_notice: 45_days
@@ -482,10 +482,10 @@ class CapacityCostAnalyzer:
                 "roi_calculations": True
             }
         }
-        
+
         response = await self.apim.execute_temporal_workflow(cost_analysis_request)
         return response.cost_analysis
-    
+
     async def generate_procurement_plan(self, capacity_forecast):
         """Generate optimal procurement plan based on forecast"""
         procurement_request = {
@@ -498,7 +498,7 @@ class CapacityCostAnalyzer:
                 "procurement_timing": "optimal"
             }
         }
-        
+
         return await self.apim.execute_temporal_workflow(procurement_request)
 ```
 
@@ -510,17 +510,17 @@ cost_optimization_metrics:
     calculation: total_storage_cost / total_stored_capacity
     target: minimize
     benchmark: industry_average
-  
+
   - metric: efficiency_ratio
     calculation: logical_capacity / physical_capacity
     target: maximize
     benchmark: best_practice_ratio
-  
+
   - metric: capacity_utilization
     calculation: used_capacity / allocated_capacity
     target: optimize_range
     optimal_range: [70%, 85%]
-  
+
   - metric: growth_cost_efficiency
     calculation: incremental_cost / incremental_capacity
     target: minimize

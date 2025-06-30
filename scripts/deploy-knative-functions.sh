@@ -38,38 +38,38 @@ print_error() {
 # Function to check prerequisites
 check_prerequisites() {
     print_status "Checking prerequisites..."
-    
+
     # Check if kn CLI is installed
     if ! command -v kn &> /dev/null; then
         print_error "kn CLI is not installed. Please install Knative CLI first."
         exit 1
     fi
-    
+
     # Check if func CLI is installed
     if ! command -v func &> /dev/null; then
         print_error "func CLI is not installed. Please install Knative func CLI first."
         exit 1
     fi
-    
+
     # Check if kubectl is available
     if ! command -v kubectl &> /dev/null; then
         print_error "kubectl is not installed. Please install kubectl first."
         exit 1
     fi
-    
+
     # Check if we can access the cluster
     if ! kubectl cluster-info &> /dev/null; then
         print_error "Cannot access Kubernetes cluster. Please check your kubeconfig."
         exit 1
     fi
-    
+
     print_success "All prerequisites satisfied"
 }
 
 # Function to create namespace if it doesn't exist
 create_namespace() {
     print_status "Creating namespace ${NAMESPACE} if it doesn't exist..."
-    
+
     if ! kubectl get namespace "${NAMESPACE}" &> /dev/null; then
         kubectl create namespace "${NAMESPACE}"
         print_success "Namespace ${NAMESPACE} created"
@@ -81,7 +81,7 @@ create_namespace() {
 # Function to create secrets
 create_secrets() {
     print_status "Creating NetApp credentials secret..."
-    
+
     # Check if required environment variables are set
     if [[ -z "${NETAPP_BASE_URL:-}" || -z "${NETAPP_USERNAME:-}" || -z "${NETAPP_PASSWORD:-}" ]]; then
         print_error "Required environment variables not set:"
@@ -90,7 +90,7 @@ create_secrets() {
         print_error "  NETAPP_PASSWORD - NetApp API password"
         exit 1
     fi
-    
+
     # Create or update secret
     kubectl create secret generic netapp-function-credentials \
         --namespace="${NAMESPACE}" \
@@ -99,7 +99,7 @@ create_secrets() {
         --from-literal=NETAPP_PASSWORD="${NETAPP_PASSWORD}" \
         --from-literal=NETAPP_VERIFY_SSL="false" \
         --dry-run=client -o yaml | kubectl apply -f -
-    
+
     print_success "NetApp credentials secret created/updated"
 }
 
@@ -107,9 +107,9 @@ create_secrets() {
 deploy_function() {
     local func_name="$1"
     local func_description="$2"
-    
+
     print_status "Deploying function: ${func_name}"
-    
+
     # Create function directory if it doesn't exist
     if [[ ! -d "${func_name}" ]]; then
         print_status "Creating function ${func_name}..."
@@ -117,10 +117,10 @@ deploy_function() {
             --language python \
             --template http
     fi
-    
+
     # Navigate to function directory
     pushd "${func_name}" > /dev/null
-    
+
     # Update func.yaml with our configuration
     cat > func.yaml << EOF
 specVersion: 0.35.0
@@ -132,7 +132,7 @@ created: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
 invoke: gunicorn
 build:
   builder: pack
-  buildpacks: 
+  buildpacks:
     - gcr.io/paketo-buildpacks/python
 run:
   env:
@@ -163,7 +163,7 @@ deploy:
       autoscaling.knative.dev/scaleUpDelay: "0s"
       description: "${func_description}"
 EOF
-    
+
     # Create requirements.txt if it doesn't exist
     if [[ ! -f requirements.txt ]]; then
         cat > requirements.txt << 'EOF'
@@ -175,7 +175,7 @@ uvicorn>=0.24.0
 parliament-functions>=1.0.0
 EOF
     fi
-    
+
     # Deploy the function
     print_status "Deploying ${func_name} to cluster..."
     func deploy \
@@ -183,7 +183,7 @@ EOF
         --env-from secret:netapp-function-credentials \
         ${BUILD_ARGS} \
         ${VERBOSE}
-    
+
     popd > /dev/null
     print_success "Function ${func_name} deployed successfully"
 }
@@ -191,11 +191,11 @@ EOF
 # Function to create storage monitor function
 create_storage_monitor_function() {
     local func_name="netapp-storage-monitor"
-    
+
     if [[ ! -d "${func_name}" ]]; then
         func create "${func_name}" --language python --template http
     fi
-    
+
     # Create the function implementation
     cat > "${func_name}/func.py" << 'EOF'
 import asyncio
@@ -256,9 +256,9 @@ async def main(context: Context):
         else:
             # For GET requests, use query parameters
             request_data = dict(context.request.query_params) if hasattr(context.request, 'query_params') else {}
-        
+
         operation = request_data.get('operation', 'get_clusters')
-        
+
         # Route to appropriate operation
         if operation == 'get_clusters':
             result = await get_clusters()
@@ -274,7 +274,7 @@ async def main(context: Context):
                 'headers': {'Content-Type': 'application/json'},
                 'body': json.dumps({'error': f'Unknown operation: {operation}'})
             }
-        
+
         return {
             'statusCode': 200,
             'headers': {'Content-Type': 'application/json'},
@@ -286,7 +286,7 @@ async def main(context: Context):
                 'data': result
             })
         }
-        
+
     except Exception as e:
         return {
             'statusCode': 500,
@@ -304,11 +304,11 @@ EOF
 # Function to create volume operations function
 create_volume_ops_function() {
     local func_name="netapp-volume-ops"
-    
+
     if [[ ! -d "${func_name}" ]]; then
         func create "${func_name}" --language python --template http
     fi
-    
+
     # Create the function implementation
     cat > "${func_name}/func.py" << 'EOF'
 import asyncio
@@ -354,16 +354,16 @@ async def main(context: Context):
             request_data = context.request.json
         else:
             request_data = {}
-        
+
         operation = request_data.get('operation')
-        
+
         if not operation:
             return {
                 'statusCode': 400,
                 'headers': {'Content-Type': 'application/json'},
                 'body': json.dumps({'error': 'Operation not specified'})
             }
-        
+
         # Route to appropriate operation
         if operation == 'create_volume':
             volume_config = request_data.get('volume_config', {})
@@ -385,7 +385,7 @@ async def main(context: Context):
                 'headers': {'Content-Type': 'application/json'},
                 'body': json.dumps({'error': f'Unknown operation: {operation}'})
             }
-        
+
         return {
             'statusCode': 200,
             'headers': {'Content-Type': 'application/json'},
@@ -397,7 +397,7 @@ async def main(context: Context):
                 'result': result
             })
         }
-        
+
     except Exception as e:
         return {
             'statusCode': 500,
@@ -416,11 +416,11 @@ EOF
 # Function to create SVM manager function
 create_svm_manager_function() {
     local func_name="netapp-svm-manager"
-    
+
     if [[ ! -d "${func_name}" ]]; then
         func create "${func_name}" --language python --template http
     fi
-    
+
     # Create the function implementation
     cat > "${func_name}/func.py" << 'EOF'
 import asyncio
@@ -472,9 +472,9 @@ async def main(context: Context):
             request_data = context.request.json
         else:
             request_data = dict(context.request.query_params) if hasattr(context.request, 'query_params') else {}
-        
+
         operation = request_data.get('operation', 'get_svms')
-        
+
         # Route to appropriate operation
         if operation == 'get_svms':
             result = await get_svms()
@@ -493,7 +493,7 @@ async def main(context: Context):
                 'headers': {'Content-Type': 'application/json'},
                 'body': json.dumps({'error': f'Unknown operation: {operation}'})
             }
-        
+
         return {
             'statusCode': 200,
             'headers': {'Content-Type': 'application/json'},
@@ -505,7 +505,7 @@ async def main(context: Context):
                 'result': result
             })
         }
-        
+
     except Exception as e:
         return {
             'statusCode': 500,
@@ -524,16 +524,16 @@ EOF
 # Function to test functions
 test_functions() {
     print_status "Testing deployed functions..."
-    
+
     local functions=("netapp-storage-monitor" "netapp-volume-ops" "netapp-svm-manager")
-    
+
     for func_name in "${functions[@]}"; do
         print_status "Testing ${func_name}..."
-        
+
         # Get function URL
         local func_url
         func_url=$(kn service describe "${func_name}" -n "${NAMESPACE}" -o jsonpath='{.status.url}' 2>/dev/null || echo "")
-        
+
         if [[ -n "${func_url}" ]]; then
             # Test the function
             local test_data='{"operation": "test"}'
@@ -544,12 +544,12 @@ test_functions() {
             elif [[ "${func_name}" == "netapp-svm-manager" ]]; then
                 test_data='{"operation": "get_svms"}'
             fi
-            
+
             local response
             response=$(curl -s -X POST "${func_url}" \
                 -H "Content-Type: application/json" \
                 -d "${test_data}" || echo "CURL_FAILED")
-            
+
             if [[ "${response}" != "CURL_FAILED" ]]; then
                 print_success "${func_name} is responding"
             else
@@ -564,36 +564,36 @@ test_functions() {
 # Main deployment function
 main() {
     print_status "Starting NetApp MCP Knative Functions deployment..."
-    
+
     # Check prerequisites
     check_prerequisites
-    
+
     # Create namespace
     create_namespace
-    
+
     # Create secrets
     create_secrets
-    
+
     # Create function implementations
     print_status "Creating function implementations..."
     create_storage_monitor_function
     create_volume_ops_function
     create_svm_manager_function
-    
+
     # Deploy functions
     print_status "Deploying functions..."
     deploy_function "netapp-storage-monitor" "NetApp storage monitoring and capacity reporting"
     deploy_function "netapp-volume-ops" "NetApp volume lifecycle operations"
     deploy_function "netapp-svm-manager" "NetApp Storage Virtual Machine management"
-    
+
     # Test functions
     sleep 30  # Wait for functions to be ready
     test_functions
-    
+
     print_success "NetApp MCP Knative Functions deployment completed!"
     print_status "Function URLs:"
     kn service list -n "${NAMESPACE}"
-    
+
     print_status ""
     print_status "To test functions manually:"
     print_status "  kn func invoke netapp-storage-monitor --data '{\"operation\": \"get_clusters\"}'"

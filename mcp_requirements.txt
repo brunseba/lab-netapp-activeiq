@@ -1,4 +1,5 @@
 # NetApp ActiveIQ MCP Server Dependencies
+# Requires Python 3.10+
 
 # Model Context Protocol framework  
 mcp>=0.8.0

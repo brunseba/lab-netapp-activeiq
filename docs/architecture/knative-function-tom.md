@@ -18,20 +18,20 @@ The Knative Function-Based TOM enables:
 ### Traditional vs Function-Based Deployment
 
 ```mermaid
-graph TB
+graph TD
     subgraph "Traditional Deployment"
         A1[Monolithic MCP Server] --> B1[Always Running]
         B1 --> C1[Fixed Resources]
         C1 --> D1[High Costs]
         D1 --> E1[Manual Scaling]
     end
-    
+
     subgraph "Knative Function-Based"
         A2[Function Decomposition] --> B2[Event-Driven Execution]
         B2 --> C2[Auto-Scaling]
         C2 --> D2[Cost Optimization]
         D2 --> E2[DevOps Self-Service]
-        
+
         subgraph "Function Catalog"
             F1[Storage Monitor Function]
             F2[Volume Provisioner Function]
@@ -40,7 +40,7 @@ graph TB
             F5[Event Processor Function]
             F6[Backup Controller Function]
         end
-        
+
         E2 --> F1
         E2 --> F2
         E2 --> F3
@@ -84,7 +84,7 @@ async def main(context: Context):
     """Storage monitoring function"""
     request_data = context.request.json
     operation = request_data.get('operation', 'get_clusters')
-    
+
     if operation == 'get_clusters':
         result = await get_clusters()
     elif operation == 'get_aggregates':
@@ -98,7 +98,7 @@ async def main(context: Context):
             'statusCode': 400,
             'body': json.dumps({'error': f'Unknown operation: {operation}'})
         }
-    
+
     return {
         'statusCode': 200,
         'headers': {'Content-Type': 'application/json'},
@@ -135,7 +135,7 @@ created: 2024-01-15T10:00:00Z
 invoke: gunicorn
 build:
   builder: pack
-  buildpacks: 
+  buildpacks:
     - gcr.io/paketo-buildpacks/python
 run:
   env:
@@ -179,7 +179,7 @@ async def main(context: Context):
     """Volume operations function"""
     request_data = context.request.json
     operation = request_data.get('operation')
-    
+
     try:
         if operation == 'create_volume':
             volume_config = request_data.get('volume_config', {})
@@ -196,7 +196,7 @@ async def main(context: Context):
                 'statusCode': 400,
                 'body': json.dumps({'error': f'Unknown operation: {operation}'})
             }
-        
+
         return {
             'statusCode': 200,
             'headers': {'Content-Type': 'application/json'},
@@ -255,13 +255,13 @@ graph TB
         A[Claude/GPT Assistant]
         B[Custom AI Agent]
     end
-    
+
     subgraph "Knative Function Gateway"
         C[Knative Serving]
         D[Function Router]
         E[Auto-Scaler]
     end
-    
+
     subgraph "NetApp Function Catalog"
         F1[Storage Monitor<br/>kn func: netapp-storage-monitor]
         F2[Volume Ops<br/>kn func: netapp-volume-ops]
@@ -270,12 +270,12 @@ graph TB
         F5[Events<br/>kn func: netapp-events]
         F6[Backup<br/>kn func: netapp-backup]
     end
-    
+
     subgraph "NetApp Infrastructure"
         G[ActiveIQ Unified Manager]
         H[ONTAP Clusters]
     end
-    
+
     A --> C
     B --> C
     C --> D
@@ -286,7 +286,7 @@ graph TB
     E --> F4
     E --> F5
     E --> F6
-    
+
     F1 --> G
     F2 --> G
     F3 --> G
@@ -306,7 +306,7 @@ sequenceDiagram
     participant KN as Knative Gateway
     participant SM as Storage Monitor Function
     participant API as NetApp API
-    
+
     AI->>KN: GET /netapp-storage-monitor<br/>{"operation": "get_clusters"}
     Note over SM: Function cold start (0→1)
     KN->>SM: Route request
@@ -327,30 +327,30 @@ sequenceDiagram
     participant SM as Storage Monitor Function
     participant PA as Performance Function
     participant API as NetApp API
-    
+
     AI->>KN: POST /netapp-volume-ops<br/>{"operation": "create_optimized_volume"}
     KN->>VO: Route request
     Note over VO: Function starts (0→1)
-    
+
     VO->>KN: Call storage monitor function
     KN->>SM: GET capacity info
     Note over SM: Function starts (0→1)
     SM->>API: GET /aggregates
     API-->>SM: Capacity data
     SM-->>VO: Available capacity
-    
+
     VO->>KN: Call performance function
     KN->>PA: GET performance metrics
     Note over PA: Function starts (0→1)
     PA->>API: GET /performance/aggregates
     API-->>PA: Performance data
     PA-->>VO: Performance recommendations
-    
+
     VO->>API: POST /volumes (create optimized)
     API-->>VO: Volume created
     VO-->>KN: Complete configuration
     KN-->>AI: Optimized volume details
-    
+
     Note over SM,PA,VO: All functions scale to zero
 ```
 
@@ -361,13 +361,13 @@ graph LR
     A[NetApp Event] --> B[Event Bus<br/>Knative Eventing]
     B --> C[Event Filter]
     C --> D[Function Trigger]
-    
+
     subgraph "Function Activation"
         D --> E[netapp-events Function]
         D --> F[netapp-backup Function]
         D --> G[netapp-performance Function]
     end
-    
+
     E --> H[Process Alert]
     F --> I[Trigger Backup]
     G --> J[Performance Analysis]
@@ -454,18 +454,18 @@ sequenceDiagram
     participant Git as Git Repository
     participant KN as Knative Platform
     participant API as NetApp API
-    
+
     Dev->>CLI: kn func create my-storage-function
     CLI-->>Dev: Function template created
-    
+
     Dev->>Git: Commit function code
     Git-->>Dev: Code committed
-    
+
     Dev->>CLI: kn func deploy --build
     CLI->>KN: Deploy function
     KN-->>CLI: Function deployed
     CLI-->>Dev: Function URL provided
-    
+
     Dev->>CLI: kn func invoke --data '{"operation": "test"}'
     CLI->>KN: Test function
     KN->>API: Execute NetApp operation
@@ -547,34 +547,34 @@ class FunctionCostModel:
     def __init__(self):
         self.cost_per_gb_second = 0.0000166667  # Google Cloud pricing
         self.cost_per_request = 0.0000004       # Per million requests
-        
+
     def calculate_monthly_cost(self, functions_config):
         total_cost = 0
-        
+
         for func_name, config in functions_config.items():
             # Memory allocation in GB
             memory_gb = config['memory_mb'] / 1024
-            
+
             # Execution time in seconds per month
             executions_per_month = config['monthly_invocations']
             avg_duration_seconds = config['avg_duration_ms'] / 1000
-            
+
             # Compute cost
             compute_cost = (
-                memory_gb * 
-                avg_duration_seconds * 
-                executions_per_month * 
+                memory_gb *
+                avg_duration_seconds *
+                executions_per_month *
                 self.cost_per_gb_second
             )
-            
+
             # Request cost
             request_cost = executions_per_month * self.cost_per_request
-            
+
             function_cost = compute_cost + request_cost
             total_cost += function_cost
-            
+
             print(f"{func_name}: ${function_cost:.2f}/month")
-        
+
         return total_cost
 
 # Example calculation
@@ -680,10 +680,10 @@ async def health_check():
         # Test NetApp API connectivity
         from netapp_client import get_client
         client = get_client()
-        
+
         # Simple connectivity test
         clusters = await client.get_clusters(fields="uuid,name")
-        
+
         return {
             'status': 'healthy',
             'timestamp': datetime.utcnow().isoformat(),
@@ -789,7 +789,7 @@ validate deployment
 update load balancer
 monitor for issues
 
-# Function-based workflow  
+# Function-based workflow
 kn func deploy --build
 # Function is live in 2-3 minutes
 kn func invoke --test
@@ -804,11 +804,11 @@ kn func invoke --test
    # Install Knative Serving
    kubectl apply -f https://github.com/knative/serving/releases/latest/download/serving-crds.yaml
    kubectl apply -f https://github.com/knative/serving/releases/latest/download/serving-core.yaml
-   
+
    # Install Knative CLI
    curl -L https://github.com/knative/client/releases/latest/download/kn-linux-amd64 -o kn
    chmod +x kn && sudo mv kn /usr/local/bin/
-   
+
    # Install func CLI
    curl -L https://github.com/knative/func/releases/latest/download/func_linux_amd64.tar.gz | tar xz
    chmod +x func && sudo mv func /usr/local/bin/

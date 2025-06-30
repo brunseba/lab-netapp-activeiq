@@ -8,18 +8,19 @@ The NetApp ActiveIQ MCP Server implements a bridge between the Model Context Pro
 
 ```mermaid
 graph TB
+
     subgraph "AI/Client Layer"
         A1[Claude Desktop]
         A2[Custom AI App]
         A3[MCP Client]
     end
-    
+
     subgraph "MCP Protocol Layer"
         B1[MCP Transport]
         B2[Tool Registry]
         B3[Schema Validator]
     end
-    
+
     subgraph "NetApp MCP Server Core"
         C1[Request Router]
         C2[Tool Executor]
@@ -28,45 +29,45 @@ graph TB
         C5[Cache Manager]
         C6[Event Handler]
     end
-    
+
     subgraph "Integration Layer"
         D1[NetApp API Client]
         D2[Temporal Workflows]
         D3[Prometheus Metrics]
         D4[Error Handler]
     end
-    
+
     subgraph "NetApp Infrastructure"
         E1[ActiveIQ Unified Manager]
         E2[ONTAP Clusters]
         E3[Storage Systems]
     end
-    
+
     subgraph "External Services"
         F1[Temporal Server]
         F2[Redis Cache]
         F3[Monitoring System]
     end
-    
+
     A1 --> B1
     A2 --> B1
     A3 --> B1
-    
+
     B1 --> C1
     B2 --> C2
     B3 --> C3
-    
+
     C1 --> D1
     C2 --> D2
     C3 --> D3
     C4 --> D1
     C5 --> F2
     C6 --> D4
-    
+
     D1 --> E1
     D2 --> F1
     D3 --> F3
-    
+
     E1 --> E2
     E1 --> E3
 ```
@@ -109,17 +110,17 @@ class RequestRouter:
     def __init__(self):
         self.tools = ToolRegistry()
         self.auth = AuthenticationManager()
-        
+
     async def route_request(self, request: MCPRequest) -> MCPResponse:
         # Authenticate request
         if not await self.auth.validate(request):
             return MCPResponse.error("Authentication failed")
-            
+
         # Route to tool
         tool = self.tools.get_tool(request.method)
         if not tool:
             return MCPResponse.error("Tool not found")
-            
+
         return await tool.execute(request.params)
 ```
 
@@ -149,7 +150,7 @@ class AuthenticationManager:
             auth=aiohttp.BasicAuth(config.username, config.password),
             connector=aiohttp.TCPConnector(ssl=config.verify_ssl)
         )
-        
+
     async def validate_connection(self) -> bool:
         try:
             async with self.session.get(f"{self.base_url}/datacenter/cluster/clusters") as resp:
@@ -173,7 +174,7 @@ class NetAppAPIClient:
     def __init__(self, config: NetAppConfig):
         self.base_url = f"https://{config.host}/api/v2"
         self.session = self._create_session(config)
-        
+
     async def get_clusters(self, **params) -> List[Dict]:
         url = f"{self.base_url}/datacenter/cluster/clusters"
         async with self.session.get(url, params=params) as resp:
@@ -207,12 +208,12 @@ sequenceDiagram
     participant Server as MCP Server
     participant Cache as Cache Layer
     participant NetApp as NetApp API
-    
+
     Client->>Server: MCP Request
     Server->>Server: Validate Request
     Server->>Server: Authenticate
     Server->>Cache: Check Cache
-    
+
     alt Cache Hit
         Cache-->>Server: Cached Response
     else Cache Miss
@@ -220,7 +221,7 @@ sequenceDiagram
         NetApp-->>Server: API Response
         Server->>Cache: Store Response
     end
-    
+
     Server->>Server: Format Response
     Server-->>Client: MCP Response
 ```
@@ -233,11 +234,11 @@ sequenceDiagram
     participant Server as MCP Server
     participant NetApp as NetApp API
     participant Monitor as Monitoring
-    
+
     Client->>Server: MCP Request
     Server->>NetApp: API Request
     NetApp-->>Server: Error Response
-    
+
     Server->>Server: Parse Error
     Server->>Monitor: Log Error
     Server->>Server: Format Error Response
@@ -267,7 +268,7 @@ class ResourceManager:
             limit=config.max_connections,
             limit_per_host=config.max_connections_per_host
         )
-    
+
     async def execute_with_limit(self, coro):
         async with self.semaphore:
             return await coro
@@ -282,7 +283,7 @@ sequenceDiagram
     participant Server as MCP Server
     participant Auth as Auth Service
     participant NetApp as NetApp API
-    
+
     Client->>Server: Request with Token
     Server->>Auth: Validate Token
     Auth-->>Server: Token Valid
@@ -418,7 +419,7 @@ logger = structlog.get_logger("netapp.mcp.server")
 
 async def execute_tool(tool_name: str, params: dict):
     logger.info("tool.execute.start", tool=tool_name, params=params)
-    
+
     try:
         result = await tool.execute(params)
         logger.info("tool.execute.success", tool=tool_name, result_size=len(result))
@@ -438,7 +439,7 @@ class HealthChecker:
             "cache": await self.check_cache(),
             "temporal": await self.check_temporal()
         }
-        
+
         status = "healthy" if all(checks.values()) else "unhealthy"
         return {"status": status, "checks": checks}
 ```

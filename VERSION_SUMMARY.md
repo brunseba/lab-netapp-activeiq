@@ -10,7 +10,7 @@ This document tracks the current versions of all components used in the document
 |-----------|---------|-------------|
 | **MkDocs** | 1.6.1 | Static site generator for project documentation |
 | **MkDocs Material** | 9.6.14 | Material Design theme for MkDocs |
-| **Python** | 3.13 | Runtime environment |
+| **Python** | 3.10+ (Recommended: 3.12) | Runtime environment |
 
 ## Diagram & Visualization
 

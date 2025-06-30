@@ -15,7 +15,7 @@ This document provides comprehensive guidance for integrating Temporal.io workfl
 ## Prerequisites
 
 - Docker installed and running
-- Python 3.8+ (recommended: Python 3.11)
+- Python 3.10+ (recommended: Python 3.12)
 - NetApp ActiveIQ Unified Manager access
 - Valid API credentials
 
@@ -86,7 +86,7 @@ class SVMConfig:
     language: str = "c.utf_8"
     security_style: str = "unix"
     protocols: List[str] = None
-    
+
     def __post_init__(self):
         if self.protocols is None:
             self.protocols = ["nfs"]
@@ -106,22 +106,22 @@ async def validate_cluster_health(cluster_key: str, um_host: str, auth: tuple) -
     """Step 1: Validate cluster health before SVM creation"""
     url = f"https://{um_host}/api/v2/datacenter/cluster/clusters/{cluster_key}"
     params = {"fields": "name,state,health,version"}
-    
+
     response = requests.get(
-        url, 
-        auth=HTTPBasicAuth(*auth), 
+        url,
+        auth=HTTPBasicAuth(*auth),
         params=params,
         verify=False,  # For self-signed certificates
         timeout=30
     )
-    
+
     if response.status_code != 200:
         raise Exception(f"Failed to validate cluster: {response.status_code} - {response.text}")
-    
+
     cluster = response.json()
     if cluster.get('state') != 'up':
         raise Exception(f"Cluster {cluster.get('name')} is not up: {cluster.get('state')}")
-    
+
     activity.logger.info(f"✓ Cluster {cluster['name']} is healthy and ready")
     return cluster
 
@@ -133,18 +133,18 @@ async def get_available_aggregates(cluster_key: str, um_host: str, auth: tuple) 
         "query": f"cluster.key:{cluster_key}",
         "fields": "name,key,space.size,space.available,state"
     }
-    
+
     response = requests.get(url, auth=HTTPBasicAuth(*auth), params=params, verify=False, timeout=30)
-    
+
     if response.status_code != 200:
         raise Exception(f"Failed to get aggregates: {response.status_code}")
-    
+
     aggregates = response.json().get('records', [])
     available_aggs = [
-        agg for agg in aggregates 
+        agg for agg in aggregates
         if agg.get('state') == 'online' and agg.get('space', {}).get('available', 0) > 10737418240  # 10GB min
     ]
-    
+
     activity.logger.info(f"Found {len(available_aggs)} available aggregates")
     return available_aggs
 
@@ -152,7 +152,7 @@ async def get_available_aggregates(cluster_key: str, um_host: str, auth: tuple) 
 async def create_svm(svm_config: SVMConfig, um_host: str, auth: tuple) -> Dict:
     """Step 3: Create SVM with specified configuration"""
     url = f"https://{um_host}/api/v2/datacenter/svm/svms"
-    
+
     payload = {
         "name": svm_config.name,
         "cluster": {"key": svm_config.cluster_key},
@@ -162,21 +162,21 @@ async def create_svm(svm_config: SVMConfig, um_host: str, auth: tuple) -> Dict:
         "security_style": svm_config.security_style,
         "allowed_protocols": svm_config.protocols
     }
-    
+
     if svm_config.aggregate_name:
         payload["aggregates"] = [{"name": svm_config.aggregate_name}]
-    
+
     response = requests.post(
-        url, 
-        auth=HTTPBasicAuth(*auth), 
-        json=payload, 
-        verify=False, 
+        url,
+        auth=HTTPBasicAuth(*auth),
+        json=payload,
+        verify=False,
         timeout=60
     )
-    
+
     if response.status_code not in [201, 202]:
         raise Exception(f"Failed to create SVM: {response.status_code} - {response.text}")
-    
+
     result = response.json()
     activity.logger.info(f"✓ SVM creation initiated: {svm_config.name}")
     return result
@@ -187,32 +187,32 @@ async def monitor_job_completion(job_uuid: str, um_host: str, auth: tuple, timeo
     url = f"https://{um_host}/api/v2/management-server/jobs/{job_uuid}"
     start_time = asyncio.get_event_loop().time()
     max_wait = timeout_minutes * 60
-    
+
     while (asyncio.get_event_loop().time() - start_time) < max_wait:
         response = requests.get(url, auth=HTTPBasicAuth(*auth), verify=False, timeout=30)
-        
+
         if response.status_code != 200:
             raise Exception(f"Failed to check job status: {response.status_code}")
-        
+
         job = response.json()
         state = job.get('state')
-        
+
         activity.logger.info(f"Job {job_uuid} status: {state} ({job.get('progress', 0)}%)")
-        
+
         if state == 'success':
             return job
         elif state in ['failure', 'partial_failures']:
             raise Exception(f"Job failed: {job.get('message', 'Unknown error')}")
-        
+
         await asyncio.sleep(10)  # Poll every 10 seconds
-    
+
     raise Exception(f"Job {job_uuid} timed out after {timeout_minutes} minutes")
 
 @activity.defn
 async def create_network_interface(svm_key: str, interface: NetworkInterface, um_host: str, auth: tuple) -> Dict:
     """Step 5 & 6: Create management and data network interfaces"""
     url = f"https://{um_host}/api/v2/datacenter/svm/svms/{svm_key}/network/ip/interfaces"
-    
+
     payload = {
         "name": interface.name,
         "ip": {
@@ -226,18 +226,18 @@ async def create_network_interface(svm_key: str, interface: NetworkInterface, um
         "service_policy": interface.service_policy,
         "enabled": True
     }
-    
+
     response = requests.post(
-        url, 
-        auth=HTTPBasicAuth(*auth), 
-        json=payload, 
-        verify=False, 
+        url,
+        auth=HTTPBasicAuth(*auth),
+        json=payload,
+        verify=False,
         timeout=30
     )
-    
+
     if response.status_code not in [201, 202]:
         raise Exception(f"Failed to create interface {interface.name}: {response.status_code}")
-    
+
     activity.logger.info(f"✓ Network interface {interface.name} created")
     return response.json()
 
@@ -245,7 +245,7 @@ async def create_network_interface(svm_key: str, interface: NetworkInterface, um
 @workflow.defn
 class SVMCreationWorkflow:
     """Complete SVM Creation Workflow based on sequence diagram"""
-    
+
     @workflow.run
     async def run(self, svm_config: SVMConfig, um_host: str, auth: tuple) -> Dict:
         retry_policy = RetryPolicy(
@@ -253,9 +253,9 @@ class SVMCreationWorkflow:
             maximum_interval=timedelta(seconds=60),
             maximum_attempts=3
         )
-        
+
         workflow.logger.info(f"Starting SVM creation workflow for {svm_config.name}")
-        
+
         # Step 1: Validate cluster health
         cluster_info = await workflow.execute_activity(
             validate_cluster_health,
@@ -265,7 +265,7 @@ class SVMCreationWorkflow:
             start_to_close_timeout=timedelta(seconds=30),
             retry_policy=retry_policy
         )
-        
+
         # Step 2: Get available aggregates
         aggregates = await workflow.execute_activity(
             get_available_aggregates,
@@ -275,13 +275,13 @@ class SVMCreationWorkflow:
             start_to_close_timeout=timedelta(seconds=30),
             retry_policy=retry_policy
         )
-        
+
         # Select best aggregate (most available space)
         if aggregates:
             best_aggregate = max(aggregates, key=lambda x: x.get('space', {}).get('available', 0))
             svm_config.aggregate_name = best_aggregate['name']
             workflow.logger.info(f"Selected aggregate: {best_aggregate['name']}")
-        
+
         # Step 3: Create SVM
         svm_result = await workflow.execute_activity(
             create_svm,
@@ -291,7 +291,7 @@ class SVMCreationWorkflow:
             start_to_close_timeout=timedelta(minutes=2),
             retry_policy=retry_policy
         )
-        
+
         # Step 4: Monitor job completion if async operation
         if 'job' in svm_result:
             job_result = await workflow.execute_activity(
@@ -303,9 +303,9 @@ class SVMCreationWorkflow:
                 start_to_close_timeout=timedelta(minutes=35),
                 retry_policy=retry_policy
             )
-        
+
         svm_key = svm_result.get('svm_key') or svm_result.get('key')
-        
+
         # Steps 5 & 6: Create network interfaces
         mgmt_interface = NetworkInterface(
             name=f"{svm_config.name}_mgmt",
@@ -315,7 +315,7 @@ class SVMCreationWorkflow:
             port_name="e0c",
             service_policy="default-management"
         )
-        
+
         data_interface = NetworkInterface(
             name=f"{svm_config.name}_data",
             ip_address="10.1.100.51",  # This should be parameterized
@@ -324,7 +324,7 @@ class SVMCreationWorkflow:
             port_name="e0d",
             service_policy="default-data-files"
         )
-        
+
         # Create management interface
         mgmt_result = await workflow.execute_activity(
             create_network_interface,
@@ -335,7 +335,7 @@ class SVMCreationWorkflow:
             start_to_close_timeout=timedelta(seconds=30),
             retry_policy=retry_policy
         )
-        
+
         # Create data interface
         data_result = await workflow.execute_activity(
             create_network_interface,
@@ -346,7 +346,7 @@ class SVMCreationWorkflow:
             start_to_close_timeout=timedelta(seconds=30),
             retry_policy=retry_policy
         )
-        
+
         return {
             "svm_name": svm_config.name,
             "svm_key": svm_key,
@@ -387,7 +387,7 @@ class ExportPolicyRule:
 async def create_export_policy(svm_key: str, policy_name: str, rules: List[ExportPolicyRule], um_host: str, auth: tuple) -> Dict:
     """Step 1: Create export policy with rules"""
     url = f"https://{um_host}/api/v2/datacenter/svm/svms/{svm_key}/export-policies"
-    
+
     payload = {
         "name": policy_name,
         "rules": [
@@ -401,12 +401,12 @@ async def create_export_policy(svm_key: str, policy_name: str, rules: List[Expor
             } for rule in rules
         ]
     }
-    
+
     response = requests.post(url, auth=HTTPBasicAuth(*auth), json=payload, verify=False, timeout=30)
-    
+
     if response.status_code not in [201, 202]:
         raise Exception(f"Failed to create export policy: {response.status_code}")
-    
+
     activity.logger.info(f"✓ Export policy {policy_name} created")
     return response.json()
 
@@ -414,7 +414,7 @@ async def create_export_policy(svm_key: str, policy_name: str, rules: List[Expor
 async def create_file_share(share_config: NFSShareConfig, um_host: str, auth: tuple) -> Dict:
     """Step 2: Create NFS file share"""
     url = f"https://{um_host}/api/v2/storage-provider/file-shares"
-    
+
     payload = {
         "name": share_config.name,
         "size": share_config.size,
@@ -424,12 +424,12 @@ async def create_file_share(share_config: NFSShareConfig, um_host: str, auth: tu
         "unix_permissions": share_config.unix_permissions,
         "security_style": share_config.security_style
     }
-    
+
     response = requests.post(url, auth=HTTPBasicAuth(*auth), json=payload, verify=False, timeout=60)
-    
+
     if response.status_code not in [201, 202]:
         raise Exception(f"Failed to create file share: {response.status_code}")
-    
+
     activity.logger.info(f"✓ NFS share {share_config.name} created")
     return response.json()
 
@@ -437,16 +437,16 @@ async def create_file_share(share_config: NFSShareConfig, um_host: str, auth: tu
 async def apply_export_policy(share_key: str, policy_name: str, um_host: str, auth: tuple) -> Dict:
     """Step 3: Apply export policy to file share"""
     url = f"https://{um_host}/api/v2/storage-provider/file-shares/{share_key}"
-    
+
     payload = {
         "export_policy": {"name": policy_name}
     }
-    
+
     response = requests.patch(url, auth=HTTPBasicAuth(*auth), json=payload, verify=False, timeout=30)
-    
+
     if response.status_code != 200:
         raise Exception(f"Failed to apply export policy: {response.status_code}")
-    
+
     activity.logger.info(f"✓ Export policy {policy_name} applied to share")
     return response.json()
 
@@ -455,17 +455,17 @@ async def verify_nfs_access(svm_key: str, um_host: str, auth: tuple) -> Dict:
     """Step 4: Verify NFS service is accessible"""
     url = f"https://{um_host}/api/v2/datacenter/svm/svms/{svm_key}"
     params = {"fields": "nfs.enabled,state,protocols"}
-    
+
     response = requests.get(url, auth=HTTPBasicAuth(*auth), params=params, verify=False, timeout=30)
-    
+
     if response.status_code != 200:
         raise Exception(f"Failed to verify NFS access: {response.status_code}")
-    
+
     svm_info = response.json()
-    
+
     if not svm_info.get('nfs', {}).get('enabled', False):
         raise Exception("NFS is not enabled on SVM")
-    
+
     activity.logger.info("✓ NFS access verified")
     return svm_info
 
@@ -473,7 +473,7 @@ async def verify_nfs_access(svm_key: str, um_host: str, auth: tuple) -> Dict:
 @workflow.defn
 class NFSShareCreationWorkflow:
     """Complete NFS Share Creation Workflow based on sequence diagram"""
-    
+
     @workflow.run
     async def run(self, share_config: NFSShareConfig, export_rules: List[ExportPolicyRule], um_host: str, auth: tuple) -> Dict:
         retry_policy = RetryPolicy(
@@ -481,9 +481,9 @@ class NFSShareCreationWorkflow:
             maximum_interval=timedelta(seconds=30),
             maximum_attempts=3
         )
-        
+
         workflow.logger.info(f"Starting NFS share creation workflow for {share_config.name}")
-        
+
         # Step 1: Create export policy
         export_policy_result = await workflow.execute_activity(
             create_export_policy,
@@ -495,7 +495,7 @@ class NFSShareCreationWorkflow:
             start_to_close_timeout=timedelta(seconds=30),
             retry_policy=retry_policy
         )
-        
+
         # Step 2: Create file share
         share_result = await workflow.execute_activity(
             create_file_share,
@@ -505,9 +505,9 @@ class NFSShareCreationWorkflow:
             start_to_close_timeout=timedelta(minutes=5),
             retry_policy=retry_policy
         )
-        
+
         share_key = share_result.get('key')
-        
+
         # Step 3: Apply export policy (if not already applied)
         if share_key:
             policy_result = await workflow.execute_activity(
@@ -519,7 +519,7 @@ class NFSShareCreationWorkflow:
                 start_to_close_timeout=timedelta(seconds=30),
                 retry_policy=retry_policy
             )
-        
+
         # Step 4: Verify NFS access
         nfs_verification = await workflow.execute_activity(
             verify_nfs_access,
@@ -529,7 +529,7 @@ class NFSShareCreationWorkflow:
             start_to_close_timeout=timedelta(seconds=30),
             retry_policy=retry_policy
         )
-        
+
         return {
             "share_name": share_config.name,
             "share_key": share_key,
@@ -570,7 +570,7 @@ logger = logging.getLogger(__name__)
 async def main():
     # Connect to Temporal server
     client = await Client.connect(os.getenv("TEMPORAL_HOST", "localhost:7233"))
-    
+
     # Create worker
     worker = Worker(
         client,
@@ -591,7 +591,7 @@ async def main():
             verify_nfs_access,
         ],
     )
-    
+
     logger.info("Starting NetApp ActiveIQ Temporal worker...")
     await worker.run()
 
@@ -611,14 +611,14 @@ from netapp_workflows import SVMConfig, NFSShareConfig, ExportPolicyRule
 
 async def run_svm_creation():
     client = await Client.connect(os.getenv("TEMPORAL_HOST", "localhost:7233"))
-    
+
     # Configure SVM
     svm_config = SVMConfig(
         name="production_nfs_svm",
         cluster_key="cluster-12345-abcde",
         protocols=["nfs"]
     )
-    
+
     # Start workflow
     result = await client.execute_workflow(
         "SVMCreationWorkflow.run",
@@ -628,13 +628,13 @@ async def run_svm_creation():
         id=f"svm-creation-{svm_config.name}",
         task_queue="netapp-activeiq"
     )
-    
+
     print(f"SVM Creation Result: {result}")
     return result
 
 async def run_nfs_share_creation(svm_key: str):
     client = await Client.connect(os.getenv("TEMPORAL_HOST", "localhost:7233"))
-    
+
     # Configure NFS share
     share_config = NFSShareConfig(
         name="shared_documents",
@@ -643,7 +643,7 @@ async def run_nfs_share_creation(svm_key: str):
         size="500GB",
         export_policy_name="production_policy"
     )
-    
+
     # Define export rules
     export_rules = [
         ExportPolicyRule(
@@ -661,7 +661,7 @@ async def run_nfs_share_creation(svm_key: str):
             superuser=["none"]
         )
     ]
-    
+
     # Start workflow
     result = await client.execute_workflow(
         "NFSShareCreationWorkflow.run",
@@ -672,7 +672,7 @@ async def run_nfs_share_creation(svm_key: str):
         id=f"nfs-share-{share_config.name}",
         task_queue="netapp-activeiq"
     )
-    
+
     print(f"NFS Share Creation Result: {result}")
     return result
 
@@ -682,7 +682,7 @@ if __name__ == "__main__":
         svm_result = await run_svm_creation()
         if svm_result and svm_result.get("status") == "completed":
             await run_nfs_share_creation(svm_result["svm_key"])
-    
+
     asyncio.run(main())
 ```
 

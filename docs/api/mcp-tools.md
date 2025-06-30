@@ -438,23 +438,23 @@ from mcp_client import MCPClient
 
 async def storage_health_check():
     client = MCPClient("http://localhost:8080")
-    
+
     # Get cluster status
     clusters = await client.call_tool("get_clusters", {})
-    
+
     # Check for volumes with low space
     low_space_volumes = await client.call_tool("get_volumes", {
         "utilization_threshold": 90,
         "fields": ["name", "svm", "cluster", "used_percentage", "available"]
     })
-    
+
     # Get recent critical events
     critical_events = await client.call_tool("get_events", {
         "severity": "critical",
         "state": "new",
         "max_records": 10
     })
-    
+
     return {
         "clusters": clusters,
         "low_space_volumes": low_space_volumes,

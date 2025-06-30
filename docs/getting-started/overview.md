@@ -35,18 +35,18 @@ graph TB
     C --> D[ActiveIQ Unified Manager API]
     C --> E[Temporal Workflows]
     C --> F[Prometheus Metrics]
-    
+
     D --> G[NetApp Storage Systems]
     E --> H[Workflow Engine]
     F --> I[Monitoring Dashboard]
-    
+
     subgraph "MCP Server Components"
         C1[Tool Registry]
         C2[Authentication Manager]
         C3[Request Router]
         C4[Response Formatter]
     end
-    
+
     C --> C1
     C --> C2
     C --> C3

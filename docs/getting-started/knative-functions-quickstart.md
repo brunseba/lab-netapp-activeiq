@@ -362,7 +362,7 @@ spec:
         severity: warning
       annotations:
         summary: "High error rate in NetApp functions"
-    
+
     - alert: NetAppFunctionColdStartHigh
       expr: histogram_quantile(0.95, function_cold_start_duration_seconds) > 5
       for: 10m
@@ -560,14 +560,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    
+
     - name: Setup Knative CLI
       run: |
         curl -L https://github.com/knative/client/releases/latest/download/kn-linux-amd64 -o kn
         chmod +x kn && sudo mv kn /usr/local/bin/
         curl -L https://github.com/knative/func/releases/latest/download/func_linux_amd64.tar.gz | tar xz
         chmod +x func && sudo mv func /usr/local/bin/
-    
+
     - name: Deploy Functions
       env:
         KUBECONFIG: ${{ secrets.KUBECONFIG }}

@@ -135,21 +135,21 @@ NetApp infrastructure management encompasses the complete lifecycle of storage s
 # Automated daily infrastructure checks
 def daily_infrastructure_check():
     """Perform automated daily infrastructure validation"""
-    
+
     # Check cluster health
     clusters = get_all_clusters()
     unhealthy_clusters = [c for c in clusters if c.health != 'healthy']
-    
+
     # Validate SVM status
     svms = get_all_svms()
     offline_svms = [s for s in svms if s.state != 'running']
-    
+
     # Check capacity thresholds
     volumes = get_volumes_above_threshold(80)
-    
+
     # Network connectivity validation
     network_issues = check_network_connectivity()
-    
+
     # Generate summary report
     return {
         'timestamp': datetime.now(),
@@ -172,28 +172,28 @@ def daily_infrastructure_check():
 # Self-service storage provisioning
 def provision_storage_for_team(team_name, requirements):
     """Automated storage provisioning workflow"""
-    
+
     # Validate requirements
     validate_storage_requirements(requirements)
-    
+
     # Find optimal cluster placement
     target_cluster = find_best_cluster(requirements.size, requirements.performance)
-    
+
     # Create SVM if needed
     svm = get_or_create_team_svm(team_name, target_cluster)
-    
+
     # Provision volumes
     volumes = create_volumes(svm, requirements.volumes)
-    
+
     # Configure network access
     configure_network_access(svm, requirements.networks)
-    
+
     # Apply security policies
     apply_security_policies(svm, team_name)
-    
+
     # Set up monitoring
     configure_monitoring(svm, volumes)
-    
+
     return {
         'svm': svm,
         'volumes': volumes,
@@ -216,7 +216,7 @@ svm_template_dev:
   snapshot_policy: default
   export_policy: dev_policy
   backup_schedule: weekly
-  
+
 network_config:
   management_lif: true
   data_lifs: 2
@@ -234,7 +234,7 @@ svm_template_prod:
   snapshot_policy: production
   export_policy: prod_policy
   backup_schedule: daily
-  
+
 network_config:
   management_lif: true
   data_lifs: 4

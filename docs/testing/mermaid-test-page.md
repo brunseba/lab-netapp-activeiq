@@ -20,7 +20,7 @@ sequenceDiagram
     participant A as Client
     participant B as Server
     participant C as Database
-    
+
     A->>B: Request
     B->>C: Query
     C-->>B: Response
@@ -52,14 +52,14 @@ classDiagram
         +initialize()
         +handle_request()
     }
-    
+
     class NetApp_API {
         +str base_url
         +str auth_token
         +get_clusters()
         +get_volumes()
     }
-    
+
     MCP_Server --> NetApp_API : uses
 ```
 
@@ -82,19 +82,19 @@ erDiagram
     CLUSTER ||--o{ SVM : contains
     SVM ||--o{ VOLUME : contains
     VOLUME ||--o{ SNAPSHOT : has
-    
+
     CLUSTER {
         string uuid
         string name
         string version
     }
-    
+
     SVM {
         string uuid
         string name
         string type
     }
-    
+
     VOLUME {
         string uuid
         string name
@@ -149,19 +149,19 @@ flowchart TD
         B[Cluster 1]
         C[Cluster 2]
     end
-    
+
     subgraph "MCP Server"
         D[API Gateway]
         E[Authentication]
         F[Tools Handler]
     end
-    
+
     subgraph "Client Applications"
         G[AI Assistant]
         H[Automation Tools]
         I[Monitoring Dashboard]
     end
-    
+
     A --> D
     B --> A
     C --> A
@@ -180,23 +180,23 @@ sequenceDiagram
     participant M as MCP Server
     participant N as NetApp API
     participant D as Database
-    
+
     C->>M: Initialize Connection
     M->>N: Authenticate
     N-->>M: Auth Token
-    
+
     loop Health Check
         M->>N: Get Cluster Status
         N-->>M: Status Response
     end
-    
+
     C->>M: Get Volume Info
     M->>N: Query Volumes
     N->>D: Fetch Data
     D-->>N: Volume Data
     N-->>M: Volume Response
     M-->>C: Formatted Result
-    
+
     Note over C,D: End-to-end data flow
 ```
 
@@ -216,11 +216,11 @@ flowchart LR
     H --> I
     I --> J[Return Result]
     D --> K[Log Error]
-    
+
     classDef successClass fill:#d4edda,stroke:#155724,stroke-width:2px
     classDef errorClass fill:#f8d7da,stroke:#721c24,stroke-width:2px
     classDef processClass fill:#fff3cd,stroke:#856404,stroke-width:2px
-    
+
     class F,G,H,I,J successClass
     class D,K errorClass
     class C,E processClass
@@ -231,19 +231,19 @@ flowchart LR
 ```mermaid
 timeline
     title NetApp MCP Server Development
-    
+
     2024-Q1 : Planning
              : Requirements Gathering
              : API Analysis
-    
+
     2024-Q2 : Development
              : Core Implementation
              : Testing Framework
-    
+
     2024-Q3 : Integration
              : AI Assistant Support
              : Documentation
-    
+
     2024-Q4 : Production
              : Deployment
              : Monitoring Setup

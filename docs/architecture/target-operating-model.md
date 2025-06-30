@@ -20,7 +20,7 @@ graph TB
         E --> F[Manual Documentation]
         F --> G[Result Communication]
     end
-    
+
     subgraph "Challenges"
         H[Single Point of Failure]
         I[Slow Response Times]
@@ -35,20 +35,20 @@ graph TB
 ```mermaid
 graph TB
     subgraph "DevOps-Driven Operating Model"
-        A[DevOps GUI Request] --> B[API Management (APIM)]
+        A[DevOps GUI Request] --> B[API Management APIM]
         B --> C[Temporal Workflows]
         C --> D[NetApp API Automation]
         D --> E[Real-time Analysis]
         E --> F[Automated Actions]
         F --> G[Structured Responses]
-        
+
         subgraph "Optional MCP Integration"
             H[MCP Server on Knative]
-            C -.-> H
-            H -.-> D
+            C --> H
+            H --> D
         end
     end
-    
+
     subgraph "Benefits"
         I[Self-Service DevOps]
         J[Instant Response]
@@ -63,10 +63,10 @@ graph TB
 ```mermaid
 graph TB
     subgraph "DevOps-Primary with Day-2 AI Model"
-        A[DevOps GUI Request] --> B[API Management (APIM)]
+        A[DevOps GUI Request] --> B[API Management APIM]
         B --> C[Temporal Workflow Engine]
         C --> D[Durable Execution]
-        
+
         subgraph "Orchestrated Activities"
             E[Optional MCP Server Functions]
             F[NetApp API Calls]
@@ -74,13 +74,13 @@ graph TB
             H[Rollback Logic]
             I[Notification Services]
         end
-        
+
         D --> E
         D --> F
         D --> G
         D --> H
         D --> I
-        
+
         subgraph "Day-2 AI Integration"
             J[AI Assistant]
             K[Predictive Analysis]
@@ -88,13 +88,13 @@ graph TB
             M[Anomaly Detection]
             N[Capacity Planning]
         end
-        
-        B -.->|Day-2 Operations| J
+
+        B -->|Day-2 Operations| J
         J --> K
         J --> L
         J --> M
         J --> N
-        
+
         subgraph "Durability Features"
             O[Fault Tolerance]
             P[Automatic Retries]
@@ -103,7 +103,7 @@ graph TB
             S[Workflow History]
         end
     end
-    
+
     subgraph "Advanced Benefits"
         T[Never Lose Progress]
         U[Automatic Recovery]
@@ -119,11 +119,34 @@ graph TB
 ### 1. WITHOUT MCP: Traditional Storage Operations
 
 #### Process Flow
-```
-Request → Expert → Analysis → Action → Documentation → Communication
-  ↓        ↓         ↓        ↓         ↓           ↓
-Manual   Human     Manual   CLI/GUI   Manual      Email/Chat
-Wait     Expert    Tools    Commands  Notes       Updates
+
+```mermaid
+flowchart LR
+    A[Request] --> B[Expert] --> C[Analysis]
+    C --> D[Action]
+    D --> E[Documentation]
+    E --> F[Communication]
+
+    A -.-> A1[Manual<br/>Wait]
+    B -.-> B1[Human<br/>Expert]
+    C -.-> C1[Manual<br/>Tools]
+    D -.-> D1[CLI/GUI<br/>Commands]
+    E -.-> E1[Manual<br/>Notes]
+    F -.-> F1[Email/Chat<br/>Updates]
+
+    style A fill:#ffebee
+    style B fill:#fff3e0
+    style C fill:#e8f5e8
+    style D fill:#e3f2fd
+    style E fill:#f3e5f5
+    style F fill:#fce4ec
+
+    style A1 fill:#ffcdd2
+    style B1 fill:#ffe0b2
+    style C1 fill:#c8e6c9
+    style D1 fill:#bbdefb
+    style E1 fill:#e1bee7
+    style F1 fill:#f8bbd9
 ```
 
 #### Operational Characteristics
@@ -365,31 +388,31 @@ class SVMEnvironmentSetup:
     @workflow.run
     async def run(self, setup_request: SVMSetupRequest) -> SVMSetupResult:
         workflow.logger.info(f"Starting SVM setup for {setup_request.team_name}")
-        
+
         # Step 1: Validate requirements
         validation = await workflow.execute_activity(
             validate_requirements,
             setup_request,
             start_to_close_timeout=timedelta(minutes=2)
         )
-        
+
         if not validation.valid:
             raise ApplicationError(f"Validation failed: {validation.errors}")
-        
+
         # Step 2: Resource allocation
         allocation = await workflow.execute_activity(
             allocate_resources,
             setup_request,
             start_to_close_timeout=timedelta(minutes=5)
         )
-        
+
         # Step 3: Create SVM
         svm = await workflow.execute_activity(
             create_svm,
             allocation,
             start_to_close_timeout=timedelta(minutes=10)
         )
-        
+
         # Step 4: Configure networking (parallel activities)
         network_tasks = [
             workflow.execute_activity(
@@ -403,9 +426,9 @@ class SVMEnvironmentSetup:
                 start_to_close_timeout=timedelta(minutes=5)
             )
         ]
-        
+
         await asyncio.gather(*network_tasks)
-        
+
         # Step 5: Human approval for production
         if setup_request.environment == "production":
             approval = await workflow.execute_activity(
@@ -413,7 +436,7 @@ class SVMEnvironmentSetup:
                 f"SVM {svm.name} ready for production deployment",
                 start_to_close_timeout=timedelta(hours=24)  # Wait up to 24 hours
             )
-            
+
             if not approval.approved:
                 # Cleanup resources
                 await workflow.execute_activity(
@@ -422,21 +445,21 @@ class SVMEnvironmentSetup:
                     start_to_close_timeout=timedelta(minutes=10)
                 )
                 raise ApplicationError("Setup not approved")
-        
+
         # Step 6: Final configuration
         final_config = await workflow.execute_activity(
             finalize_setup,
             svm.uuid,
             start_to_close_timeout=timedelta(minutes=15)
         )
-        
+
         # Step 7: Notification
         await workflow.execute_activity(
             send_completion_notification,
             final_config,
             start_to_close_timeout=timedelta(minutes=2)
         )
-        
+
         return SVMSetupResult(
             svm_uuid=svm.uuid,
             svm_name=svm.name,
@@ -460,7 +483,7 @@ class CapacityManagement:
                 cluster_uuid,
                 start_to_close_timeout=timedelta(minutes=5)
             )
-            
+
             if capacity_status.utilization > 80:
                 # Trigger expansion workflow
                 await workflow.execute_child_workflow(
@@ -468,7 +491,7 @@ class CapacityManagement:
                     cluster_uuid,
                     id=f"expansion-{cluster_uuid}-{workflow.now()}"
                 )
-            
+
             # Wait for next check or external signal
             try:
                 await workflow.wait_condition(
@@ -477,7 +500,7 @@ class CapacityManagement:
                 )
             except TimeoutError:
                 continue  # Normal hourly check
-            
+
             # Handle external signals
             signals = workflow.list_all_signals()
             for signal in signals:

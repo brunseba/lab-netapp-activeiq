@@ -6,6 +6,56 @@ This document describes the key data models and schemas used in the NetApp Activ
 
 The API uses JSON for all request and response payloads. All data models are based on OpenAPI 2.0 specification and include detailed property descriptions, data types, and constraints.
 
+## Schema Overview Diagram
+
+```mermaid
+classDiagram
+    class NetAppConfig {
+        +string base_url
+        +string username
+        +string password
+        +bool verify_ssl
+        +int timeout
+    }
+
+    class ClusterInfo {
+        +string cluster_id
+        +string name
+        +string version
+        +string health_status
+        +List~string~ nodes
+    }
+    c
+    class SVMConfig {
+        +string name
+        +string cluster_key
+        +string aggregate_name
+        +string root_volume
+        +string language
+        +string security_style
+    }
+
+    class NFSShareConfig {
+        +string name
+        +string svm_key
+        +string path
+        +string export_policy
+        +Dict~string, Any~ access_control
+    }
+
+    class MonitoringConfig {
+        +List~string~ cluster_keys
+        +List~string~ metrics
+        +Dict~string, float~ alert_thresholds
+        +List~string~ notification_channels
+    }
+
+    NetAppConfig --> ClusterInfo : manages
+    ClusterInfo --> SVMConfig : contains
+    SVMConfig --> NFSShareConfig : hosts
+    ClusterInfo --> MonitoringConfig : monitors
+```
+
 ## Common Properties
 
 Many objects in the API share common structural elements:
@@ -106,7 +156,7 @@ Represents network access points for storage resources.
 
 **Performance Metrics Categories:**
 - **read**: Read operation metrics
-- **write**: Write operation metrics  
+- **write**: Write operation metrics
 - **total**: Combined read/write metrics
 - **other**: Other operation metrics
 
@@ -195,7 +245,7 @@ Represents network access points for storage resources.
 
 **Event Severities:**
 - `critical`
-- `warning` 
+- `warning`
 - `information`
 - `error`
 
@@ -243,7 +293,7 @@ Represents network access points for storage resources.
     "per_tb": 1000
   },
   "peak_iops": {
-    "allocation": "allocated_space", 
+    "allocation": "allocated_space",
     "absolute": 50000,
     "per_tb": 5000
   },
@@ -284,7 +334,7 @@ Represents network access points for storage resources.
 ### Primitive Types
 - **string**: Text values
 - **integer**: Whole numbers
-- **number/double**: Decimal numbers  
+- **number/double**: Decimal numbers
 - **boolean**: true/false values
 - **uuid**: UUID format strings
 - **int64**: 64-bit integers
@@ -300,7 +350,7 @@ Many fields use predefined enumerated values for consistency:
 
 **Protocols:**
 - `nfs`
-- `cifs` 
+- `cifs`
 - `iscsi`
 - `fcp`
 

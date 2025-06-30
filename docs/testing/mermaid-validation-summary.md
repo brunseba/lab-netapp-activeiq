@@ -80,7 +80,7 @@ Navigate to: `http://127.0.0.1:8000/testing/mermaid-test-page/`
 ### 3. Verify All Diagram Types
 The test page includes:
 - ✅ Basic Flowcharts
-- ✅ Sequence Diagrams  
+- ✅ Sequence Diagrams
 - ✅ Gantt Charts
 - ✅ Class Diagrams
 - ✅ State Diagrams

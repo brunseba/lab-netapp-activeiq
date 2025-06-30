@@ -20,47 +20,45 @@ This comprehensive guide covers deploying the NetApp ActiveIQ Unified Manager MC
 
 ### GitOps Architecture with ArgoCD
 
-```
-┌─────────────────────────────────────────────────────┐
-│                 Git Repository                      │
-│  ┌─────────────────────────────────────────────┐    │
-│  │           Helm Chart                        │    │
-│  │  ├── Chart.yaml                             │    │
-│  │  ├── values.yaml                            │    │
-│  │  ├── values-production.yaml                 │    │
-│  │  └── templates/                             │    │
-│  │      ├── knative-service.yaml               │    │
-│  │      ├── rbac.yaml                          │    │
-│  │      ├── configmap.yaml                     │    │
-│  │      └── extras.yaml                        │    │
-│  └─────────────────────────────────────────────┘    │
-└─────────────────┬───────────────────────────────────┘
-                  │ Git Pull
-                  │
-┌─────────────────▼───────────────────────────────────┐
-│              ArgoCD Server                          │
-│  ┌─────────────────────────────────────────────┐    │
-│  │        Application Controller               │    │
-│  │  - Monitors Git Repository                  │    │
-│  │  - Renders Helm Templates                   │    │
-│  │  - Applies to Kubernetes                    │    │
-│  │  - Manages Sync Policies                    │    │
-│  └─────────────────────────────────────────────┘    │
-└─────────────────┬───────────────────────────────────┘
-                  │ Kubernetes API
-                  │
-┌─────────────────▼───────────────────────────────────┐
-│           Kubernetes Cluster                        │
-│  ┌─────────────────────────────────────────────┐    │
-│  │         Knative Service                     │    │
-│  │  ┌─────────────────────────────────────┐    │    │
-│  │  │    NetApp MCP Server Pod            │    │    │
-│  │  │  - FastMCP Framework               │    │    │
-│  │  │  - NetApp API Client               │    │    │
-│  │  │  - Auto-scaling Enabled            │    │    │
-│  │  └─────────────────────────────────────┘    │    │
-│  └─────────────────────────────────────────────┘    │
-└─────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    subgraph "Git Repository"
+        subgraph "Helm Chart"
+            A1[Chart.yaml]
+            A2[values.yaml]
+            A3[values-production.yaml]
+            A4[templates/]
+            A5[knative-service.yaml]
+            A6[rbac.yaml]
+            A7[configmap.yaml]
+            A8[extras.yaml]
+        end
+    end
+
+    subgraph "ArgoCD Server"
+        subgraph "Application Controller"
+            B1[Monitors Git Repository]
+            B2[Renders Helm Templates]
+            B3[Applies to Kubernetes]
+            B4[Manages Sync Policies]
+        end
+    end
+
+    subgraph "Kubernetes Cluster"
+        subgraph "Knative Service"
+            subgraph "NetApp MCP Server Pod"
+                C1[FastMCP Framework]
+                C2[NetApp API Client]
+                C3[Auto-scaling Enabled]
+            end
+        end
+    end
+
+    A4 --"Git Pull"--> B1
+    B1 --> B2
+    B2 --> B3
+    B3 --"Kubernetes API"--> C1
+    B4 --> B3
 ```
 
 ### Key Benefits
@@ -444,7 +442,7 @@ spec:
           for: 5m
           annotations:
             summary: "NetApp MCP Server is down"
-        
+
         - alert: ArgocdSyncFailed
           expr: argocd_app_health_status{health_status!="Healthy"} == 1
           for: 10m
@@ -502,7 +500,7 @@ data:
     p, role:netapp-admin, repositories, *, *, allow
     p, role:netapp-developer, applications, get, netapp-integration/*, allow
     p, role:netapp-developer, applications, sync, netapp-integration/*, allow
-    
+
     # Group assignments
     g, netapp-admins, role:netapp-admin
     g, netapp-developers, role:netapp-developer

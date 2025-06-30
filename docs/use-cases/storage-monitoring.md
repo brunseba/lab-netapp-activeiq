@@ -14,7 +14,7 @@ NetApp ActiveIQ provides comprehensive storage monitoring capabilities that can 
 - **Threshold-based alerting** for space consumption
 - **Storage efficiency metrics** including deduplication and compression ratios
 
-### 📈 **Performance Monitoring** 
+### 📈 **Performance Monitoring**
 - **IOPS, latency, and throughput** metrics for volumes and aggregates
 - **Performance trend analysis** over time
 - **Bottleneck identification** and performance optimization
@@ -242,7 +242,7 @@ if current_metrics.latency > baseline_metrics.latency * 1.5:
 
 ### Data Retention
 - **Real-time data**: Keep for 30 days
-- **Hourly aggregates**: Keep for 6 months  
+- **Hourly aggregates**: Keep for 6 months
 - **Daily summaries**: Keep for 2 years
 - **Monthly reports**: Keep for 5 years
 

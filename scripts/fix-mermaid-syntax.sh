@@ -8,7 +8,7 @@ DOCS_DIR="/Users/brun_s/Documents/veille-technologique/Professionel/donnees-d-en
 # Find and fix encoded arrows in all markdown files
 find "$DOCS_DIR" -name "*.md" -exec grep -l "mermaid" {} \; | while read -r file; do
     echo "🔍 Processing: $file"
-    
+
     # Use perl for more reliable regex replacement
     perl -i -pe '
         if (/^```mermaid$/ .. /^```$/) {
@@ -20,7 +20,7 @@ find "$DOCS_DIR" -name "*.md" -exec grep -l "mermaid" {} \; | while read -r file
             s/--\\u003e\\u003e/-->>>/g;
         }
     ' "$file"
-    
+
     echo "✅ Processed: $file"
 done
 

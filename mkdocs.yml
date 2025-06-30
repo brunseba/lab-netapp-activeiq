@@ -30,7 +30,7 @@ theme:
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
-  
+
   # Features
   features:
     - announce.dismiss
@@ -183,19 +183,19 @@ nav:
     - 📖 Overview: index.md
     - 🧭 Navigation Guide: navigation.md
     - 📋 Documentation Summary: README.md
-  
+
   - 🚀 Getting Started:
     - 🔍 System Overview: getting-started/overview.md
     - ⚡ Quick Setup: getting-started/quick-start.md
     - 📦 Installation: getting-started/installation.md
     - ⚙️ Knative Functions Quick Start: getting-started/knative-functions-quickstart.md
-  
+
   - 🔌 NetApp ActiveIQ API:
     - 📄 API Overview: netapp-activeiq-api-overview.md
     - 🔗 API Endpoints: api-endpoints.md
     - 📊 Data Models: data-models.md
     - 📝 API Use Cases: api-use-cases-table.md
-  
+
   - 💼 DevOps Use Cases:
     - 📈 Storage Monitoring: use-cases/storage-monitoring.md
     - 🏗️ Infrastructure Management: use-cases/infrastructure-management.md
@@ -205,12 +205,12 @@ nav:
     - 📐 Capacity Planning: use-cases/capacity-planning.md
     - 🖥️ SVM Management: use-cases/svm-management.md
     - 💽 Volume Operations: use-cases/volume-operations.md
-  
+
   - 💻 Implementation Examples:
     - 🔰 Basic Examples: examples.md
     - 🚀 Advanced Workflows: advanced-use-cases.md
     - 🐍 Python Automation: examples/basic-usage.md
-  
+
   - 🏛️ Architecture & Design:
     - 🎯 Target Operating Model: architecture/target-operating-model.md
     - ⚙️ Knative Function TOM: architecture/knative-function-tom.md
@@ -218,18 +218,18 @@ nav:
     - 📐 Technical Documentation: architecture/technical-documentation.md
     - 🏗️ System Design: architecture/system-design.md
     - 🔧 Function-Based Architecture: deployment/function-based-architecture.md
-  
+
   - 🚀 Deployment Guides:
     - 📋 Installation Guide: getting-started/installation.md
     - ☸️ Knative Deployment: deployment/KNATIVE_DEPLOYMENT.md
     - ⚡ Knative Functions: deployment/knative-functions-deployment.md
     - 🏗️ ArgoCD Helm Deployment: deployment/ARGOCD_HELM_DEPLOYMENT.md
     - ⚙️ Development Setup: DEVELOPMENT.md
-  
+
   - ⏱️ Temporal Workflows:
     - 🔄 Workflow Integration: temporal-integration.md
     - 🛡️ Durable Execution: DEVELOPMENT.md
-  
+
   - 🌐 API Management (APIM):
     - 📋 API Management Strategy: api-management/api-management-strategy.md
     - ⚙️ Gravitee.io Configuration: api-management/gravitee-api-definitions.json
@@ -237,12 +237,12 @@ nav:
     - 🚀 Deployment Guide: api-management/gravitee-deployment.yaml
     - 🔧 MCP Tools Reference: api/mcp-tools.md
     - 🔌 Optional MCP Integration: MCP_SERVER_README.md
-  
+
   - 🤖 Day-2 AI Operations:
     - 🧠 AI Assistant Integration: advanced-use-cases.md
     - 📈 Predictive Analytics: use-cases/capacity-planning.md
     - 🎯 Automated Operations: use-cases/event-management.md
-  
+
   - 🧪 Testing & Development:
     - 📊 Mermaid Diagram Test: testing/mermaid-test-page.md
     - ✅ Mermaid Validation Summary: testing/mermaid-validation-summary.md
@@ -252,7 +252,7 @@ extra:
   version:
     provider: mike
     default: latest
-  
+
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/netapp/activeiq-mcp-server
@@ -266,7 +266,7 @@ extra:
     - icon: material/protocol
       link: https://modelcontextprotocol.io/
       name: Model Context Protocol
-  
+
   analytics:
     provider: google
     property: G-XXXXXXXXXX  # Replace with actual GA tracking ID
@@ -284,7 +284,7 @@ extra:
           note: >
             Thanks for your feedback! Help us improve this page by
             <a href="https://github.com/netapp/activeiq-api-docs/issues/new/?title=[Feedback]+{title}+-+{url}" target="_blank" rel="noopener">telling us what you found helpful or what could be improved</a>.
-  
+
   tags:
     MCP: mcp
     Protocol: protocol

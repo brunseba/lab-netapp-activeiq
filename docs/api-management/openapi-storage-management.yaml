@@ -3,22 +3,22 @@ info:
   title: NetApp Storage Management API
   description: |
     Comprehensive NetApp storage management capabilities exposed through secure API gateway.
-    This API provides complete storage lifecycle management including volume operations, 
+    This API provides complete storage lifecycle management including volume operations,
     SVM management, performance monitoring, and capacity planning.
-    
+
     ## Security
-    
+
     All endpoints require OAuth 2.0 authentication with appropriate scopes:
     - `storage:read` - Read access to storage resources
-    - `storage:write` - Write access to storage resources  
+    - `storage:write` - Write access to storage resources
     - `storage:admin` - Administrative access to storage resources
-    
+
     ## Rate Limits
-    
+
     - Basic Plan: 100 requests/minute, 10,000 requests/day
     - Professional Plan: 1,000 requests/minute, 100,000 requests/day
     - Enterprise Plan: 5,000 requests/minute, 1,000,000 requests/day
-    
+
   version: "1.0.0"
   contact:
     name: Storage Platform Team
@@ -486,7 +486,7 @@ components:
             storage:admin: Administrative access to storage resources
             backup:manage: Backup and recovery management
             analytics:access: Access to analytics and AI features
-    
+
     ApiKeyAuth:
       type: apiKey
       in: header
@@ -501,7 +501,7 @@ components:
       schema:
         type: string
         format: uuid
-    
+
     VolumeIdParam:
       name: volumeId
       in: path
@@ -510,7 +510,7 @@ components:
       schema:
         type: string
         format: uuid
-    
+
     SVMIdParam:
       name: svmId
       in: path
@@ -519,7 +519,7 @@ components:
       schema:
         type: string
         format: uuid
-    
+
     LimitParam:
       name: limit
       in: query
@@ -529,7 +529,7 @@ components:
         minimum: 1
         maximum: 1000
         default: 100
-    
+
     OffsetParam:
       name: offset
       in: query
@@ -538,14 +538,14 @@ components:
         type: integer
         minimum: 0
         default: 0
-    
+
     FilterParam:
       name: filter
       in: query
       description: Filter expression for results
       schema:
         type: string
-    
+
     TimeRangeParam:
       name: timeRange
       in: query
@@ -554,7 +554,7 @@ components:
         type: string
         enum: [1h, 6h, 24h, 7d, 30d]
         default: 24h
-    
+
     MetricsParam:
       name: metrics
       in: query
@@ -573,28 +573,28 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    
+
     Unauthorized:
       description: Unauthorized
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    
+
     Forbidden:
       description: Forbidden
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    
+
     NotFound:
       description: Resource not found
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    
+
     TooManyRequests:
       description: Too many requests
       headers:

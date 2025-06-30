@@ -6,31 +6,31 @@
   @page {
     size: A4;
     margin: 2cm 1.5cm 2cm 1.5cm;
-    
+
     @top-left {
       content: "NetApp ActiveIQ MCP Server";
       font-size: 10pt;
       color: #666;
     }
-    
+
     @top-right {
       content: "Page " counter(page);
       font-size: 10pt;
       color: #666;
     }
-    
+
     @bottom-center {
       content: "Copyright © 2024 NetApp API Documentation";
       font-size: 8pt;
       color: #999;
     }
   }
-  
+
   /* Chapter page breaks */
   .md-nav__item--section > .md-nav__link {
     page-break-before: always;
   }
-  
+
   /* Prevent page breaks inside important elements */
   .mermaid,
   .highlight,
@@ -40,7 +40,7 @@
     page-break-inside: avoid;
     break-inside: avoid;
   }
-  
+
   /* Hide web-only elements */
   .md-header,
   .md-sidebar,
@@ -49,12 +49,12 @@
   .md-top {
     display: none !important;
   }
-  
+
   /* Adjust main content for print */
   .md-main {
     margin: 0 !important;
   }
-  
+
   .md-content {
     margin: 0 !important;
     max-width: none !important;
@@ -68,10 +68,10 @@
   height: auto !important;
   display: block !important;
   margin: 1em 0 !important;
-  
+
   /* Better contrast for print */
   background-color: transparent !important;
-  
+
   /* Force text to be black for better readability */
   color: #000 !important;
 }
@@ -81,7 +81,7 @@
   max-width: 100% !important;
   height: auto !important;
   background: transparent !important;
-  
+
   /* Ensure text is readable in PDF */
   font-family: "Roboto", "Helvetica Neue", Arial, sans-serif !important;
   font-size: 12px !important;

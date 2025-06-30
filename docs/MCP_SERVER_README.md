@@ -54,7 +54,7 @@ The MCP server provides comprehensive access to NetApp ActiveIQ Unified Manager 
          "args": ["/path/to/mcp_server.py"],
          "env": {
            "NETAPP_BASE_URL": "https://your-netapp-aiqum.example.com/api",
-           "NETAPP_USERNAME": "your-username", 
+           "NETAPP_USERNAME": "your-username",
            "NETAPP_PASSWORD": "your-password"
          }
        }
@@ -161,7 +161,7 @@ This MCP server implements key endpoints from the NetApp ActiveIQ Unified Manage
 
 ### Datacenter APIs
 - `/datacenter/cluster/clusters` - Cluster management
-- `/datacenter/cluster/nodes` - Node management  
+- `/datacenter/cluster/nodes` - Node management
 - `/datacenter/svm/svms` - SVM management
 - `/datacenter/storage/volumes` - Volume management
 - `/datacenter/storage/aggregates` - Aggregate management

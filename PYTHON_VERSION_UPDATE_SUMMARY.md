@@ -4,8 +4,8 @@ This document summarizes the updates made to align the entire NetApp ActiveIQ MC
 
 ## Overview
 
-**Previous Requirement**: Python 3.8+  
-**New Requirement**: Python 3.10+ (Recommended: Python 3.12)  
+**Previous Requirement**: Python 3.8+
+**New Requirement**: Python 3.10+ (Recommended: Python 3.12)
 **Reason**: Remove Node.js dependency and modernize to current Python standards
 
 ## Files Updated
@@ -64,9 +64,9 @@ from typing import Dict, List, Optional, Any, Union
 ### Async/Await Patterns
 ```python
 async def _make_request(
-    self, 
-    method: str, 
-    endpoint: str, 
+    self,
+    method: str,
+    endpoint: str,
     params: Optional[Dict[str, Any]] = None
 ) -> Dict[str, Any]:
 ```
@@ -157,7 +157,7 @@ kubectl apply -f k8s/
 ## Verification Checklist
 
 - [ ] All documentation references updated
-- [ ] Docker images build successfully  
+- [ ] Docker images build successfully
 - [ ] CI/CD pipelines pass with Python 3.10
 - [ ] Local development works with Python 3.10+
 - [ ] No Node.js dependencies remain

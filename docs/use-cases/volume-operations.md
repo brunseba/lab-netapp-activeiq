@@ -25,7 +25,7 @@ sequenceDiagram
     NetApp-->>Temporal: Volume State & Metrics
     Temporal->>APIM: Operation Results
     APIM-->>DevOps: Volume Management Dashboard
-    
+
     Note over AI: Day-2 Operations
     AI->>Temporal: Volume Performance Analysis
     AI->>DevOps: Optimization Recommendations
@@ -151,7 +151,7 @@ class VolumeManager:
     def __init__(self):
         self.apim = APIMClient()
         self.mcp_client = NetAppMCPClient()
-    
+
     async def create_volume(self, volume_config: dict):
         """Create a new volume with specified configuration"""
         provisioning_request = {
@@ -166,10 +166,10 @@ class VolumeManager:
                 "data_protection": volume_config.get("data_protection", True)
             }
         }
-        
+
         response = await self.apim.execute_temporal_workflow(provisioning_request)
         return response.volume_details
-    
+
     async def get_volume_performance(self, volume_id: str, timeframe_hours: int = 24):
         """Get comprehensive volume performance metrics"""
         performance_request = {
@@ -183,10 +183,10 @@ class VolumeManager:
                 "workload_analysis": True
             }
         }
-        
+
         response = await self.apim.execute_temporal_workflow(performance_request)
         return response.performance_data
-    
+
     async def resize_volume(self, volume_id: str, new_size: str, resize_type: str = "auto"):
         """Resize volume with optional auto-shrink capability"""
         resize_request = {
@@ -199,7 +199,7 @@ class VolumeManager:
                 "backup_before_resize": True
             }
         }
-        
+
         return await self.apim.execute_temporal_workflow(resize_request)
 ```
 
@@ -209,7 +209,7 @@ class VolumeManager:
 class AutomatedVolumeOperations:
     async def setup_volume_automation(self):
         """Configure automated volume management"""
-        
+
         # Automated volume resizing
         await self.apim.register_volume_handler({
             "trigger_type": "volume_space_threshold",
@@ -220,7 +220,7 @@ class AutomatedVolumeOperations:
             "approval_required": False,
             "notification_channels": ["slack", "email"]
         })
-        
+
         # Automated snapshot management
         await self.apim.register_volume_handler({
             "trigger_type": "snapshot_schedule",
@@ -230,7 +230,7 @@ class AutomatedVolumeOperations:
             "auto_execute": True,
             "cleanup_old_snapshots": True
         })
-        
+
         # Automated performance optimization
         await self.apim.register_volume_handler({
             "trigger_type": "performance_degradation",
@@ -240,7 +240,7 @@ class AutomatedVolumeOperations:
             "approval_required": True,
             "approver_role": "storage_admin"
         })
-    
+
     async def execute_volume_migration(self, migration_plan):
         """Execute volume migration workflow"""
         migration_workflow = {
@@ -254,7 +254,7 @@ class AutomatedVolumeOperations:
                 "rollback_plan": migration_plan.get("rollback_plan")
             }
         }
-        
+
         return await self.apim.execute_temporal_workflow(migration_workflow)
 ```
 
@@ -275,21 +275,21 @@ The AI Assistant provides advanced volume management capabilities:
 class AIVolumeAnalytics:
     async def optimize_volume_performance(self, volume_metrics):
         """AI-driven volume performance optimization"""
-        
+
         # Analyze current volume performance
         performance_analysis = await self.ai_assistant.analyze_volume_performance(
             volume_metrics=volume_metrics,
             historical_data="30_days",
             include_workload_patterns=True
         )
-        
+
         # Generate optimization recommendations
         optimizations = await self.ai_assistant.generate_volume_optimizations(
             performance_analysis=performance_analysis,
             application_requirements=await self.get_application_requirements(),
             storage_constraints=await self.get_storage_constraints()
         )
-        
+
         # Execute approved optimizations
         for optimization in optimizations.approved_recommendations:
             await self.apim.execute_temporal_workflow({
@@ -297,9 +297,9 @@ class AIVolumeAnalytics:
                 "parameters": optimization.parameters,
                 "ai_confidence": optimization.confidence_score
             })
-        
+
         return optimizations
-    
+
     async def predict_volume_capacity_needs(self, volume_metrics):
         """Predict volume capacity requirements"""
         capacity_prediction = await self.ai_assistant.predict_capacity_needs(
@@ -307,7 +307,7 @@ class AIVolumeAnalytics:
             growth_patterns=await self.get_growth_patterns(),
             business_forecasts=await self.get_business_forecasts()
         )
-        
+
         # Proactive capacity management for high-confidence predictions
         for prediction in capacity_prediction.high_confidence_predictions:
             if prediction.confidence_score > 0.85:
@@ -319,7 +319,7 @@ class AIVolumeAnalytics:
                         "timing": prediction.optimal_timing
                     }
                 })
-        
+
         return capacity_prediction
 ```
 
@@ -338,7 +338,7 @@ predictive_volume_workflows:
       - performance_bottlenecks
       - capacity_exhaustion_timeline
       - optimization_opportunities
-  
+
   - name: volume_workload_analysis
     trigger: continuous
     ai_model: workload_classification
@@ -350,7 +350,7 @@ predictive_volume_workflows:
       - workload_classification
       - optimization_recommendations
       - tiering_suggestions
-  
+
   - name: volume_anomaly_detection
     trigger: real_time
     ai_model: anomaly_detection
@@ -376,14 +376,14 @@ qos_policies:
     min_throughput: 100_mbps
     max_throughput: 1_gbps
     latency_target: 2_ms
-    
+
   standard_performance:
     min_iops: 100
     max_iops: 5000
     min_throughput: 10_mbps
     max_throughput: 500_mbps
     latency_target: 10_ms
-    
+
   basic_performance:
     min_iops: 10
     max_iops: 1000
@@ -412,10 +412,10 @@ class VolumePerformanceMonitor:
                 }
             }
         }
-        
+
         response = await self.apim.execute_temporal_workflow(monitoring_request)
         return response.performance_metrics
-    
+
     async def analyze_workload_patterns(self, volume_id: str, analysis_period: str = "7_days"):
         """Analyze volume workload patterns for optimization"""
         analysis_request = {
@@ -428,7 +428,7 @@ class VolumePerformanceMonitor:
                 "optimization_suggestions": True
             }
         }
-        
+
         return await self.apim.execute_temporal_workflow(analysis_request)
 ```
 
@@ -442,17 +442,17 @@ snapshot_policies:
     schedule: every_4_hours
     retention: 24_snapshots
     prefix: "frequent"
-    
+
   daily_snapshots:
     schedule: daily_at_midnight
     retention: 30_snapshots
     prefix: "daily"
-    
+
   weekly_snapshots:
     schedule: weekly_sunday
     retention: 12_snapshots
     prefix: "weekly"
-    
+
   monthly_snapshots:
     schedule: monthly_first_sunday
     retention: 12_snapshots
@@ -474,9 +474,9 @@ class VolumeBackupManager:
                 "update_catalog": True
             }
         }
-        
+
         return await self.apim.execute_temporal_workflow(snapshot_request)
-    
+
     async def restore_from_snapshot(self, volume_id: str, snapshot_name: str, restore_type: str = "in_place"):
         """Restore volume from snapshot"""
         restore_request = {
@@ -489,9 +489,9 @@ class VolumeBackupManager:
                 "backup_current_state": True
             }
         }
-        
+
         return await self.apim.execute_temporal_workflow(restore_request)
-    
+
     async def setup_replication(self, source_volume: str, destination_cluster: str, policy: str = "MirrorAndVault"):
         """Setup SnapMirror replication for volume"""
         replication_request = {
@@ -504,7 +504,7 @@ class VolumeBackupManager:
                 "initialize_immediately": True
             }
         }
-        
+
         return await self.apim.execute_temporal_workflow(replication_request)
 ```
 
@@ -520,14 +520,14 @@ efficiency_policies:
     compaction: enabled
     temperature_sensitive_storage: enabled
     inline_efficiency: true
-    
+
   balanced_efficiency:
     deduplication: enabled
     compression: enabled
     compaction: disabled
     temperature_sensitive_storage: disabled
     inline_efficiency: false
-    
+
   performance_optimized:
     deduplication: background_only
     compression: disabled
@@ -552,9 +552,9 @@ class VolumeEfficiencyManager:
                 "schedule_optimization": "low_usage_hours"
             }
         }
-        
+
         return await self.apim.execute_temporal_workflow(efficiency_request)
-    
+
     async def analyze_efficiency_opportunities(self, cluster_id: str):
         """Analyze storage efficiency opportunities across volumes"""
         analysis_request = {
@@ -567,7 +567,7 @@ class VolumeEfficiencyManager:
                 "cost_benefit_analysis": True
             }
         }
-        
+
         return await self.apim.execute_temporal_workflow(analysis_request)
 ```
 

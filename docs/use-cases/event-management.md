@@ -23,11 +23,11 @@ sequenceDiagram
     AI-->>Temporal: Event Severity & Recommendations
     Temporal->>Alert: Send Notifications
     Temporal->>DevOps: Event Dashboard Update
-    
+
     Note over DevOps: Manual Intervention (if required)
     DevOps->>APIM: Acknowledge/Resolve Event
     APIM->>Temporal: Update Event Status
-    
+
     Note over AI: Continuous Learning
     AI->>Temporal: Pattern Recognition Updates
     AI->>DevOps: Predictive Event Insights
@@ -136,7 +136,7 @@ class EventManager:
     def __init__(self):
         self.apim = APIMClient()
         self.mcp_client = NetAppMCPClient()
-    
+
     async def get_active_events(self, severity_filter: list = None):
         """Fetch active events with optional severity filtering"""
         workflow_request = {
@@ -147,10 +147,10 @@ class EventManager:
                 "include_details": True
             }
         }
-        
+
         response = await self.apim.execute_temporal_workflow(workflow_request)
         return response.events
-    
+
     async def acknowledge_event(self, event_id: str, user_id: str, notes: str = None):
         """Acknowledge an event with user context"""
         acknowledgment_request = {
@@ -162,9 +162,9 @@ class EventManager:
                 "notes": notes
             }
         }
-        
+
         return await self.apim.execute_temporal_workflow(acknowledgment_request)
-    
+
     async def get_event_timeline(self, cluster_id: str, timeframe_hours: int = 24):
         """Get event timeline for specific cluster"""
         timeline_request = {
@@ -176,7 +176,7 @@ class EventManager:
                 "include_correlations": True
             }
         }
-        
+
         response = await self.apim.execute_temporal_workflow(timeline_request)
         return response.timeline_data
 ```
@@ -187,7 +187,7 @@ class EventManager:
 class EventAutomation:
     async def setup_event_handlers(self):
         """Configure automated event response handlers"""
-        
+
         # Critical event handler
         await self.apim.register_event_handler({
             "event_type": "hardware_failure",
@@ -196,7 +196,7 @@ class EventAutomation:
             "auto_execute": True,
             "approval_required": False
         })
-        
+
         # Warning event handler
         await self.apim.register_event_handler({
             "event_type": "performance_degradation",
@@ -206,7 +206,7 @@ class EventAutomation:
             "approval_required": True,
             "approver_role": "devops_lead"
         })
-        
+
         # Informational event handler
         await self.apim.register_event_handler({
             "event_type": "maintenance_completion",
@@ -215,7 +215,7 @@ class EventAutomation:
             "auto_execute": True,
             "approval_required": False
         })
-    
+
     async def execute_remediation_runbook(self, event_data):
         """Execute automated remediation based on event type"""
         runbook_mapping = {
@@ -224,7 +224,7 @@ class EventAutomation:
             "network_issue": "network_diagnostics_workflow",
             "backup_failure": "backup_retry_workflow"
         }
-        
+
         runbook = runbook_mapping.get(event_data.event_type)
         if runbook:
             return await self.apim.execute_temporal_workflow({
@@ -254,35 +254,35 @@ The AI Assistant provides advanced event management capabilities:
 class AIEventProcessor:
     async def process_event_with_ai(self, event_data):
         """AI-enhanced event processing"""
-        
+
         # Event classification and enrichment
         classified_event = await self.ai_assistant.classify_event(
             event_data=event_data,
             historical_context=True,
             system_topology=True
         )
-        
+
         # Correlation analysis
         correlations = await self.ai_assistant.find_correlations(
             target_event=classified_event,
             time_window="30_minutes",
             similarity_threshold=0.7
         )
-        
+
         # Impact assessment
         impact_analysis = await self.ai_assistant.assess_impact(
             event=classified_event,
             correlations=correlations,
             business_context=True
         )
-        
+
         # Generate recommendations
         recommendations = await self.ai_assistant.generate_recommendations(
             event_analysis=impact_analysis,
             available_actions=self.get_available_actions(),
             risk_tolerance="medium"
         )
-        
+
         # Execute approved automated responses
         for recommendation in recommendations.auto_approved:
             await self.apim.execute_temporal_workflow({
@@ -290,7 +290,7 @@ class AIEventProcessor:
                 "parameters": recommendation.parameters,
                 "ai_confidence": recommendation.confidence_score
             })
-        
+
         return {
             "processed_event": classified_event,
             "correlations": correlations,
@@ -315,7 +315,7 @@ predictive_workflows:
       - preventive_maintenance_scheduling
       - proactive_component_replacement
       - capacity_planning_updates
-  
+
   - name: cascade_prevention
     trigger: critical_event
     ai_model: dependency_graph_analysis
@@ -345,7 +345,7 @@ immediate_actions:
       - create_incident_ticket: high_priority
       - gather_system_state: comprehensive
       - execute_containment_procedures: automated
-      
+
 short_term_actions:
   - duration: 5-30_minutes
     steps:
@@ -353,7 +353,7 @@ short_term_actions:
       - implement_workarounds: temporary_solutions
       - coordinate_response_team: escalation_procedures
       - update_stakeholders: regular_intervals
-      
+
 resolution_actions:
   - duration: 30_minutes+
     steps:
@@ -396,12 +396,12 @@ monitoring_configuration:
     - storage_vms: all_active_svms
     - aggregates: all_data_aggregates
     - volumes: critical_volumes_only
-  
+
   collection_frequency:
     - critical_events: real_time
     - warning_events: 1_minute
     - informational_events: 5_minutes
-  
+
   retention_policy:
     - critical_events: 1_year
     - warning_events: 6_months
@@ -426,7 +426,7 @@ notification_rules:
       - channel: email
         recipients: management_team
         escalation: 5_minutes
-  
+
   - rule_name: performance_degradation
     conditions:
       - event_type: performance_issue

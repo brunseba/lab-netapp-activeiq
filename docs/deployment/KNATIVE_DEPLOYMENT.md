@@ -27,7 +27,7 @@ This deployment enables a **function-based architecture** where NetApp storage o
 - **Kubernetes Cluster**: v1.24+ with Knative Serving installed
 - **Knative Serving**: v1.8+ with networking layer (Istio/Kourier)
 - **Container Registry**: Docker Hub, GCR, ECR, or private registry
-- **Resource Requirements**: 
+- **Resource Requirements**:
   - Minimum: 2 vCPUs, 4GB RAM per cluster
   - Recommended: 4 vCPUs, 8GB RAM per cluster
 
@@ -55,35 +55,34 @@ istioctl >= 1.15 (if using Istio)
 
 ### Knative Serverless Architecture
 
-```
-┌─────────────────────────────────────────────────────┐
-│                 AI Assistant                        │
-└─────────────────┬───────────────────────────────────┘
-                  │ MCP Protocol
-                  │
-┌─────────────────▼───────────────────────────────────┐
-│              Knative Gateway                        │
-│              (Istio/Kourier)                        │
-└─────────────────┬───────────────────────────────────┘
-                  │
-┌─────────────────▼───────────────────────────────────┐
-│           Knative Service                           │
-│    ┌─────────────────────────────────────────┐      │
-│    │      NetApp MCP Server Pod              │      │
-│    │  ┌─────────────────────────────────┐    │      │
-│    │  │     MCP Server Container        │    │      │
-│    │  │   - FastMCP Framework          │    │      │
-│    │  │   - NetApp API Client          │    │      │
-│    │  │   - 17 MCP Tools               │    │      │
-│    │  └─────────────────────────────────┘    │      │
-│    └─────────────────────────────────────────┘      │
-└─────────────────┬───────────────────────────────────┘
-                  │ HTTPS API Calls
-                  │
-┌─────────────────▼───────────────────────────────────┐
-│         NetApp ActiveIQ Unified Manager             │
-│              (External System)                      │
-└─────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    subgraph "Client Layer"
+        AI[AI Assistant]
+    end
+
+    subgraph "Knative Infrastructure"
+        Gateway[Knative Gateway<br/>Istio/Kourier]
+
+        subgraph "Knative Service"
+            subgraph "NetApp MCP Server Pod"
+                subgraph "MCP Server Container"
+                    FastMCP[FastMCP Framework]
+                    NetAppClient[NetApp API Client]
+                    MCPTools[17 MCP Tools]
+                end
+            end
+        end
+    end
+
+    subgraph "External Systems"
+        NetAppUM[NetApp ActiveIQ<br/>Unified Manager]
+    end
+
+    AI --"MCP Protocol"--> Gateway
+    Gateway --> NetAppClient
+    FastMCP --> MCPTools
+    NetAppClient --"HTTPS API Calls"--> NetAppUM
 ```
 
 ### Key Benefits
@@ -374,7 +373,7 @@ data:
         Parser docker
         DB /var/log/flb_kube.db
         Mem_Buf_Limit 50MB
-    
+
     [OUTPUT]
         Name forward
         Match kube.netapp.mcp.*
@@ -678,21 +677,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    
+
     - name: Build and push image
       run: |
         docker build -t {% raw %}${{ secrets.REGISTRY }}{% endraw %}/netapp/mcp-server:{% raw %}${{ github.sha }}{% endraw %} .
         docker push {% raw %}${{ secrets.REGISTRY }}{% endraw %}/netapp/mcp-server:{% raw %}${{ github.sha }}{% endraw %}
-    
+
     - name: Deploy to Kubernetes
       run: |
         echo "{% raw %}${{ secrets.KUBECONFIG }}{% endraw %}" | base64 -d > kubeconfig
         export KUBECONFIG=kubeconfig
-        
+
         cd k8s
         kustomize edit set image netapp-mcp-server={% raw %}${{ secrets.REGISTRY }}{% endraw %}/netapp/mcp-server:{% raw %}${{ github.sha }}{% endraw %}
         kubectl apply -k .
-        
+
         # Wait for rollout
         kubectl rollout status ksvc/netapp-mcp-server -n netapp-mcp
 ```
@@ -711,21 +710,21 @@ class NetAppMCPWorkflow:
             request,
             start_to_close_timeout=timedelta(minutes=5)
         )
-        
+
         # Process data and execute NetApp operations
         result = await workflow.execute_activity(
             process_netapp_data,
             mcp_data,
             start_to_close_timeout=timedelta(minutes=10)
         )
-        
+
         return result
 
 @activity.defn
 async def query_mcp_server(request: NetAppRequest) -> dict:
     # Connect to Knative service
     mcp_url = "http://netapp-mcp-server.netapp-mcp.svc.cluster.local"
-    
+
     async with httpx.AsyncClient() as client:
         response = await client.post(
             f"{mcp_url}/query",

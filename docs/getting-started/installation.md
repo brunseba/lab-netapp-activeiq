@@ -18,7 +18,7 @@ Complete installation guide for the NetApp ActiveIQ MCP Server across different 
 - **Network**: Dedicated network access to NetApp infrastructure
 
 ### Software Prerequisites
-- **Docker 20.10+** or **Python 3.8+**
+- **Docker 20.10+** or **Python 3.10+**
 - **Git** (for source installation)
 - **curl** (for testing)
 
@@ -136,7 +136,7 @@ created: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
 invoke: gunicorn
 build:
   builder: pack
-  buildpacks: 
+  buildpacks:
     - gcr.io/paketo-buildpacks/python
 run:
   env:

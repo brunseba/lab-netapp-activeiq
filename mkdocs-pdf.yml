@@ -20,7 +20,7 @@ theme:
     - scheme: default
       primary: blue
       accent: orange
-  
+
   # Features optimized for PDF export
   features:
     - content.code.annotate
@@ -55,7 +55,7 @@ theme:
 plugins:
   - search:
       separator: '[\s\-,:!=\[\]()"/]+|(?!\b)(?=[A-Z][a-z])|(?!\b)(?=[A-Z][A-Z])'
-  
+
   # PDF export plugin with enhanced configuration
   - with-pdf:
       author: NetApp Integration Team
@@ -72,7 +72,7 @@ plugins:
       debug_html: false
       show_anchors: false
       verbose: false
-      
+
       # Enhanced TOC configuration
       toc_title: Table of Contents
       toc_level: 4
@@ -80,16 +80,16 @@ plugins:
       excludes_children:
         - release-notes/:
         - changelog/:
-      
+
       # Custom CSS for PDF styling
       custom_template_path: templates/
-      
+
       # Render settings for better Mermaid support
       render_js: true
-      
+
       # Page breaks and formatting
       two_columns_level: 0
-      
+
       # Mermaid rendering options
       render_js_options:
         mermaid:
@@ -119,7 +119,7 @@ plugins:
           gantt:
             numberSectionStyles: 4
             useMaxWidth: true
-          
+
   # Git revision for documentation tracking
   - git-revision-date-localized:
       type: date
@@ -127,7 +127,7 @@ plugins:
       locale: en
       fallback_to_build_date: true
       enable_creation_date: true
-  
+
   # Enhanced Mermaid plugin with PDF optimization
   - mermaid2:
       version: '11.4.0'
@@ -230,19 +230,19 @@ nav:
     - 📖 Document Overview: index.md
     - 🎯 Project Summary: README.md
     - 🧭 Navigation Guide: navigation.md
-  
+
   - 🚀 Getting Started:
     - 🔍 System Overview: getting-started/overview.md
     - ⚡ Quick Setup: getting-started/quick-start.md
     - 📦 Installation Guide: getting-started/installation.md
     - ⚙️ Knative Functions Quick Start: getting-started/knative-functions-quickstart.md
-  
+
   - 🔌 NetApp ActiveIQ API Reference:
     - 📄 API Overview: netapp-activeiq-api-overview.md
     - 🔗 API Endpoints: api-endpoints.md
     - 📊 Data Models: data-models.md
     - 📝 Use Cases Table: api-use-cases-table.md
-  
+
   - 💼 DevOps Use Cases:
     - 📈 Storage Monitoring: use-cases/storage-monitoring.md
     - 🏗️ Infrastructure Management: use-cases/infrastructure-management.md
@@ -252,12 +252,12 @@ nav:
     - 📐 Capacity Planning: use-cases/capacity-planning.md
     - 🖥️ SVM Management: use-cases/svm-management.md
     - 💽 Volume Operations: use-cases/volume-operations.md
-  
+
   - 💻 Implementation Examples:
     - 🔰 Basic Examples: examples.md
     - 🚀 Advanced Workflows: advanced-use-cases.md
     - 🐍 Python Automation: examples/basic-usage.md
-  
+
   - 🏛️ Architecture & Design:
     - 🎯 Target Operating Model: architecture/target-operating-model.md
     - ⚙️ Knative Function TOM: architecture/knative-function-tom.md
@@ -265,17 +265,17 @@ nav:
     - 📐 Technical Documentation: architecture/technical-documentation.md
     - 🏗️ System Design: architecture/system-design.md
     - 🔧 Function-Based Architecture: deployment/function-based-architecture.md
-  
+
   - 🚀 Deployment Guides:
     - ☸️ Knative Deployment: deployment/KNATIVE_DEPLOYMENT.md
     - ⚡ Knative Functions: deployment/knative-functions-deployment.md
     - 🏗️ ArgoCD Helm Deployment: deployment/ARGOCD_HELM_DEPLOYMENT.md
     - ⚙️ Development Setup: DEVELOPMENT.md
-  
+
   - ⏱️ Temporal Workflows:
     - 🔄 Workflow Integration: temporal-integration.md
     - 🛡️ Durable Execution: DEVELOPMENT.md
-  
+
   - 🌐 API Management (APIM):
     - 📋 API Management Strategy: api-management/api-management-strategy.md
     - ⚙️ Gravitee.io Configuration: api-management/gravitee-api-definitions.json
@@ -283,7 +283,7 @@ nav:
     - 🚀 Deployment Guide: api-management/gravitee-deployment.yaml
     - 🔧 MCP Tools Reference: api/mcp-tools.md
     - 🔌 Optional MCP Integration: MCP_SERVER_README.md
-  
+
   - 🤖 Day-2 AI Operations:
     - 🧠 AI Assistant Integration: advanced-use-cases.md
     - 📈 Predictive Analytics: use-cases/capacity-planning.md
@@ -294,7 +294,7 @@ extra:
   version:
     provider: mike
     default: latest
-  
+
   # PDF metadata
   pdf:
     author: NetApp Integration Team
@@ -302,7 +302,7 @@ extra:
     keywords: NetApp, ActiveIQ, MCP, API, Documentation, DevOps, Storage, Automation
     creator: MkDocs Material with PDF Export
     title: NetApp ActiveIQ MCP Server - Complete Documentation
-    
+
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/netapp/activeiq-mcp-server
@@ -316,7 +316,7 @@ extra:
     - icon: material/protocol
       link: https://modelcontextprotocol.io/
       name: Model Context Protocol
-  
+
   tags:
     MCP: mcp
     Protocol: protocol

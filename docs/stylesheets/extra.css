@@ -9,19 +9,19 @@
   --netapp-dark-blue: #003D75;
   --netapp-gray: #6C757D;
   --netapp-light-gray: #F8F9FA;
-  
+
   /* Semantic Colors */
   --success-color: #28a745;
   --warning-color: #ffc107;
   --error-color: #dc3545;
   --info-color: #17a2b8;
-  
+
   /* Code and Content */
   --code-bg: #f8f9fa;
   --code-border: #e9ecef;
   --content-shadow: 0 2px 8px rgba(0,0,0,0.1);
   --hover-shadow: 0 4px 16px rgba(0,0,0,0.15);
-  
+
   /* Transitions */
   --transition-fast: 0.2s ease;
   --transition-medium: 0.3s ease;
@@ -469,24 +469,24 @@
 /* ===== ANIMATIONS AND INTERACTIONS ===== */
 
 @keyframes fadeIn {
-  from { 
-    opacity: 0; 
-    transform: translateY(20px); 
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
-  to { 
-    opacity: 1; 
-    transform: translateY(0); 
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
 @keyframes slideInLeft {
-  from { 
-    opacity: 0; 
-    transform: translateX(-30px); 
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
   }
-  to { 
-    opacity: 1; 
-    transform: translateX(0); 
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 
@@ -554,31 +554,31 @@
   .md-header__title {
     font-size: 1rem;
   }
-  
+
   .md-nav__link {
     padding: 12px 16px;
     margin: 4px 8px;
   }
-  
+
   .quick-ref-card {
     margin: 16px 0;
     padding: 20px;
   }
-  
+
   .api-endpoint {
     padding: 16px;
     margin: 16px 0;
   }
-  
+
   .md-typeset table:not([class]) {
     font-size: 14px;
   }
-  
+
   .md-typeset table:not([class]) th,
   .md-typeset table:not([class]) td {
     padding: 12px 16px;
   }
-  
+
   .highlight pre {
     padding: 16px;
     font-size: 13px;
@@ -589,11 +589,11 @@
   .md-nav__item--active > .md-nav__link {
     padding-left: 16px;
   }
-  
+
   .api-endpoint {
     padding: 12px;
   }
-  
+
   .quick-ref-card {
     padding: 16px;
   }
@@ -642,26 +642,26 @@
   .md-nav {
     display: none !important;
   }
-  
+
   .md-main__inner {
     margin: 0 !important;
   }
-  
+
   .md-content__inner {
     padding: 0 !important;
   }
-  
+
   .quick-ref-card,
   .api-endpoint {
     box-shadow: none;
     border: 1px solid #ccc;
   }
-  
+
   .highlight {
     border: 1px solid #ccc;
     box-shadow: none;
   }
-  
+
   .md-typeset table:not([class]) {
     box-shadow: none;
     border: 1px solid #ccc;
@@ -684,11 +684,11 @@ button:focus {
     --netapp-blue: #0056b3;
     --netapp-orange: #e55a00;
   }
-  
+
   .md-nav__link {
     border: 1px solid transparent;
   }
-  
+
   .md-nav__link:hover {
     border-color: var(--netapp-blue);
   }

@@ -22,7 +22,7 @@ sequenceDiagram
     NetApp-->>Temporal: Performance Data
     Temporal->>APIM: Analysis Results
     APIM-->>DevOps: Performance Report
-    
+
     Note over AI: Day-2 Operations
     AI->>Temporal: Predictive Performance Insights
     AI->>DevOps: Performance Optimization Recommendations
@@ -131,7 +131,7 @@ class PerformanceAnalyzer:
     def __init__(self):
         self.apim = APIMClient()
         self.mcp_client = NetAppMCPClient()
-    
+
     async def get_cluster_performance(self, cluster_id: str):
         """Fetch comprehensive cluster performance metrics"""
         workflow_request = {
@@ -142,11 +142,11 @@ class PerformanceAnalyzer:
                 "timeframe": "1_hour"
             }
         }
-        
+
         # Route through APIM for standardized access
         response = await self.apim.execute_temporal_workflow(workflow_request)
         return response.performance_data
-    
+
     async def analyze_performance_trends(self, svm_id: str):
         """Analyze performance trends for SVM"""
         trend_data = await self.apim.get_performance_trends(
@@ -154,7 +154,7 @@ class PerformanceAnalyzer:
             resource_id=svm_id,
             analysis_period="7_days"
         )
-        
+
         return {
             "current_performance": trend_data.current_metrics,
             "trend_analysis": trend_data.trends,
@@ -174,7 +174,7 @@ alert_rules:
     actions:
       - temporal_workflow: performance_investigation
       - notification: devops_team
-      
+
   - name: cpu_utilization_critical
     condition: cpu_usage > 90%
     duration: 2_minutes
@@ -202,16 +202,16 @@ The AI Assistant provides enhanced day-2 operations capabilities:
 class AIPerformanceOptimizer:
     async def optimize_performance(self, cluster_metrics):
         """AI-driven performance optimization"""
-        
+
         # Analyze current performance state
         performance_state = await self.analyze_current_state(cluster_metrics)
-        
+
         # Generate optimization recommendations
         optimizations = await self.ai_assistant.generate_optimizations(
             performance_state=performance_state,
             optimization_goals=["latency_reduction", "iops_improvement", "efficiency"]
         )
-        
+
         # Execute approved optimizations through Temporal workflows
         for optimization in optimizations.approved_recommendations:
             await self.apim.execute_temporal_workflow({
@@ -219,7 +219,7 @@ class AIPerformanceOptimizer:
                 "parameters": optimization.parameters,
                 "approval_required": optimization.requires_approval
             })
-        
+
         return optimizations
 ```
 

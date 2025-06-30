@@ -27,35 +27,29 @@ This deployment method transforms the NetApp MCP Server into serverless Knative 
 
 ### Architecture Benefits
 
-```
-┌─────────────────────────────────────────────────────┐
-│                 AI Assistant                        │
-└─────────────────┬───────────────────────────────────┘
-                  │ MCP Protocol
-                  │
-┌─────────────────▼───────────────────────────────────┐
-│              Knative Gateway                        │
-│              (Istio/Kourier)                        │
-└─────────────────┬───────────────────────────────────┘
-                  │
-┌─────────────────▼───────────────────────────────────┐
-│         NetApp MCP Server Function                  │
-│    ┌─────────────────────────────────────────┐      │
-│    │      Auto-scaling Pod                   │      │
-│    │  ┌─────────────────────────────────┐    │      │
-│    │  │     MCP Server Container        │    │      │
-│    │  │   - FastMCP Framework          │    │      │
-│    │  │   - NetApp API Client          │    │      │
-│    │  │   - 17 MCP Tools               │    │      │
-│    │  └─────────────────────────────────┘    │      │
-│    └─────────────────────────────────────────┘      │
-└─────────────────┬───────────────────────────────────┘
-                  │ HTTPS API Calls
-                  │
-┌─────────────────▼───────────────────────────────────┐
-│         NetApp ActiveIQ Unified Manager             │
-│              (External System)                      │
-└─────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    A[AI Assistant] -->|MCP Protocol| B[Knative Gateway<br/>Istio/Kourier]
+    B --> C[NetApp MCP Server Function]
+
+    subgraph C["NetApp MCP Server Function"]
+        subgraph D["Auto-scaling Pod"]
+            subgraph E["MCP Server Container"]
+                F[FastMCP Framework]
+                G[NetApp API Client]
+                H[17 MCP Tools]
+            end
+        end
+    end
+
+    C -->|HTTPS API Calls| I[NetApp ActiveIQ Unified Manager<br/>External System]
+
+    style A fill:#e1f5fe
+    style B fill:#f3e5f5
+    style C fill:#e8f5e8
+    style D fill:#fff3e0
+    style E fill:#fce4ec
+    style I fill:#fff8e1
 ```
 
 ## Prerequisites
@@ -65,7 +59,7 @@ This deployment method transforms the NetApp MCP Server into serverless Knative 
 - **Kubernetes Cluster**: v1.24+ with Knative Serving installed
 - **Knative Serving**: v1.8+ with networking layer (Istio/Kourier)
 - **Container Registry**: Docker Hub, GCR, ECR, or private registry access
-- **Resource Requirements**: 
+- **Resource Requirements**:
   - Minimum: 2 vCPUs, 4GB RAM per cluster
   - Recommended: 4 vCPUs, 8GB RAM per cluster
 
@@ -185,7 +179,7 @@ created: 2025-06-28T14:00:00Z
 invoke: gunicorn
 build:
   builder: pack
-  buildpacks: 
+  buildpacks:
     - gcr.io/paketo-buildpacks/python
   env:
     - name: BP_PIP_VERSION
@@ -265,7 +259,7 @@ except ImportError:
     # Fallback implementations for testing
     async def get_clusters(**kwargs):
         return {"records": [], "num_records": 0}
-    
+
     async def test_connection(**kwargs):
         return {"status": "connected", "timestamp": datetime.utcnow().isoformat()}
 
@@ -282,14 +276,14 @@ async def main(context: Context) -> Dict[str, Any]:
         else:
             # Handle GET requests with query parameters
             request_data = dict(context.request.query_params) if hasattr(context.request, 'query_params') else {}
-        
+
         # Extract operation and arguments
         operation = request_data.get('operation', 'health_check')
         arguments = request_data.get('arguments', {})
-        
+
         # Route to appropriate MCP tool
         result = await route_operation(operation, arguments)
-        
+
         return {
             'statusCode': 200,
             'headers': {'Content-Type': 'application/json'},
@@ -301,7 +295,7 @@ async def main(context: Context) -> Dict[str, Any]:
                 'result': result
             })
         }
-        
+
     except Exception as e:
         return {
             'statusCode': 500,
@@ -317,19 +311,19 @@ async def main(context: Context) -> Dict[str, Any]:
 
 async def route_operation(operation: str, arguments: Dict[str, Any]) -> Any:
     """Route operations to appropriate MCP tools"""
-    
+
     # Health check
     if operation == 'health_check':
         return await test_connection()
-    
+
     # Cluster operations
     elif operation == 'get_clusters':
         return await get_clusters(**arguments)
-    
+
     # Aggregate operations
     elif operation == 'get_aggregates':
         return await get_aggregates(**arguments)
-    
+
     # Volume operations
     elif operation == 'get_volumes':
         return await get_volumes(**arguments)
@@ -339,7 +333,7 @@ async def route_operation(operation: str, arguments: Dict[str, Any]) -> Any:
         return await delete_volume(**arguments)
     elif operation == 'modify_volume':
         return await modify_volume(**arguments)
-    
+
     # SVM operations
     elif operation == 'get_svms':
         return await get_svms(**arguments)
@@ -347,11 +341,11 @@ async def route_operation(operation: str, arguments: Dict[str, Any]) -> Any:
         return await create_svm(**arguments)
     elif operation == 'configure_svm':
         return await configure_svm(**arguments)
-    
+
     # Connection test
     elif operation == 'test_connection':
         return await test_connection(**arguments)
-    
+
     else:
         raise ValueError(f"Unknown operation: {operation}")
 ```
