@@ -1,5 +1,5 @@
-site_name: NetApp ActiveIQ MCP Server
-site_description: Model Context Protocol server for NetApp ActiveIQ Unified Manager - Comprehensive Documentation
+site_name: NetApp ActiveIQ MCP Server - Complete Documentation
+site_description: Model Context Protocol server for NetApp ActiveIQ Unified Manager - PDF Export Documentation
 site_author: NetApp Integration Team
 site_url: https://netapp-mcp-server.docs/
 
@@ -16,47 +16,24 @@ theme:
   name: material
   language: en
   palette:
-    # Palette toggle for light mode
+    # Use light mode for better PDF printing
     - scheme: default
       primary: blue
       accent: orange
-      toggle:
-        icon: material/brightness-7
-        name: Switch to dark mode
-    # Palette toggle for dark mode
-    - scheme: slate
-      primary: blue
-      accent: orange
-      toggle:
-        icon: material/brightness-4
-        name: Switch to light mode
   
-  # Features
+  # Features optimized for PDF export
   features:
-    - announce.dismiss
-    - content.action.edit
-    - content.action.view
     - content.code.annotate
     - content.code.copy
     - content.tabs.link
     - content.tooltips
-    - header.autohide
     - navigation.expand
     - navigation.footer
     - navigation.indexes
-    - navigation.instant
-    - navigation.instant.prefetch
-    - navigation.instant.progress
     - navigation.path
-    - navigation.prune
     - navigation.sections
-    - navigation.tabs
-    - navigation.tabs.sticky
     - navigation.top
     - navigation.tracking
-    - search.highlight
-    - search.share
-    - search.suggest
     - toc.follow
     - toc.integrate
 
@@ -64,47 +41,97 @@ theme:
   icon:
     logo: material/api
     repo: fontawesome/brands/github
-    edit: material/pencil
-    view: material/eye
-    admonition:
-      note: octicons/tag-16
-      abstract: octicons/checklist-16
-      info: octicons/info-16
-      tip: octicons/squirrel-16
-      success: octicons/check-16
-      question: octicons/question-16
-      warning: octicons/alert-16
-      failure: octicons/x-circle-16
-      danger: octicons/zap-16
-      bug: octicons/bug-16
-      example: octicons/beaker-16
-      quote: octicons/quote-16
 
-  # Custom CSS
+  # Custom CSS for PDF optimization
   extra_css:
-    - stylesheets/extra.css
-    - stylesheets/termynal.css
+    - stylesheets/pdf-export.css
 
-  # Custom JavaScript
+  # Enhanced JavaScript for PDF rendering
   extra_javascript:
     - https://unpkg.com/mermaid@11.4.0/dist/mermaid.min.js
+    - javascripts/pdf-mermaid.js
 
-# Plugins
+# Plugins optimized for PDF export
 plugins:
   - search:
       separator: '[\s\-,:!=\[\]()"/]+|(?!\b)(?=[A-Z][a-z])|(?!\b)(?=[A-Z][A-Z])'
-  - minify:
-      minify_html: true
+  
+  # PDF export plugin with enhanced configuration
+  - with-pdf:
+      author: NetApp Integration Team
+      copyright: Copyright © 2024 NetApp API Documentation
+      cover: true
+      back_cover: true
+      cover_title: NetApp ActiveIQ MCP Server
+      cover_subtitle: Complete Technical Documentation
+      cover_logo: assets/images/netapp-logo.png
+      headless_chrome_path: /Applications/Google Chrome.app/Contents/MacOS/Google Chrome
+
+      output_path: pdf/netapp-activeiq-mcp-server-complete-documentation.pdf
+      enabled_if_env: ENABLE_PDF_EXPORT
+      debug_html: false
+      show_anchors: false
+      verbose: false
+      
+      # Enhanced TOC configuration
+      toc_title: Table of Contents
+      toc_level: 4
+      ordered_chapter_level: 3
+      excludes_children:
+        - release-notes/:
+        - changelog/:
+      
+      # Custom CSS for PDF styling
+      custom_template_path: templates/
+      
+      # Render settings for better Mermaid support
+      render_js: true
+      
+      # Page breaks and formatting
+      two_columns_level: 0
+      
+      # Mermaid rendering options
+      render_js_options:
+        mermaid:
+          theme: 'base'
+          themeVariables:
+            primaryColor: '#2196f3'
+            primaryTextColor: '#000000'
+            primaryBorderColor: '#1976d2'
+            lineColor: '#333333'
+            secondaryColor: '#ff9800'
+            tertiaryColor: '#4caf50'
+            background: '#ffffff'
+            mainBkg: '#ffffff'
+            secondBkg: '#f5f5f5'
+          flowchart:
+            htmlLabels: true
+            curve: 'linear'
+            useMaxWidth: true
+            wrappingWidth: 200
+          sequence:
+            actorMargin: 50
+            boxMargin: 10
+            boxTextMargin: 5
+            noteMargin: 10
+            messageMargin: 35
+            useMaxWidth: true
+          gantt:
+            numberSectionStyles: 4
+            useMaxWidth: true
+          
+  # Git revision for documentation tracking
   - git-revision-date-localized:
       type: date
       timezone: UTC
       locale: en
       fallback_to_build_date: true
       enable_creation_date: true
+  
+  # Enhanced Mermaid plugin with PDF optimization
   - mermaid2:
       version: '11.4.0'
       arguments:
-        startOnLoad: true
         theme: 'base'
         themeVariables:
           primaryColor: '#2196f3'
@@ -116,10 +143,14 @@ plugins:
           background: '#ffffff'
           mainBkg: '#ffffff'
           secondBkg: '#f5f5f5'
+          cScale0: '#2196f3'
+          cScale1: '#ff9800'
+          cScale2: '#4caf50'
         flowchart:
           htmlLabels: true
+          curve: 'linear'
           useMaxWidth: true
-          curve: 'basis'
+          wrappingWidth: 200
         sequence:
           actorMargin: 50
           boxMargin: 10
@@ -127,13 +158,18 @@ plugins:
           noteMargin: 10
           messageMargin: 35
           useMaxWidth: true
+          wrap: true
         gantt:
           numberSectionStyles: 4
           useMaxWidth: true
-        gitgraph:
+        pie:
+          useMaxWidth: true
+        journey:
+          useMaxWidth: true
+        timeline:
           useMaxWidth: true
 
-# Extensions
+# Extensions optimized for PDF
 markdown_extensions:
   - abbr
   - admonition
@@ -141,9 +177,13 @@ markdown_extensions:
   - def_list
   - footnotes
   - md_in_html
+  - meta
   - toc:
       permalink: true
-      title: On this page
+      title: Table of Contents
+      toc_depth: 4
+      anchorlink: true
+      separator: "-"
   - tables
   - pymdownx.arithmatex:
       generic: true
@@ -158,6 +198,8 @@ markdown_extensions:
       anchor_linenums: true
       line_spans: __span
       pygments_lang_class: true
+      auto_title: true
+      linenums: true
   - pymdownx.inlinehilite
   - pymdownx.keys
   - pymdownx.magiclink:
@@ -167,34 +209,39 @@ markdown_extensions:
   - pymdownx.mark
   - pymdownx.smartsymbols
   - pymdownx.superfences:
+      preserve_tabs: true
       custom_fences:
         - name: mermaid
           class: mermaid
           format: !!python/name:mermaid2.fence_mermaid
+        - name: math
+          class: arithmatex
+          format: !!python/name:pymdownx.arithmatex.fence_mathjax_format
   - pymdownx.tabbed:
       alternate_style: true
+      combine_header_slug: true
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.tilde
 
-# Navigation
+# Enhanced Navigation for comprehensive PDF export
 nav:
-  - 🏠 Home:
-    - 📖 Overview: index.md
+  - 📚 Executive Summary:
+    - 📖 Document Overview: index.md
+    - 🎯 Project Summary: README.md
     - 🧭 Navigation Guide: navigation.md
-    - 📋 Documentation Summary: README.md
   
   - 🚀 Getting Started:
     - 🔍 System Overview: getting-started/overview.md
     - ⚡ Quick Setup: getting-started/quick-start.md
-    - 📦 Installation: getting-started/installation.md
+    - 📦 Installation Guide: getting-started/installation.md
     - ⚙️ Knative Functions Quick Start: getting-started/knative-functions-quickstart.md
   
-  - 🔌 NetApp ActiveIQ API:
+  - 🔌 NetApp ActiveIQ API Reference:
     - 📄 API Overview: netapp-activeiq-api-overview.md
     - 🔗 API Endpoints: api-endpoints.md
     - 📊 Data Models: data-models.md
-    - 📝 API Use Cases: api-use-cases-table.md
+    - 📝 Use Cases Table: api-use-cases-table.md
   
   - 💼 DevOps Use Cases:
     - 📈 Storage Monitoring: use-cases/storage-monitoring.md
@@ -220,7 +267,6 @@ nav:
     - 🔧 Function-Based Architecture: deployment/function-based-architecture.md
   
   - 🚀 Deployment Guides:
-    - 📋 Installation Guide: getting-started/installation.md
     - ☸️ Knative Deployment: deployment/KNATIVE_DEPLOYMENT.md
     - ⚡ Knative Functions: deployment/knative-functions-deployment.md
     - 🏗️ ArgoCD Helm Deployment: deployment/ARGOCD_HELM_DEPLOYMENT.md
@@ -242,17 +288,21 @@ nav:
     - 🧠 AI Assistant Integration: advanced-use-cases.md
     - 📈 Predictive Analytics: use-cases/capacity-planning.md
     - 🎯 Automated Operations: use-cases/event-management.md
-  
-  - 🧪 Testing & Development:
-    - 📊 Mermaid Diagram Test: testing/mermaid-test-page.md
-    - ✅ Mermaid Validation Summary: testing/mermaid-validation-summary.md
 
-# Extra configuration
+# Extra configuration for PDF export
 extra:
   version:
     provider: mike
     default: latest
   
+  # PDF metadata
+  pdf:
+    author: NetApp Integration Team
+    subject: NetApp ActiveIQ MCP Server Documentation
+    keywords: NetApp, ActiveIQ, MCP, API, Documentation, DevOps, Storage, Automation
+    creator: MkDocs Material with PDF Export
+    title: NetApp ActiveIQ MCP Server - Complete Documentation
+    
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/netapp/activeiq-mcp-server
@@ -266,24 +316,6 @@ extra:
     - icon: material/protocol
       link: https://modelcontextprotocol.io/
       name: Model Context Protocol
-  
-  analytics:
-    provider: google
-    property: G-XXXXXXXXXX  # Replace with actual GA tracking ID
-    feedback:
-      title: Was this page helpful?
-      ratings:
-        - icon: material/emoticon-happy-outline
-          name: This page was helpful
-          data: 1
-          note: >
-            Thanks for your feedback!
-        - icon: material/emoticon-sad-outline
-          name: This page could be improved
-          data: 0
-          note: >
-            Thanks for your feedback! Help us improve this page by
-            <a href="https://github.com/netapp/activeiq-api-docs/issues/new/?title=[Feedback]+{title}+-+{url}" target="_blank" rel="noopener">telling us what you found helpful or what could be improved</a>.
   
   tags:
     MCP: mcp

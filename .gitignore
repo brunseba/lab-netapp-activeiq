@@ -1,0 +1,67 @@
+# Ignore PDF outputs
+pdf/
+
+# Ignore temporary files
+*.temp
+*.tmp
+
+# Ignore compiled Python files
+*.pyc
+__pycache__/
+
+# Ignore config backups
+*.bak
+*.swp
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore local environment files
+.env
+
+# Ignore cache and logs
+.cache/
+logs/
+
+# Ignore node_modules
+node_modules/
+
+# Ignore virtualenvs
+venv/
+
+# Ignore IDE metadata
+.idea/
+.vscode/
+
+# MkDocs specific files and directories
+site/
+.mkdocs_cache/
+.mkdocs-material-cache/
+.mkdocs/
+*.md.bak
+
+# MkDocs build outputs
+/site
+
+# MkDocs plugins cache
+.plugins/
+.mike/
+
+# PDF export temporary files
+*.pdf.tmp
+*.pdf.html
+pdf-temp/
+
+# MkDocs with-pdf plugin
+/docs/.weasyprint/
+/docs/.chromium/
+
+# Git revision plugin cache
+.git-revision-date-localized-cache/
+
+# Search index
+search_index.json
+
+# Material theme cache
+.material-cache/
