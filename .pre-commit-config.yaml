@@ -14,3 +14,4 @@ repos:
   hooks:
     - id: forbid-binary
     - id: require-ascii
+      exclude: '\.(md|yml|yaml)$'
