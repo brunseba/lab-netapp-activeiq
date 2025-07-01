@@ -27,11 +27,11 @@ def check_environment():
     """Check if required environment variables are set"""
     required_vars = ["NETAPP_BASE_URL", "NETAPP_USERNAME", "NETAPP_PASSWORD"]
     missing_vars = []
-    
+
     for var in required_vars:
         if not os.getenv(var):
             missing_vars.append(var)
-    
+
     if missing_vars:
         print(f"Warning: Missing environment variables: {', '.join(missing_vars)}")
         print("The server will require manual configuration via configure_netapp_connection tool.")
@@ -49,18 +49,18 @@ async def main():
     """Main function to start the MCP server"""
     setup_logging()
     check_environment()
-    
+
     print("Starting NetApp ActiveIQ MCP Server...")
     print("=" * 50)
-    
+
     # Import and run the MCP server
     try:
-        from mcp_server import mcp
+        from .mcp_server import mcp
         import mcp.server.stdio
-        
+
         async with mcp.server.stdio.stdio_server() as (read_stream, write_stream):
             await mcp.run(read_stream, write_stream, mcp.create_initialization_options())
-            
+
     except ImportError as e:
         print(f"Error importing MCP dependencies: {e}")
         print("Please install the required dependencies:")

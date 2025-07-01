@@ -2,7 +2,7 @@
 """
 NetApp ActiveIQ Unified Manager MCP Server
 
-This Model Context Protocol (MCP) server provides tools to interact with 
+This Model Context Protocol (MCP) server provides tools to interact with
 NetApp ActiveIQ Unified Manager REST API. It enables AI assistants to:
 - Query cluster information and performance metrics
 - Retrieve SVM (Storage Virtual Machine) details
@@ -44,28 +44,28 @@ class NetAppConfig(BaseModel):
 
 class NetAppClient:
     """Client for NetApp ActiveIQ Unified Manager API"""
-    
+
     def __init__(self, config: NetAppConfig):
         self.config = config
         self.base_url = config.base_url.rstrip('/')
         self.timeout = httpx.Timeout(config.timeout)
-        
+
     async def _make_request(
-        self, 
-        method: str, 
-        endpoint: str, 
+        self,
+        method: str,
+        endpoint: str,
         params: Optional[Dict[str, Any]] = None,
         data: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         """Make HTTP request to NetApp API"""
         url = urljoin(f"{self.base_url}/", endpoint.lstrip('/'))
-        
+
         auth = (self.config.username, self.config.password)
         headers = {
             "Accept": "application/json",
             "Content-Type": "application/json"
         }
-        
+
         async with httpx.AsyncClient(
             verify=self.config.verify_ssl,
             timeout=self.timeout,
@@ -81,7 +81,7 @@ class NetAppClient:
                 )
                 response.raise_for_status()
                 return response.json() if response.content else {}
-                
+
             except httpx.HTTPStatusError as e:
                 logger.error(f"HTTP error {e.response.status_code}: {e.response.text}")
                 raise
@@ -95,13 +95,13 @@ _netapp_client: Optional[NetAppClient] = None
 def get_client() -> NetAppClient:
     """Get the NetApp client instance"""
     global _netapp_client
-    
+
     # Auto-configure from environment variables if not already configured
     if _netapp_client is None:
         base_url = os.getenv("NETAPP_BASE_URL")
         username = os.getenv("NETAPP_USERNAME")
         password = os.getenv("NETAPP_PASSWORD")
-        
+
         if base_url and username and password:
             logger.info("Auto-configuring NetApp client from environment variables")
             config = NetAppConfig(
@@ -114,32 +114,32 @@ def get_client() -> NetAppClient:
             _netapp_client = NetAppClient(config)
         else:
             raise RuntimeError("NetApp client not configured. Use configure_netapp_connection first or set environment variables (NETAPP_BASE_URL, NETAPP_USERNAME, NETAPP_PASSWORD).")
-    
+
     return _netapp_client
 
 @mcp.tool()
 async def configure_netapp_connection(
     base_url: str,
-    username: str, 
+    username: str,
     password: str,
     verify_ssl: bool = True,
     timeout: int = 30
 ) -> str:
     """
     Configure connection to NetApp ActiveIQ Unified Manager.
-    
+
     Args:
         base_url: Base URL for NetApp ActiveIQ API (e.g., https://netapp-aiqum.example.com/api)
         username: Username for authentication
-        password: Password for authentication  
+        password: Password for authentication
         verify_ssl: Whether to verify SSL certificates (default: True)
         timeout: Request timeout in seconds (default: 30)
-    
+
     Returns:
         Confirmation message
     """
     global _netapp_client
-    
+
     config = NetAppConfig(
         base_url=base_url,
         username=username,
@@ -147,9 +147,9 @@ async def configure_netapp_connection(
         verify_ssl=verify_ssl,
         timeout=timeout
     )
-    
+
     _netapp_client = NetAppClient(config)
-    
+
     # Test connection
     try:
         await _netapp_client._make_request("GET", "/datacenter/cluster/clusters", {"max_records": 1})
@@ -168,31 +168,31 @@ async def get_clusters(
 ) -> str:
     """
     Retrieve list of ONTAP clusters from NetApp ActiveIQ.
-    
+
     Args:
         name: Filter by cluster name
         location: Filter by cluster location
         version_generation: Filter by ONTAP version generation (e.g., 9)
         max_records: Maximum number of records to return (default: 100)
         order_by: Sort field (default: name)
-    
+
     Returns:
         JSON string containing cluster information
     """
     client = get_client()
-    
+
     params = {
         "max_records": max_records,
         "order_by": order_by
     }
-    
+
     if name:
         params["name"] = name
     if location:
         params["location"] = location
     if version_generation:
         params["version.generation"] = version_generation
-    
+
     result = await client._make_request("GET", "/datacenter/cluster/clusters", params)
     return json.dumps(result, indent=2)
 
@@ -200,15 +200,15 @@ async def get_clusters(
 async def get_cluster_details(cluster_key: str) -> str:
     """
     Get detailed information about a specific cluster.
-    
+
     Args:
         cluster_key: Unique identifier of the cluster
-    
+
     Returns:
         JSON string containing detailed cluster information
     """
     client = get_client()
-    
+
     endpoint = f"/datacenter/cluster/clusters/{cluster_key}"
     result = await client._make_request("GET", endpoint)
     return json.dumps(result, indent=2)
@@ -220,19 +220,19 @@ async def get_cluster_performance(
 ) -> str:
     """
     Get performance metrics for a specific cluster.
-    
+
     Args:
         cluster_key: Unique identifier of the cluster
         interval: Time range for metrics (1h, 12h, 1d, 2d, 3d, 15d, 1w, 1m, 2m, 3m, 6m)
-    
+
     Returns:
         JSON string containing performance metrics
     """
     client = get_client()
-    
+
     endpoint = f"/datacenter/cluster/clusters/{cluster_key}/metrics"
     params = {"interval": interval}
-    
+
     result = await client._make_request("GET", endpoint, params)
     return json.dumps(result, indent=2)
 
@@ -247,7 +247,7 @@ async def get_nodes(
 ) -> str:
     """
     Retrieve list of nodes from NetApp clusters.
-    
+
     Args:
         cluster_name: Filter by cluster name
         name: Filter by node name
@@ -255,17 +255,17 @@ async def get_nodes(
         health: Filter by node health status
         max_records: Maximum number of records to return
         order_by: Sort field
-    
+
     Returns:
         JSON string containing node information
     """
     client = get_client()
-    
+
     params = {
         "max_records": max_records,
         "order_by": order_by
     }
-    
+
     if cluster_name:
         params["cluster.name"] = cluster_name
     if name:
@@ -274,7 +274,7 @@ async def get_nodes(
         params["model"] = model
     if health is not None:
         params["health"] = health
-    
+
     result = await client._make_request("GET", "/datacenter/cluster/nodes", params)
     return json.dumps(result, indent=2)
 
@@ -288,31 +288,31 @@ async def get_svms(
 ) -> str:
     """
     Retrieve list of Storage Virtual Machines (SVMs).
-    
+
     Args:
         cluster_name: Filter by cluster name
         name: Filter by SVM name
         state: Filter by SVM state (running, stopped, etc.)
         max_records: Maximum number of records to return
         order_by: Sort field
-    
+
     Returns:
         JSON string containing SVM information
     """
     client = get_client()
-    
+
     params = {
         "max_records": max_records,
         "order_by": order_by
     }
-    
+
     if cluster_name:
         params["cluster.name"] = cluster_name
     if name:
         params["name"] = name
     if state:
         params["state"] = state
-    
+
     result = await client._make_request("GET", "/datacenter/svm/svms", params)
     return json.dumps(result, indent=2)
 
@@ -328,7 +328,7 @@ async def get_volumes(
 ) -> str:
     """
     Retrieve list of volumes.
-    
+
     Args:
         cluster_name: Filter by cluster name
         svm_name: Filter by SVM name
@@ -337,17 +337,17 @@ async def get_volumes(
         style: Filter by volume style (flexvol, flexgroup)
         max_records: Maximum number of records to return
         order_by: Sort field
-    
+
     Returns:
         JSON string containing volume information
     """
     client = get_client()
-    
+
     params = {
         "max_records": max_records,
         "order_by": order_by
     }
-    
+
     if cluster_name:
         params["cluster.name"] = cluster_name
     if svm_name:
@@ -358,7 +358,7 @@ async def get_volumes(
         params["state"] = state
     if style:
         params["style"] = style
-    
+
     result = await client._make_request("GET", "/datacenter/storage/volumes", params)
     return json.dumps(result, indent=2)
 
@@ -373,25 +373,25 @@ async def get_volume_analytics(
 ) -> str:
     """
     Get volume performance analytics.
-    
+
     Args:
         cluster_name: Filter by cluster name
-        svm_name: Filter by SVM name  
+        svm_name: Filter by SVM name
         volume_name: Filter by volume name
         period: Duration of aggregation in hours
         max_records: Maximum number of records to return
         order_by: Sort field
-    
+
     Returns:
         JSON string containing volume analytics
     """
     client = get_client()
-    
+
     params = {
         "max_records": max_records,
         "order_by": order_by
     }
-    
+
     if cluster_name:
         params["cluster.name"] = cluster_name
     if svm_name:
@@ -400,7 +400,7 @@ async def get_volume_analytics(
         params["volume.name"] = volume_name
     if period:
         params["period"] = period
-    
+
     result = await client._make_request("GET", "/datacenter/storage/volumes/analytics", params)
     return json.dumps(result, indent=2)
 
@@ -415,7 +415,7 @@ async def get_aggregates(
 ) -> str:
     """
     Retrieve list of aggregates.
-    
+
     Args:
         cluster_name: Filter by cluster name
         name: Filter by aggregate name
@@ -423,17 +423,17 @@ async def get_aggregates(
         type_filter: Filter by aggregate type
         max_records: Maximum number of records to return
         order_by: Sort field
-    
+
     Returns:
         JSON string containing aggregate information
     """
     client = get_client()
-    
+
     params = {
         "max_records": max_records,
         "order_by": order_by
     }
-    
+
     if cluster_name:
         params["cluster.name"] = cluster_name
     if name:
@@ -442,7 +442,7 @@ async def get_aggregates(
         params["state"] = state
     if type_filter:
         params["type"] = type_filter
-    
+
     result = await client._make_request("GET", "/datacenter/storage/aggregates", params)
     return json.dumps(result, indent=2)
 
@@ -455,28 +455,28 @@ async def get_performance_service_levels(
 ) -> str:
     """
     Retrieve Performance Service Levels.
-    
+
     Args:
         name: Filter by PSL name
         system_defined: Filter by system-defined PSLs
         max_records: Maximum number of records to return
         order_by: Sort field
-    
+
     Returns:
         JSON string containing Performance Service Level information
     """
     client = get_client()
-    
+
     params = {
         "max_records": max_records,
         "order_by": order_by
     }
-    
+
     if name:
         params["name"] = name
     if system_defined is not None:
         params["system_defined"] = system_defined
-    
+
     result = await client._make_request("GET", "/storage-provider/performance-service-levels", params)
     return json.dumps(result, indent=2)
 
@@ -489,28 +489,28 @@ async def get_storage_efficiency_policies(
 ) -> str:
     """
     Retrieve Storage Efficiency Policies.
-    
+
     Args:
         name: Filter by policy name
         system_defined: Filter by system-defined policies
         max_records: Maximum number of records to return
         order_by: Sort field
-    
+
     Returns:
         JSON string containing Storage Efficiency Policy information
     """
     client = get_client()
-    
+
     params = {
         "max_records": max_records,
         "order_by": order_by
     }
-    
+
     if name:
         params["name"] = name
     if system_defined is not None:
         params["system_defined"] = system_defined
-    
+
     result = await client._make_request("GET", "/storage-provider/storage-efficiency-policies", params)
     return json.dumps(result, indent=2)
 
@@ -525,7 +525,7 @@ async def get_workloads(
 ) -> str:
     """
     Retrieve workloads information.
-    
+
     Args:
         cluster_name: Filter by cluster name
         svm_name: Filter by SVM name
@@ -533,17 +533,17 @@ async def get_workloads(
         conformance_status: Filter by conformance status
         max_records: Maximum number of records to return
         order_by: Sort field
-    
+
     Returns:
         JSON string containing workload information
     """
     client = get_client()
-    
+
     params = {
         "max_records": max_records,
         "order_by": order_by
     }
-    
+
     if cluster_name:
         params["cluster.name"] = cluster_name
     if svm_name:
@@ -552,7 +552,7 @@ async def get_workloads(
         params["type"] = workload_type
     if conformance_status:
         params["conformance_status"] = conformance_status
-    
+
     result = await client._make_request("GET", "/storage-provider/workloads", params)
     return json.dumps(result, indent=2)
 
@@ -566,31 +566,31 @@ async def get_events(
 ) -> str:
     """
     Retrieve events from NetApp ActiveIQ.
-    
+
     Args:
         severity: Filter by event severity (critical, error, warning, information)
         state: Filter by event state (new, acknowledged, resolved, obsolete)
         source_type: Filter by source type
         max_records: Maximum number of records to return
         order_by: Sort field
-    
+
     Returns:
         JSON string containing event information
     """
     client = get_client()
-    
+
     params = {
         "max_records": max_records,
         "order_by": order_by
     }
-    
+
     if severity:
         params["severity"] = severity
     if state:
         params["state"] = state
     if source_type:
         params["source_type"] = source_type
-    
+
     result = await client._make_request("GET", "/management-server/events", params)
     return json.dumps(result, indent=2)
 
@@ -603,28 +603,28 @@ async def get_jobs(
 ) -> str:
     """
     Retrieve job information.
-    
+
     Args:
         state: Filter by job state
         type_filter: Filter by job type
         max_records: Maximum number of records to return
         order_by: Sort field
-    
+
     Returns:
         JSON string containing job information
     """
     client = get_client()
-    
+
     params = {
         "max_records": max_records,
         "order_by": order_by
     }
-    
+
     if state:
         params["state"] = state
     if type_filter:
         params["type"] = type_filter
-    
+
     result = await client._make_request("GET", "/management-server/jobs", params)
     return json.dumps(result, indent=2)
 
@@ -632,21 +632,21 @@ async def get_jobs(
 async def get_system_info() -> str:
     """
     Get system information about NetApp ActiveIQ Unified Manager.
-    
+
     Returns:
         JSON string containing system information
     """
     client = get_client()
-    
+
     result = await client._make_request("GET", "/admin/system")
     return json.dumps(result, indent=2)
 
 if __name__ == "__main__":
     # Run the MCP server
     import mcp.server.stdio
-    
+
     async def main():
         async with mcp.server.stdio.stdio_server() as (read_stream, write_stream):
             await mcp.run(read_stream, write_stream, mcp.create_initialization_options())
-    
+
     asyncio.run(main())

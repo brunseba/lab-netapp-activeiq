@@ -1,0 +1,59 @@
+[project]
+name = "netapp-mcp-server"
+version = "1.0.0"
+description = "NetApp ActiveIQ Unified Manager MCP Server for AI assistants"
+authors = [
+    { name = "NetApp Integration Team", email = "netapp-integration@company.com" }
+]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "mcp>=0.8.0",
+    "httpx>=0.25.0",
+    "pydantic>=2.0.0",
+    "python-dateutil>=2.8.0",
+    "asyncio-mqtt>=0.16.0",
+    "python-json-logger>=2.0.0",
+]
+keywords = ["netapp", "activeiq", "mcp", "model-context-protocol", "ai-assistant", "storage"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Systems Administration",
+]
+
+[project.scripts]
+netapp-mcp-server = "netapp_mcp_server.start_mcp_server:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "mypy>=1.0.0",
+    "pre-commit>=3.0.0",
+]
+test = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.0.0",
+    "httpx[test]>=0.25.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/netapp/activeiq-mcp-server"
+Documentation = "https://netapp-mcp-server.docs/"
+Repository = "https://github.com/netapp/activeiq-mcp-server.git"
+"Bug Tracker" = "https://github.com/netapp/activeiq-mcp-server/issues"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

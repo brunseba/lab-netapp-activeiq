@@ -1,0 +1,59 @@
+[project]
+name = "netapp-temporal-workflows"
+version = "1.0.0"
+description = "Temporal.io workflows for NetApp ActiveIQ infrastructure management"
+authors = [
+    { name = "NetApp Integration Team", email = "netapp-integration@company.com" }
+]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "temporalio>=1.5.0",
+    "httpx>=0.25.0",
+    "pydantic>=2.0.0",
+    "python-dateutil>=2.8.0",
+    "asyncio>=3.4.3",
+    "dataclasses-json>=0.6.0",
+]
+keywords = ["netapp", "activeiq", "temporal", "workflows", "infrastructure", "storage"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Systems Administration",
+]
+
+[project.scripts]
+netapp-temporal-worker = "netapp_temporal_workflows.temporal_worker:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "mypy>=1.0.0",
+    "pre-commit>=3.0.0",
+]
+test = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.0.0",
+    "temporalio[test]>=1.5.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/netapp/activeiq-temporal-workflows"
+Documentation = "https://netapp-mcp-server.docs/"
+Repository = "https://github.com/netapp/activeiq-temporal-workflows.git"
+"Bug Tracker" = "https://github.com/netapp/activeiq-temporal-workflows/issues"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

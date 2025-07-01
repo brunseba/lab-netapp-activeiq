@@ -10,14 +10,14 @@ import logging
 from temporalio.client import Client
 from temporalio.worker import Worker
 
-from temporal_workflows import (
+from .temporal_workflows import (
     # Import all workflows
     SVMCreationWorkflow,
     NFSShareProvisioningWorkflow,
     PerformanceMonitoringWorkflow,
     EventProcessingWorkflow,
     ComprehensiveStorageProvisioningWorkflow,
-    
+
     # Import all activities
     validate_cluster_health,
     get_available_aggregates,
@@ -42,7 +42,7 @@ async def main():
     """
     # Connect to Temporal Server
     client = await Client.connect("localhost:7233")
-    
+
     # Create and start worker
     worker = Worker(
         client,
@@ -67,7 +67,7 @@ async def main():
             acknowledge_event,
         ],
     )
-    
+
     logger.info("Starting NetApp ActiveIQ Temporal worker...")
     await worker.run()
 
