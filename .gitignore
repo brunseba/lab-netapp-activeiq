@@ -43,6 +43,7 @@ site/
 
 # MkDocs build outputs
 /site
+site
 
 # MkDocs plugins cache
 .plugins/

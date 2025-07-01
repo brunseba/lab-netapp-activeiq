@@ -151,16 +151,16 @@ flowchart LR
 
 #### Operational Characteristics
 
-| **Aspect** | **Traditional Model** | **Impact** |
-|------------|----------------------|------------|
-| **Request Handling** | Email, ticket system, meetings | Delays, context loss |
-| **Analysis** | Manual data gathering, expert interpretation | Time-consuming, error-prone |
-| **Execution** | CLI commands, GUI operations | Knowledge-dependent, manual |
-| **Documentation** | Manual notes, spreadsheets | Inconsistent, outdated |
-| **Knowledge Transfer** | Training, documentation | Slow, incomplete |
-| **Scalability** | Limited by expert availability | Bottleneck, single points of failure |
-| **Response Time** | Hours to days | Business impact, user frustration |
-| **Consistency** | Varies by individual | Quality variance |
+| **Aspect**             | **Traditional Model**                        | **Impact**                           |
+| ---------------------- | -------------------------------------------- | ------------------------------------ |
+| **Request Handling**   | Email, ticket system, meetings               | Delays, context loss                 |
+| **Analysis**           | Manual data gathering, expert interpretation | Time-consuming, error-prone          |
+| **Execution**          | CLI commands, GUI operations                 | Knowledge-dependent, manual          |
+| **Documentation**      | Manual notes, spreadsheets                   | Inconsistent, outdated               |
+| **Knowledge Transfer** | Training, documentation                      | Slow, incomplete                     |
+| **Scalability**        | Limited by expert availability               | Bottleneck, single points of failure |
+| **Response Time**      | Hours to days                                | Business impact, user frustration    |
+| **Consistency**        | Varies by individual                         | Quality variance                     |
 
 #### Typical Workflow Example: Volume Creation
 
@@ -183,6 +183,7 @@ flowchart LR
 ### 2. WITH APIM: DevOps-Driven Operations via Temporal
 
 #### Process Flow
+
 ```
 DevOps GUI → API Management → Temporal Workflow → NetApp APIs → Structured Response
      ↓            ↓                ↓                ↓            ↓
@@ -192,16 +193,16 @@ DevOps GUI → API Management → Temporal Workflow → NetApp APIs → Structur
 
 #### Operational Characteristics
 
-| **Aspect** | **DevOps-Driven Model** | **Impact** |
-|------------|----------------------|------------|
-| **Request Handling** | GUI-based, structured workflows | Immediate, standardized |
-| **Analysis** | Temporal-powered workflow analysis, real-time insights | Fast, comprehensive, durable |
-| **Execution** | APIM-orchestrated calls, fault-tolerant workflows | Reliable, recoverable |
-| **Documentation** | Auto-generated workflow history, real-time updates | Always current, auditable |
-| **Knowledge Transfer** | Workflow-embedded expertise, accessible to DevOps teams | Instant, comprehensive |
-| **Scalability** | Temporal auto-scaling, concurrent workflow processing | Unlimited, elastic |
-| **Response Time** | Seconds to minutes with guaranteed completion | Business enablement, reliability |
-| **Consistency** | Workflow-standardized, best-practice embedded | Uniform quality |
+| **Aspect**             | **DevOps-Driven Model**                                 | **Impact**                       |
+| ---------------------- | ------------------------------------------------------- | -------------------------------- |
+| **Request Handling**   | GUI-based, structured workflows                         | Immediate, standardized          |
+| **Analysis**           | Temporal-powered workflow analysis, real-time insights  | Fast, comprehensive, durable     |
+| **Execution**          | APIM-orchestrated calls, fault-tolerant workflows       | Reliable, recoverable            |
+| **Documentation**      | Auto-generated workflow history, real-time updates      | Always current, auditable        |
+| **Knowledge Transfer** | Workflow-embedded expertise, accessible to DevOps teams | Instant, comprehensive           |
+| **Scalability**        | Temporal auto-scaling, concurrent workflow processing   | Unlimited, elastic               |
+| **Response Time**      | Seconds to minutes with guaranteed completion           | Business enablement, reliability |
+| **Consistency**        | Workflow-standardized, best-practice embedded           | Uniform quality                  |
 
 #### Typical Workflow Example: Volume Creation
 
@@ -226,6 +227,7 @@ API Management + Temporal Workflow:
 ### 3. **NEW TOM**: DevOps-Primary with Day-2 AI Operations
 
 #### Process Flow
+
 ```
 DevOps GUI → API Management → Temporal Workflow → Durable Activities → Guaranteed Completion
      ↓            ↓                ↓                 ↓                  ↓
@@ -240,16 +242,16 @@ DevOps GUI → API Management → Temporal Workflow → Durable Activities → G
 
 #### Operational Characteristics
 
-| **Aspect** | **DevOps-Primary + Day-2 AI Model** | **Impact** |
-|------------|-------------------------------------|------------|
-| **Request Handling** | GUI-driven durable workflow execution, guaranteed completion | Never lose requests, structured input validation |
-| **Analysis** | Multi-step workflows with checkpoints + AI insights | Fault-tolerant analysis with predictive intelligence |
-| **Execution** | APIM-orchestrated activities with automatic retries | Self-healing operations with AI monitoring |
-| **Documentation** | Complete workflow history + AI-generated insights | Perfect audit trail with intelligent analysis |
-| **Knowledge Transfer** | Workflow-embedded expertise + AI learning | Evolutionary improvement with machine learning |
-| **Scalability** | Unlimited concurrent workflows + AI optimization | Handle enterprise-scale with intelligent resource allocation |
-| **Response Time** | Seconds for simple, minutes-hours for complex + AI acceleration | Appropriate timing with AI-assisted optimization |
-| **Consistency** | Deterministic execution + AI quality assurance | Perfect consistency with intelligent validation |
+| **Aspect**             | **DevOps-Primary + Day-2 AI Model**                             | **Impact**                                                   |
+| ---------------------- | --------------------------------------------------------------- | ------------------------------------------------------------ |
+| **Request Handling**   | GUI-driven durable workflow execution, guaranteed completion    | Never lose requests, structured input validation             |
+| **Analysis**           | Multi-step workflows with checkpoints + AI insights             | Fault-tolerant analysis with predictive intelligence         |
+| **Execution**          | APIM-orchestrated activities with automatic retries             | Self-healing operations with AI monitoring                   |
+| **Documentation**      | Complete workflow history + AI-generated insights               | Perfect audit trail with intelligent analysis                |
+| **Knowledge Transfer** | Workflow-embedded expertise + AI learning                       | Evolutionary improvement with machine learning               |
+| **Scalability**        | Unlimited concurrent workflows + AI optimization                | Handle enterprise-scale with intelligent resource allocation |
+| **Response Time**      | Seconds for simple, minutes-hours for complex + AI acceleration | Appropriate timing with AI-assisted optimization             |
+| **Consistency**        | Deterministic execution + AI quality assurance                  | Perfect consistency with intelligent validation              |
 
 #### Advanced Workflow Example: Complete SVM Environment Setup
 
@@ -299,16 +301,16 @@ spec:
   template:
     spec:
       containers:
-      - name: temporal-server
-        image: temporalio/auto-setup:latest
-        env:
-        - name: DB
-          value: "postgresql"
-        - name: POSTGRES_SEEDS
-          value: "postgres-service"
-        ports:
-        - containerPort: 7233
-        - containerPort: 8080
+        - name: temporal-server
+          image: temporalio/auto-setup:latest
+          env:
+            - name: DB
+              value: "postgresql"
+            - name: POSTGRES_SEEDS
+              value: "postgres-service"
+          ports:
+            - containerPort: 7233
+            - containerPort: 8080
 ---
 # NetApp Workflow Worker
 apiVersion: serving.knative.dev/v1
@@ -319,38 +321,42 @@ spec:
   template:
     spec:
       containers:
-      - image: netapp/temporal-worker:latest
-        env:
-        - name: TEMPORAL_HOST
-          value: "temporal-server:7233"
-        - name: NETAPP_API_ENDPOINT
-          valueFrom:
-            secretKeyRef:
-              name: netapp-credentials
-              key: endpoint
+        - image: netapp/temporal-worker:latest
+          env:
+            - name: TEMPORAL_HOST
+              value: "temporal-server:7233"
+            - name: NETAPP_API_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: netapp-credentials
+                  key: endpoint
 ```
 
 ### Durable Workflow Benefits
 
 #### 🔄 **Fault Tolerance**
+
 - **Automatic Retries**: Failed activities retry with exponential backoff
 - **Partial Failure Recovery**: Resume from last successful checkpoint
 - **Worker Failures**: Workflows survive worker restarts and deployments
 - **Infrastructure Failures**: Persist through cluster outages
 
 #### 📈 **Complex Orchestration**
+
 - **Multi-Step Processes**: Coordinate dozens of NetApp operations
 - **Conditional Logic**: Smart decision-making based on intermediate results
 - **Human-in-the-Loop**: Pause for approvals, resume automatically
 - **Parallel Execution**: Run independent operations concurrently
 
 #### 🔍 **Observability**
+
 - **Workflow History**: Complete execution trace with timing
 - **State Inspection**: View current workflow state and variables
 - **Replay Capability**: Debug issues by replaying exact execution
 - **Metrics Integration**: Built-in metrics for monitoring
 
 #### ⏱️ **Long-Running Operations**
+
 - **Days/Weeks Duration**: Handle migration and upgrade workflows
 - **Scheduled Operations**: Cron-like scheduling with durability
 - **Event-Driven**: React to NetApp events and external triggers
@@ -513,26 +519,29 @@ class CapacityManagement:
 
 ## Enhanced Operational Metrics with Temporal
 
-| **Metric** | **Without MCP** | **With MCP** | **With Temporal** | **Total Improvement** |
-|------------|-----------------|--------------|------------------|----------------------|
-| **Request Response Time** | 2-48 hours | 30 seconds - 5 minutes | 30 seconds - 45 minutes* | 95%+ reduction |
-| **Success Rate** | 70-80% (human error) | 95% (automated) | 99.9% (durable execution) | 99%+ improvement |
-| **Complex Workflow Execution** | Days/weeks | Not supported | Hours with fault tolerance | 90%+ reduction |
-| **Audit Compliance** | Manual, incomplete | Basic logging | Complete workflow history | Perfect compliance |
-| **Recovery from Failures** | Manual intervention | Restart from beginning | Resume from checkpoint | 100% improvement |
-| **Concurrent Operations** | 1-2 per admin | 100s | Unlimited with coordination | Unlimited scaling |
+| **Metric**                     | **Without MCP**      | **With MCP**           | **With Temporal**           | **Total Improvement** |
+| ------------------------------ | -------------------- | ---------------------- | --------------------------- | --------------------- |
+| **Request Response Time**      | 2-48 hours           | 30 seconds - 5 minutes | 30 seconds - 45 minutes\*   | 95%+ reduction        |
+| **Success Rate**               | 70-80% (human error) | 95% (automated)        | 99.9% (durable execution)   | 99%+ improvement      |
+| **Complex Workflow Execution** | Days/weeks           | Not supported          | Hours with fault tolerance  | 90%+ reduction        |
+| **Audit Compliance**           | Manual, incomplete   | Basic logging          | Complete workflow history   | Perfect compliance    |
+| **Recovery from Failures**     | Manual intervention  | Restart from beginning | Resume from checkpoint      | 100% improvement      |
+| **Concurrent Operations**      | 1-2 per admin        | 100s                   | Unlimited with coordination | Unlimited scaling     |
 
-*Complex workflows like complete environment setup can take 30-45 minutes but run reliably with automatic recovery
+\*Complex workflows like complete environment setup can take 30-45 minutes but run reliably with automatic recovery
 
 ## Implementation Roadmap with Temporal
 
 ### Phase 1: Foundation + Temporal (Months 1-3)
+
 1. **Infrastructure Setup**
+
    - Deploy Temporal.io cluster
    - Set up Knative for MCP functions
    - Configure PostgreSQL for Temporal persistence
 
 2. **Basic Workflows**
+
    - Simple volume operations
    - SVM creation with rollback
    - Capacity monitoring workflows
@@ -543,12 +552,15 @@ class CapacityManagement:
    - Performance optimization
 
 ### Phase 2: Advanced Workflows (Months 4-6)
+
 1. **Complex Orchestration**
+
    - Multi-site disaster recovery setup
    - Large-scale data migration
    - Scheduled maintenance workflows
 
 2. **Human Integration**
+
    - Approval workflows
    - Exception handling
    - Manual override capabilities
@@ -559,7 +571,9 @@ class CapacityManagement:
    - Compliance reporting
 
 ### Phase 3: Advanced AI Integration (Months 7-9)
+
 1. **Intelligent Workflows**
+
    - AI-driven capacity planning
    - Predictive maintenance workflows
    - Self-optimizing configurations
@@ -572,18 +586,21 @@ class CapacityManagement:
 ## Business Impact with Temporal Integration
 
 ### Risk Elimination
+
 - **Zero Data Loss**: Workflows guarantee completion or clean rollback
 - **No Lost Work**: Failed operations resume from last checkpoint
 - **Audit Perfection**: Complete history of all operations
 - **Compliance Automation**: Workflows enforce compliance automatically
 
 ### Operational Excellence
+
 - **Complex Operations**: Handle enterprise-scale migrations and setups
 - **Unattended Operations**: Workflows run 24/7 without human intervention
 - **Smart Recovery**: Automatic handling of transient failures
 - **Scalable Orchestration**: Coordinate hundreds of parallel operations
 
 ### Business Agility
+
 - **Rapid Environment Provisioning**: Complete setups in under an hour
 - **Reliable Scaling**: Predictable capacity expansion
 - **Fast Recovery**: Automatic disaster recovery workflows
@@ -609,37 +626,40 @@ spec:
         autoscaling.knative.dev/target: "10"
     spec:
       containers:
-      - image: netapp/mcp-server:latest
-        env:
-        - name: NETAPP_API_ENDPOINT
-          valueFrom:
-            secretKeyRef:
-              name: netapp-credentials
-              key: endpoint
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "200m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
+        - image: netapp/mcp-server:latest
+          env:
+            - name: NETAPP_API_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: netapp-credentials
+                  key: endpoint
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
 ```
 
 ### Benefits of Knative Deployment
 
 #### 🚀 **Auto-Scaling**
+
 - **Scale to Zero**: No resources consumed when idle
 - **Instant Scale-Up**: Automatic scaling based on demand
 - **Cost Optimization**: Pay only for actual usage
 - **High Availability**: Built-in redundancy and failover
 
 #### ⚡ **Performance**
+
 - **Cold Start Optimization**: Sub-second startup times
 - **Request Routing**: Intelligent traffic distribution
 - **Resource Efficiency**: Optimal resource utilization
 - **Concurrent Processing**: Handle multiple requests simultaneously
 
 #### 🔧 **Operations**
+
 - **Simplified Deployment**: GitOps-enabled deployments
 - **Version Management**: Blue-green deployments
 - **Health Monitoring**: Built-in health checks
@@ -650,6 +670,7 @@ spec:
 ### Role Transformation
 
 #### Traditional Roles
+
 ```
 Storage Administrator:
 - Manual operation execution
@@ -665,6 +686,7 @@ Application Teams:
 ```
 
 #### MCP-Enabled Roles
+
 ```
 Storage Administrator:
 - Solution architect and optimizer
@@ -681,24 +703,26 @@ Application Teams:
 
 ### Operational Metrics Comparison
 
-| **Metric** | **Without MCP** | **With MCP** | **Improvement** |
-|------------|-----------------|--------------|------------------|
-| **Request Response Time** | 2-48 hours | 30 seconds - 5 minutes | 95%+ reduction |
-| **Storage Admin Utilization** | 80% routine tasks | 20% routine tasks | 4x efficiency gain |
-| **Error Rate** | 5-10% human error | <1% automated error | 90%+ reduction |
-| **Knowledge Transfer Time** | Weeks to months | Instant access | Immediate |
-| **After-Hours Support** | On-call expert required | 24/7 automated | Always available |
-| **Scaling Capacity** | Linear with headcount | Exponential with automation | Unlimited |
+| **Metric**                    | **Without MCP**         | **With MCP**                | **Improvement**    |
+| ----------------------------- | ----------------------- | --------------------------- | ------------------ |
+| **Request Response Time**     | 2-48 hours              | 30 seconds - 5 minutes      | 95%+ reduction     |
+| **Storage Admin Utilization** | 80% routine tasks       | 20% routine tasks           | 4x efficiency gain |
+| **Error Rate**                | 5-10% human error       | <1% automated error         | 90%+ reduction     |
+| **Knowledge Transfer Time**   | Weeks to months         | Instant access              | Immediate          |
+| **After-Hours Support**       | On-call expert required | 24/7 automated              | Always available   |
+| **Scaling Capacity**          | Linear with headcount   | Exponential with automation | Unlimited          |
 
 ### Business Value Realization
 
 #### Financial Impact
+
 - **Cost Reduction**: 60-80% reduction in operational overhead
 - **Revenue Protection**: 95% reduction in storage-related outages
 - **Productivity Gains**: 4x improvement in storage admin efficiency
 - **Innovation Acceleration**: Teams focus on value-add activities
 
 #### Operational Excellence
+
 - **Service Quality**: Consistent, best-practice operations
 - **Compliance**: Automated compliance and audit trails
 - **Risk Reduction**: Elimination of human error
@@ -707,12 +731,15 @@ Application Teams:
 ## Implementation Strategy
 
 ### Phase 1: Foundation (Months 1-2)
+
 1. **Knative Platform Setup**
+
    - Deploy Knative Serving on Kubernetes
    - Configure autoscaling and observability
    - Establish CI/CD pipelines
 
 2. **MCP Server Development**
+
    - Build NetApp API integration
    - Implement core storage operations
    - Develop error handling and logging
@@ -723,12 +750,15 @@ Application Teams:
    - Capacity planning queries
 
 ### Phase 2: Expansion (Months 3-4)
+
 1. **Advanced Operations**
+
    - SVM management and provisioning
    - Performance optimization workflows
    - Backup and recovery automation
 
 2. **Integration Development**
+
    - ITSM system integration
    - Monitoring tool connectivity
    - Notification and alerting
@@ -739,12 +769,15 @@ Application Teams:
    - Role-based access controls
 
 ### Phase 3: Optimization (Months 5-6)
+
 1. **AI Enhancement**
+
    - Predictive analytics integration
    - Machine learning model deployment
    - Intelligent recommendation engine
 
 2. **Process Automation**
+
    - End-to-end workflow automation
    - Exception handling processes
    - Continuous optimization loops
@@ -757,6 +790,7 @@ Application Teams:
 ## Governance and Control
 
 ### Without MCP: Manual Governance
+
 - **Access Control**: Manual user management
 - **Change Management**: Paper-based approval processes
 - **Audit Trails**: Manual documentation, often incomplete
@@ -764,6 +798,7 @@ Application Teams:
 - **Policy Enforcement**: Relies on human adherence
 
 ### With MCP: Automated Governance
+
 - **Access Control**: Role-based automated access with audit trails
 - **Change Management**: Automated approval workflows with full traceability
 - **Audit Trails**: Complete API-level logging and monitoring
@@ -775,12 +810,14 @@ Application Teams:
 ### Risk Mitigation Strategies
 
 #### Technical Risks
+
 - **Service Availability**: Knative multi-zone deployment with health checks
 - **Data Security**: End-to-end encryption and secure credential management
 - **Performance**: Auto-scaling and resource optimization
 - **Integration Failures**: Circuit breakers and fallback mechanisms
 
 #### Operational Risks
+
 - **Change Management**: GitOps deployment with rollback capabilities
 - **Knowledge Loss**: Expertise embedded in automation
 - **Dependency Management**: Multi-vendor API abstraction
@@ -789,12 +826,14 @@ Application Teams:
 ## Success Metrics
 
 ### Technical KPIs
+
 - **Response Time**: <30 seconds for 95% of requests
 - **Availability**: 99.9% uptime SLA
 - **Scalability**: Support 10x current request volume
 - **Accuracy**: <1% error rate in automated operations
 
 ### Business KPIs
+
 - **User Satisfaction**: >90% satisfaction score
 - **Cost Reduction**: >60% reduction in operational costs
 - **Time to Value**: <5 minutes for standard requests

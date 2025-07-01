@@ -1,5 +1,5 @@
 # NetApp ActiveIQ MCP Server - Multi-stage Docker build
-FROM python:3.11-slim as builder
+FROM python:3.10-slim as builder
 
 # Set build arguments
 ARG BUILD_DATE
@@ -31,7 +31,7 @@ RUN pip install --no-cache-dir --upgrade pip setuptools wheel
 RUN pip install --no-cache-dir -r /tmp/mcp_requirements.txt
 
 # Production stage
-FROM python:3.11-slim as production
+FROM python:3.10-slim as production
 
 # Create non-root user for security
 RUN groupadd -r mcp && useradd -r -g mcp -d /app -s /bin/bash mcp

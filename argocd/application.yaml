@@ -17,24 +17,24 @@ metadata:
 spec:
   # Project configuration
   project: netapp-integration
-  
+
   # Source configuration
   source:
     # Git repository containing Helm chart
     repoURL: https://github.com/your-org/netapp-mcp-server
     path: helm/netapp-mcp
     targetRevision: main
-    
+
     # Helm configuration
     helm:
       # Release name
       releaseName: netapp-mcp-server
-      
+
       # Values files to use
       valueFiles:
         - values.yaml
         - values-production.yaml
-      
+
       # Parameter overrides
       parameters:
         - name: image.tag
@@ -49,7 +49,7 @@ spec:
           value: "true"
         - name: networkPolicy.enabled
           value: "true"
-      
+
       # Helm values (inline)
       values: |
         # Production overrides
@@ -59,7 +59,7 @@ spec:
               autoscaling.knative.dev/minScale: "2"
               autoscaling.knative.dev/maxScale: "20"
               autoscaling.knative.dev/target: "50"
-        
+
         container:
           resources:
             requests:
@@ -68,29 +68,29 @@ spec:
             limits:
               memory: "1Gi"
               cpu: "1000m"
-        
+
         monitoring:
           serviceMonitor:
             enabled: true
             labels:
               prometheus: kube-prometheus
-        
+
         networkPolicy:
           enabled: true
-        
+
         app:
           logLevel: "INFO"
           extraEnv:
             ENVIRONMENT: "production"
             CLUSTER_NAME: "production-k8s"
-  
+
   # Destination configuration
   destination:
     # Target cluster
     server: https://kubernetes.default.svc
     # Target namespace
     namespace: netapp-mcp
-  
+
   # Sync policy
   syncPolicy:
     # Automatic sync configuration
@@ -101,7 +101,7 @@ spec:
       selfHeal: true
       # Allow empty resources
       allowEmpty: false
-    
+
     # Sync options
     syncOptions:
       - CreateNamespace=true
@@ -110,7 +110,7 @@ spec:
       - ApplyOutOfSyncOnly=true
       - ServerSideApply=true
       - RespectIgnoreDifferences=true
-    
+
     # Retry configuration
     retry:
       limit: 5
@@ -118,10 +118,10 @@ spec:
         duration: 5s
         factor: 2
         maxDuration: 3m
-  
+
   # Revision history
   revisionHistoryLimit: 10
-  
+
   # Ignore differences configuration
   ignoreDifferences:
     - group: serving.knative.dev
@@ -151,14 +151,14 @@ metadata:
     argocd.argoproj.io/sync-wave: "1"
 spec:
   description: NetApp Integration Platform Project
-  
+
   # Source repositories
   sourceRepos:
     - https://github.com/your-org/netapp-mcp-server
     - https://github.com/your-org/netapp-temporal-workflows
     - https://charts.bitnami.com/bitnami
     - https://prometheus-community.github.io/helm-charts
-  
+
   # Destination clusters and namespaces
   destinations:
     - namespace: netapp-mcp
@@ -171,7 +171,7 @@ spec:
       server: https://kubernetes.default.svc
     - namespace: monitoring
       server: https://kubernetes.default.svc
-  
+
   # Cluster resource whitelist
   clusterResourceWhitelist:
     - group: ""
@@ -186,7 +186,7 @@ spec:
       kind: ValidatingAdmissionWebhook
     - group: admissionregistration.k8s.io
       kind: MutatingAdmissionWebhook
-  
+
   # Namespace resource whitelist
   namespaceResourceWhitelist:
     - group: ""
@@ -219,7 +219,7 @@ spec:
       kind: PodDisruptionBudget
     - group: autoscaling
       kind: HorizontalPodAutoscaler
-  
+
   # RBAC configuration
   roles:
     - name: admin
@@ -231,7 +231,7 @@ spec:
       groups:
         - netapp-admins
         - platform-team
-    
+
     - name: developer
       description: Developer access to NetApp integration project
       policies:
@@ -242,7 +242,7 @@ spec:
       groups:
         - netapp-developers
         - integration-team
-    
+
     - name: readonly
       description: Read-only access to NetApp integration project
       policies:
@@ -252,7 +252,7 @@ spec:
       groups:
         - netapp-viewers
         - monitoring-team
-  
+
   # Orphaned resources monitoring
   orphanedResources:
     warn: true
@@ -263,11 +263,11 @@ spec:
       - group: ""
         kind: Secret
         name: default-token-*
-  
+
   # Signature keys for verification
   signatureKeys:
     - keyID: "netapp-integration-key"
-  
+
   # Sync windows
   syncWindows:
     - kind: allow
