@@ -37,6 +37,10 @@ dev = [
     "pre-commit>=3.0.0",
 ]
 
+[tool.uv.sources]
+netapp-mcp-server = { workspace = true }
+netapp-temporal-workflows = { workspace = true }
+
 [project.urls]
 Homepage = "https://github.com/netapp/activeiq-platform"
 Documentation = "https://netapp-mcp-server.docs/"
