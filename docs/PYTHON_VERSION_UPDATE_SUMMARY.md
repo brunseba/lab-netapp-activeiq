@@ -13,39 +13,48 @@ This document summarizes the updates made to align the entire NetApp ActiveIQ MC
 ### 1. Core Infrastructure
 
 #### Dockerfile
+
 - `FROM python:3.11-slim` → `FROM python:3.10-slim` (both builder and production stages)
 - Ensures consistent base image aligned with minimum requirement
 
 #### mcp_requirements.txt
+
 - Added comment: `# Requires Python 3.10+`
 - Updated header documentation
 
 ### 2. Documentation Files
 
 #### docs/DEVELOPMENT.md
+
 - `Python 3.8+ (recommended: Python 3.11)` → `Python 3.10+ (recommended: Python 3.12)`
 
 #### docs/getting-started/quick-start.md
+
 - `**Python 3.8+** (for development setup)` → `**Python 3.10+** (for development setup)`
 
 #### docs/getting-started/installation.md
+
 - `**Docker 20.10+** or **Python 3.8+**` → `**Docker 20.10+** or **Python 3.10+**`
 
 #### docs/temporal-integration.md
+
 - `Python 3.8+ (recommended: Python 3.11)` → `Python 3.10+ (recommended: Python 3.12)`
 
 ### 3. CI/CD and Deployment
 
 #### .github/workflows/deploy-docs.yml
+
 - `python-version: '3.11'` → `python-version: '3.10'` (both build and validate jobs)
 - Ensures CI/CD uses the minimum supported version for testing
 
 #### VERSION_SUMMARY.md
+
 - `**Python** | 3.13 | Runtime environment` → `**Python** | 3.10+ (Recommended: 3.12) | Runtime environment`
 
 ### 4. Configuration Cleanup
 
 #### mkdocs.yml
+
 - Removed custom JavaScript references that are no longer needed:
   - `javascripts/extra.js`
   - `javascripts/termynal.js`
@@ -57,11 +66,13 @@ This document summarizes the updates made to align the entire NetApp ActiveIQ MC
 The codebase already uses modern Python features compatible with 3.10+:
 
 ### Type Hints
+
 ```python
 from typing import Dict, List, Optional, Any, Union
 ```
 
 ### Async/Await Patterns
+
 ```python
 async def _make_request(
     self,
@@ -72,6 +83,7 @@ async def _make_request(
 ```
 
 ### Dataclasses
+
 ```python
 from dataclasses import dataclass
 
@@ -81,20 +93,24 @@ class NetAppConfig:
 ```
 
 ### Union Types (Python 3.10+)
+
 The codebase is ready for `X | Y` syntax when fully adopting 3.10+ only.
 
 ## Deployment Impact
 
 ### Docker
+
 - Production containers now use Python 3.10 as base
 - Smaller image size and better security posture
 - Consistent with minimum requirement
 
 ### Kubernetes/Knative
+
 - All Helm charts and Knative functions inherit Python 3.10
 - No additional changes needed
 
 ### Development
+
 - Virtual environments should use Python 3.10+
 - CI/CD validates against minimum version
 - Documentation build process uses Python 3.10
@@ -111,11 +127,13 @@ The codebase is ready for `X | Y` syntax when fully adopting 3.10+ only.
 ## Compatibility Notes
 
 ### Removed Dependencies
+
 - No Node.js requirement
 - No JavaScript build tools needed
 - Simplified development environment
 
 ### Python Version Support
+
 - **Minimum**: Python 3.10.0
 - **Recommended**: Python 3.12.x
 - **Maximum**: Python 3.13.x (when available)
@@ -123,6 +141,7 @@ The codebase is ready for `X | Y` syntax when fully adopting 3.10+ only.
 ## Testing Requirements
 
 Ensure testing covers:
+
 - Python 3.10.0 (minimum)
 - Python 3.11.x (LTS)
 - Python 3.12.x (recommended)
@@ -130,6 +149,7 @@ Ensure testing covers:
 ## Migration Guide for Developers
 
 ### For Local Development
+
 ```bash
 # Check current Python version
 python3 --version
@@ -146,6 +166,7 @@ pip install -r mcp_requirements.txt
 ```
 
 ### For Production Deployment
+
 ```bash
 # Docker builds automatically use Python 3.10
 docker build -t netapp-mcp-server .
