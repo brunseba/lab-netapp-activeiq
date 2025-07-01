@@ -44,7 +44,7 @@ container:
     limits:
       memory: "1Gi"
       cpu: "1000m"
-  
+
   # Production environment variables
   env:
     - name: ENVIRONMENT
@@ -88,7 +88,7 @@ healthChecks:
     timeoutSeconds: 15
     failureThreshold: 3
     successThreshold: 1
-  
+
   readinessProbe:
     enabled: true
     initialDelaySeconds: 30
@@ -96,7 +96,7 @@ healthChecks:
     timeoutSeconds: 10
     failureThreshold: 3
     successThreshold: 1
-  
+
   startupProbe:
     enabled: true
     initialDelaySeconds: 30
@@ -141,7 +141,7 @@ configMap:
       logging.level=INFO
       environment=production
       cluster.name=production-k8s
-    
+
     features.yaml: |
       features:
         cluster_analytics: true
@@ -159,7 +159,7 @@ configMap:
         ssl_verification: true
         certificate_validation: true
         debug_mode: false
-    
+
     monitoring.yaml: |
       monitoring:
         enabled: true

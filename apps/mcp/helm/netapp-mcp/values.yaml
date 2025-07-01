@@ -45,7 +45,7 @@ knative:
       serving.knative.dev/lastModifier: "helm-chart"
     # Knative service labels
     labels: {}
-    
+
   # Revision template configuration
   template:
     # Revision template annotations
@@ -61,10 +61,10 @@ knative:
       # Resource optimization
       run.googleapis.com/cpu-throttling: "false"
       run.googleapis.com/execution-environment: "gen2"
-    
+
     # Revision template labels
     labels: {}
-    
+
     # Container timeout (max time for handling a request)
     timeoutSeconds: 300
     # Response headers timeout
@@ -82,12 +82,12 @@ container:
   command: []
   # Container args (optional)
   args: []
-  
+
   # Environment variables
   env: []
   # Environment variables from ConfigMap/Secret
   envFrom: []
-  
+
   # Resource requests and limits
   resources:
     requests:
@@ -96,7 +96,7 @@ container:
     limits:
       memory: "512Mi"
       cpu: "500m"
-  
+
   # Security context
   securityContext:
     allowPrivilegeEscalation: false
@@ -107,7 +107,7 @@ container:
     capabilities:
       drop:
         - ALL
-  
+
   # Volume mounts
   volumeMounts: []
 
@@ -123,7 +123,7 @@ netapp:
   verifySSL: true
   # Request timeout
   timeout: 30
-  
+
   # Existing secret name (if provided, above credentials are ignored)
   existingSecret: ""
   # Secret keys for existing secret
@@ -160,7 +160,7 @@ healthChecks:
         - python
         - -c
         - "import asyncio; import sys; sys.exit(0)"
-  
+
   # Readiness probe
   readinessProbe:
     enabled: true
@@ -174,7 +174,7 @@ healthChecks:
         - python
         - -c
         - "import asyncio; import sys; sys.exit(0)"
-  
+
   # Startup probe
   startupProbe:
     enabled: true
@@ -234,7 +234,7 @@ configMap:
       service.version={{ .Values.app.serviceVersion }}
       server.port={{ .Values.container.port }}
       logging.level={{ .Values.app.logLevel }}
-    
+
     features.yaml: |
       features:
         cluster_analytics: true

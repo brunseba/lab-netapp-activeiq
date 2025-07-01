@@ -29,6 +29,7 @@ node_modules/
 
 # Ignore virtualenvs
 venv/
+.venv/
 
 # Ignore IDE metadata
 .idea/
@@ -43,7 +44,8 @@ site/
 
 # MkDocs build outputs
 /site
-site
+site/
+dist/
 
 # MkDocs plugins cache
 .plugins/
@@ -52,7 +54,7 @@ site
 # PDF export temporary files
 *.pdf.tmp
 *.pdf.html
-pdf-temp/
+/tmp/
 
 # MkDocs with-pdf plugin
 /docs/.weasyprint/
@@ -66,3 +68,44 @@ search_index.json
 
 # Material theme cache
 .material-cache/
+
+# MkDocs directory cache
+.cache/mkdocs/
+.cache/mkdocs-material/
+.cache/mike/
+
+# Python packaging and distribution
+build/
+*.egg-info/
+*.whl
+*.tar.gz
+
+# uv package manager
+.uv/
+uv.lock
+.python-version
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+
+# Pytest cache
+.pytest_cache/
+
+# MyPy cache
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Mermaid diagram cache
+.mermaid/
+
+# Documentation generation temporary files
+.mkdocs_temp/
+docs_build/
+_build/
+
+# Pre-commit
+.pre-commit-cache/

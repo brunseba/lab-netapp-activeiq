@@ -76,16 +76,16 @@ spec:
     - |
       set -e
       echo "Testing NetApp MCP Server connectivity..."
-      
+
       # Get service URL (for Knative)
       {{- if .Values.knative.enabled }}
       SERVICE_URL="http://{{ include "netapp-mcp-server.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local"
       {{- else }}
       SERVICE_URL="http://{{ include "netapp-mcp-server.fullname" . }}:{{ .Values.service.port }}"
       {{- end }}
-      
+
       echo "Service URL: $SERVICE_URL"
-      
+
       # Wait for service to be ready
       for i in $(seq 1 30); do
         if curl -s -f --max-time 10 "$SERVICE_URL/health" > /dev/null 2>&1; then
@@ -95,7 +95,7 @@ spec:
         echo "Waiting for service... ($i/30)"
         sleep 5
       done
-      
+
       # Test basic connectivity
       if curl -s -f --max-time 10 "$SERVICE_URL/health"; then
         echo "✓ Health check passed"
@@ -103,7 +103,7 @@ spec:
         echo "✗ Health check failed"
         exit 1
       fi
-      
+
       echo "All tests passed!"
     securityContext:
       runAsNonRoot: true

@@ -42,12 +42,12 @@ spec:
       {{- with .Values.knative.template.idleTimeoutSeconds }}
       idleTimeoutSeconds: {{ . }}
       {{- end }}
-      
+
       containers:
       - name: {{ .Values.container.name }}
         image: {{ include "netapp-mcp-server.image" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
-        
+
         {{- with .Values.container.command }}
         command:
           {{- toYaml . | nindent 10 }}
@@ -56,12 +56,12 @@ spec:
         args:
           {{- toYaml . | nindent 10 }}
         {{- end }}
-        
+
         ports:
         - name: http1
           containerPort: {{ .Values.container.port }}
           protocol: TCP
-        
+
         env:
         {{- if .Values.netapp.existingSecret }}
         - name: NETAPP_BASE_URL
@@ -144,7 +144,7 @@ spec:
         {{- with .Values.extraEnvVars }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
-        
+
         {{- if or .Values.container.envFrom .Values.extraEnvVarsSecret .Values.extraEnvVarsCM }}
         envFrom:
         {{- if .Values.configMap.create }}
@@ -163,13 +163,13 @@ spec:
             name: {{ .Values.extraEnvVarsCM }}
         {{- end }}
         {{- end }}
-        
+
         resources:
           {{- toYaml .Values.container.resources | nindent 10 }}
-        
+
         securityContext:
           {{- toYaml .Values.container.securityContext | nindent 10 }}
-        
+
         {{- if .Values.healthChecks.livenessProbe.enabled }}
         livenessProbe:
           {{- with .Values.healthChecks.livenessProbe.exec }}
@@ -182,7 +182,7 @@ spec:
           failureThreshold: {{ .Values.healthChecks.livenessProbe.failureThreshold }}
           successThreshold: {{ .Values.healthChecks.livenessProbe.successThreshold }}
         {{- end }}
-        
+
         {{- if .Values.healthChecks.readinessProbe.enabled }}
         readinessProbe:
           {{- with .Values.healthChecks.readinessProbe.exec }}
@@ -195,7 +195,7 @@ spec:
           failureThreshold: {{ .Values.healthChecks.readinessProbe.failureThreshold }}
           successThreshold: {{ .Values.healthChecks.readinessProbe.successThreshold }}
         {{- end }}
-        
+
         {{- if .Values.healthChecks.startupProbe.enabled }}
         startupProbe:
           {{- with .Values.healthChecks.startupProbe.exec }}
@@ -208,7 +208,7 @@ spec:
           failureThreshold: {{ .Values.healthChecks.startupProbe.failureThreshold }}
           successThreshold: {{ .Values.healthChecks.startupProbe.successThreshold }}
         {{- end }}
-        
+
         volumeMounts:
         {{- with .Values.container.volumeMounts }}
         {{- toYaml . | nindent 8 }}
@@ -216,21 +216,21 @@ spec:
         {{- with .Values.extraVolumeMounts }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
-        
+
         {{- with .Values.lifecycle }}
         lifecycle:
           {{- toYaml . | nindent 10 }}
         {{- end }}
-      
+
       {{- with .Values.extraContainers }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
-      
+
       {{- with .Values.initContainers }}
       initContainers:
         {{- toYaml . | nindent 6 }}
       {{- end }}
-      
+
       {{- if or .Values.volumes .Values.extraVolumes }}
       volumes:
       {{- with .Values.volumes }}
@@ -240,33 +240,33 @@ spec:
       {{- toYaml . | nindent 6 }}
       {{- end }}
       {{- end }}
-      
+
       {{- if .Values.serviceAccount.create }}
       serviceAccountName: {{ include "netapp-mcp-server.serviceAccountName" . }}
       {{- end }}
-      
+
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      
+
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      
+
       {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      
+
       {{- with .Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      
+
       {{- with .Values.priorityClassName }}
       priorityClassName: {{ . }}
       {{- end }}
-      
+
       {{- if or .Values.image.pullSecrets .Values.global.imagePullSecrets }}
       imagePullSecrets:
       {{- range .Values.image.pullSecrets }}
