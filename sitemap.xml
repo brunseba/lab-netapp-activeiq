@@ -161,7 +161,15 @@
          <lastmod>2025-07-30</lastmod>
     </url>
     <url>
+         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/netapp-api/apply_snapshot_policy_to_volume/</loc>
+         <lastmod>2025-07-30</lastmod>
+    </url>
+    <url>
          <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/netapp-api/attach_metadata_to_object/</loc>
+         <lastmod>2025-07-30</lastmod>
+    </url>
+    <url>
+         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/netapp-api/create_snapshot_policy/</loc>
          <lastmod>2025-07-30</lastmod>
     </url>
     <url>
