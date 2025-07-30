@@ -58,7 +58,11 @@ dev-dependencies = [
 ]
 
 [tool.uv.workspace]
-members = ["apps/mcp", "apps/temporal"]
+members = [
+    "apps/mcp",
+ "apps/temporal",
+ "netapp-cli",
+]
 
 [build-system]
 requires = ["hatchling"]
