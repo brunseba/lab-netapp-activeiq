@@ -6,8 +6,48 @@ This use case describes how to apply an existing Snapshot policy to a Volume usi
 
 ## API Endpoint
 
-- **PATCH** `/api/storage/volumes/{volume_uuid}`
+- **PATCH** `/api/storage/volumes/{volume_uuid}` 
 - **Permissions**: `cluster-admin` or `volume-admin`
+
+## Sequence Diagram
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant NetApp_API
+    participant ONTAP_Cluster
+    participant Volume
+
+    Client->>NetApp_API: GET /api/storage/volumes?name=<volume_name>
+    NetApp_API->>ONTAP_Cluster: Find Volume by Name
+    ONTAP_Cluster-->>NetApp_API: Volume UUID
+    NetApp_API-->>Client: Volume UUID
+
+    Client->>NetApp_API: PATCH /api/storage/volumes/{volume_uuid}
+    Note over Client,NetApp_API: Apply Snapshot Policy
+    
+    NetApp_API->>ONTAP_Cluster: Find Volume by UUID
+    alt Volume Found
+        ONTAP_Cluster->>ONTAP_Cluster: Find Snapshot Policy
+        alt Policy Found
+            ONTAP_Cluster->>Volume: Apply Policy
+            Volume-->>ONTAP_Cluster: Policy Applied
+            ONTAP_Cluster-->>NetApp_API: Success Confirmation
+            NetApp_API-->>Client: 200 OK
+        else Policy Not Found
+            ONTAP_Cluster-->>NetApp_API: Policy Not Found Error
+            NetApp_API-->>Client: 404 Not Found
+        end
+    else Volume Not Found
+        ONTAP_Cluster-->>NetApp_API: Volume Not Found Error
+        NetApp_API-->>Client: 404 Not Found
+    else Authorization Error
+        NetApp_API-->>Client: 403 Forbidden
+    else System Error
+        ONTAP_Cluster-->>NetApp_API: Internal Error
+        NetApp_API-->>Client: 500 Internal Server Error
+    end
+```
 
 ## Prerequisites
 
