@@ -1,15 +1,15 @@
-site_name: NetApp ActiveIQ MCP Server
-site_description: Model Context Protocol server for NetApp ActiveIQ Unified Manager - Comprehensive Documentation
-site_author: NetApp Integration Team
-site_url: https://netapp-mcp-server.docs/
+site_name: IDP Workload Estimation Tool - Lab NetApp ActiveIQ
+site_description: Comprehensive IDP (Internal Developer Platform) workload estimation tool with role-based analysis and multi-phase planning capabilities
+site_author: brunseba
+site_url: https://brunseba.github.io/lab-netapp-activeiq/
 
 # Repository
-repo_name: netapp/activeiq-mcp-server
-repo_url: https://github.com/netapp/activeiq-mcp-server
+repo_name: brunseba/lab-netapp-activeiq
+repo_url: https://github.com/brunseba/lab-netapp-activeiq
 edit_uri: edit/main/docs/
 
 # Copyright
-copyright: Copyright &copy; 2024 NetApp API Documentation
+copyright: Copyright &copy; 2024 IDP Workload Estimation Tool - Lab NetApp ActiveIQ
 
 # Configuration
 theme:
@@ -102,24 +102,24 @@ plugins:
       fallback_to_build_date: true
       enable_creation_date: true
   - mermaid2:
-      version: '11.4.0'
+      version: "11.4.0"
       arguments:
         startOnLoad: true
-        theme: 'base'
+        theme: "base"
         themeVariables:
-          primaryColor: '#2196f3'
-          primaryTextColor: '#000000'
-          primaryBorderColor: '#1976d2'
-          lineColor: '#333333'
-          secondaryColor: '#ff9800'
-          tertiaryColor: '#4caf50'
-          background: '#ffffff'
-          mainBkg: '#ffffff'
-          secondBkg: '#f5f5f5'
+          primaryColor: "#2196f3"
+          primaryTextColor: "#000000"
+          primaryBorderColor: "#1976d2"
+          lineColor: "#333333"
+          secondaryColor: "#ff9800"
+          tertiaryColor: "#4caf50"
+          background: "#ffffff"
+          mainBkg: "#ffffff"
+          secondBkg: "#f5f5f5"
         flowchart:
           htmlLabels: true
           useMaxWidth: true
-          curve: 'basis'
+          curve: "basis"
         sequence:
           actorMargin: 50
           boxMargin: 10
@@ -162,8 +162,8 @@ markdown_extensions:
   - pymdownx.keys
   - pymdownx.magiclink:
       repo_url_shorthand: true
-      user: netapp
-      repo: activeiq-mcp-server
+      user: brunseba
+      repo: lab-netapp-activeiq
   - pymdownx.mark
   - pymdownx.smartsymbols
   - pymdownx.superfences:
@@ -180,72 +180,72 @@ markdown_extensions:
 # Navigation
 nav:
   - 🏠 Home:
-    - 📖 Overview: index.md
-    - 🧭 Navigation Guide: navigation.md
-    - 📋 Documentation Summary: README.md
+      - 📖 Overview: index.md
+      - 🧭 Navigation Guide: navigation.md
+      - 📋 Documentation Summary: README.md
 
   - 🚀 Getting Started:
-    - 🔍 System Overview: getting-started/overview.md
-    - ⚡ Quick Setup: getting-started/quick-start.md
-    - 📦 Installation: getting-started/installation.md
-    - ⚙️ Knative Functions Quick Start: getting-started/knative-functions-quickstart.md
+      - 🔍 System Overview: getting-started/overview.md
+      - ⚡ Quick Setup: getting-started/quick-start.md
+      - 📦 Installation: getting-started/installation.md
+      - ⚙️ Knative Functions Quick Start: getting-started/knative-functions-quickstart.md
 
   - 🔌 NetApp ActiveIQ API:
-    - 📄 API Overview: netapp-activeiq-api-overview.md
-    - 🔗 API Endpoints: api-endpoints.md
-    - 📊 Data Models: data-models.md
-    - 📝 API Use Cases: api-use-cases-table.md
+      - 📄 API Overview: netapp-activeiq-api-overview.md
+      - 🔗 API Endpoints: api-endpoints.md
+      - 📊 Data Models: data-models.md
+      - 📝 API Use Cases: api-use-cases-table.md
 
   - 💼 DevOps Use Cases:
-    - 📈 Storage Monitoring: use-cases/storage-monitoring.md
-    - 🏗️ Infrastructure Management: use-cases/infrastructure-management.md
-    - 📊 Performance Analysis: use-cases/performance-analysis.md
-    - 🔔 Event Management: use-cases/event-management.md
-    - 💾 Backup & Recovery: use-cases/backup-recovery.md
-    - 📐 Capacity Planning: use-cases/capacity-planning.md
-    - 🖥️ SVM Management: use-cases/svm-management.md
-    - 💽 Volume Operations: use-cases/volume-operations.md
+      - 📈 Storage Monitoring: use-cases/storage-monitoring.md
+      - 🏗️ Infrastructure Management: use-cases/infrastructure-management.md
+      - 📊 Performance Analysis: use-cases/performance-analysis.md
+      - 🔔 Event Management: use-cases/event-management.md
+      - 💾 Backup & Recovery: use-cases/backup-recovery.md
+      - 📐 Capacity Planning: use-cases/capacity-planning.md
+      - 🖥️ SVM Management: use-cases/svm-management.md
+      - 💽 Volume Operations: use-cases/volume-operations.md
 
   - 💻 Implementation Examples:
-    - 🔰 Basic Examples: examples.md
-    - 🚀 Advanced Workflows: advanced-use-cases.md
-    - 🐍 Python Automation: examples/basic-usage.md
+      - 🔰 Basic Examples: examples.md
+      - 🚀 Advanced Workflows: advanced-use-cases.md
+      - 🐍 Python Automation: examples/basic-usage.md
 
   - 🏛️ Architecture & Design:
-    - 🎯 Target Operating Model: architecture/target-operating-model.md
-    - ⚙️ Knative Function TOM: architecture/knative-function-tom.md
-    - ⚙️ FAAS Function TOM: architecture/faas-function-tom.md
-    - 📐 Technical Documentation: architecture/technical-documentation.md
-    - 🏗️ System Design: architecture/system-design.md
-    - 🔧 Function-Based Architecture: deployment/function-based-architecture.md
+      - 🎯 Target Operating Model: architecture/target-operating-model.md
+      - ⚙️ Knative Function TOM: architecture/knative-function-tom.md
+      - ⚙️ FAAS Function TOM: architecture/faas-function-tom.md
+      - 📐 Technical Documentation: architecture/technical-documentation.md
+      - 🏗️ System Design: architecture/system-design.md
+      - 🔧 Function-Based Architecture: deployment/function-based-architecture.md
 
   - 🚀 Deployment Guides:
-    - 📋 Installation Guide: getting-started/installation.md
-    - ☸️ Knative Deployment: deployment/KNATIVE_DEPLOYMENT.md
-    - ⚡ Knative Functions: deployment/knative-functions-deployment.md
-    - 🏗️ ArgoCD Helm Deployment: deployment/ARGOCD_HELM_DEPLOYMENT.md
-    - ⚙️ Development Setup: DEVELOPMENT.md
+      - 📋 Installation Guide: getting-started/installation.md
+      - ☸️ Knative Deployment: deployment/KNATIVE_DEPLOYMENT.md
+      - ⚡ Knative Functions: deployment/knative-functions-deployment.md
+      - 🏗️ ArgoCD Helm Deployment: deployment/ARGOCD_HELM_DEPLOYMENT.md
+      - ⚙️ Development Setup: DEVELOPMENT.md
 
   - ⏱️ Temporal Workflows:
-    - 🔄 Workflow Integration: temporal-integration.md
-    - 🛡️ Durable Execution: DEVELOPMENT.md
+      - 🔄 Workflow Integration: temporal-integration.md
+      - 🛡️ Durable Execution: DEVELOPMENT.md
 
   - 🌐 API Management (APIM):
-    - 📋 API Management Strategy: api-management/api-management-strategy.md
-    - ⚙️ Gravitee.io Configuration: api-management/gravitee-api-definitions.json
-    - 📄 OpenAPI Specification: api-management/openapi-storage-management.yaml
-    - 🚀 Deployment Guide: api-management/gravitee-deployment.yaml
-    - 🔧 MCP Tools Reference: api/mcp-tools.md
-    - 🔌 Optional MCP Integration: MCP_SERVER_README.md
+      - 📋 API Management Strategy: api-management/api-management-strategy.md
+      - ⚙️ Gravitee.io Configuration: api-management/gravitee-api-definitions.json
+      - 📄 OpenAPI Specification: api-management/openapi-storage-management.yaml
+      - 🚀 Deployment Guide: api-management/gravitee-deployment.yaml
+      - 🔧 MCP Tools Reference: api/mcp-tools.md
+      - 🔌 Optional MCP Integration: MCP_SERVER_README.md
 
   - 🤖 Day-2 AI Operations:
-    - 🧠 AI Assistant Integration: advanced-use-cases.md
-    - 📈 Predictive Analytics: use-cases/capacity-planning.md
-    - 🎯 Automated Operations: use-cases/event-management.md
+      - 🧠 AI Assistant Integration: advanced-use-cases.md
+      - 📈 Predictive Analytics: use-cases/capacity-planning.md
+      - 🎯 Automated Operations: use-cases/event-management.md
 
   - 🧪 Testing & Development:
-    - 📊 Mermaid Diagram Test: testing/mermaid-test-page.md
-    - ✅ Mermaid Validation Summary: testing/mermaid-validation-summary.md
+      - 📊 Mermaid Diagram Test: testing/mermaid-test-page.md
+      - ✅ Mermaid Validation Summary: testing/mermaid-validation-summary.md
 
 # Extra configuration
 extra:
@@ -255,21 +255,21 @@ extra:
 
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/netapp/activeiq-mcp-server
+      link: https://github.com/brunseba/lab-netapp-activeiq
       name: GitHub Repository
-    - icon: fontawesome/brands/docker
-      link: https://hub.docker.com/r/netapp/activeiq-mcp-server
-      name: Docker Hub
-    - icon: fontawesome/solid/globe
-      link: https://docs.netapp.com/us-en/active-iq/
-      name: Official NetApp Documentation
-    - icon: material/protocol
-      link: https://modelcontextprotocol.io/
-      name: Model Context Protocol
+    - icon: fontawesome/brands/github-alt
+      link: https://github.com/brunseba/lab-netapp-activeiq/releases
+      name: Releases
+    - icon: fontawesome/solid/calculator
+      link: https://github.com/brunseba/lab-netapp-activeiq/blob/main/idp_workload_estimator_embedded.py
+      name: IDP Workload Estimator Tool
+    - icon: fontawesome/solid/chart-bar
+      link: https://github.com/brunseba/lab-netapp-activeiq/blob/main/README.md
+      name: Documentation
 
   analytics:
     provider: google
-    property: G-XXXXXXXXXX  # Replace with actual GA tracking ID
+    property: G-XXXXXXXXXX # Replace with actual GA tracking ID
     feedback:
       title: Was this page helpful?
       ratings:
@@ -283,22 +283,23 @@ extra:
           data: 0
           note: >
             Thanks for your feedback! Help us improve this page by
-            <a href="https://github.com/netapp/activeiq-api-docs/issues/new/?title=[Feedback]+{title}+-+{url}" target="_blank" rel="noopener">telling us what you found helpful or what could be improved</a>.
+            <a href="https://github.com/brunseba/lab-netapp-activeiq/issues/new/?title=[Feedback]+{title}+-+{url}" target="_blank" rel="noopener">telling us what you found helpful or what could be improved</a>.
 
   tags:
-    MCP: mcp
-    Protocol: protocol
+    IDP: idp
+    Workload: workload
+    Estimation: estimation
+    Planning: planning
+    DevOps: devops
+    Python: python
+    CLI: cli
+    Excel: excel
+    Reporting: reporting
+    Analysis: analysis
     NetApp: netapp
     ActiveIQ: activeiq
-    Server: server
-    API: api
-    Python: python
-    Automation: automation
-    Storage: storage
-    AI: ai
-    Temporal: temporal
-    Docker: docker
-    Kubernetes: kubernetes
+    Lab: lab
+    Tool: tool
 
 # Validation
 validation:
