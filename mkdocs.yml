@@ -180,6 +180,7 @@ nav:
           - 🔍 Searching by Metadata: use-cases/netapp-api/search_object_by_metadata.md
           - 📸 Creating Snapshot Policy: use-cases/netapp-api/create_snapshot_policy.md
           - 📸 Applying Snapshot Policy: use-cases/netapp-api/apply_snapshot_policy_to_volume.md
+          - 📸 List Available Snapshots: use-cases/netapp-api/list_available_snapshots.md
       - 🔧 MCP Tools:
           - 📖 Overview: use-cases/mcp-tools/overview.md
           - 💾 Backup & Recovery: use-cases/mcp-tools/backup-recovery.md

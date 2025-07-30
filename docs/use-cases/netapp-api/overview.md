@@ -27,6 +27,7 @@ NetApp API use cases provide structured approaches to:
 | ------------------------------------------------------------------------- | ------------------------------------------- | --------------------------------------------------- |
 | [**Create Snapshot Policy**](create_snapshot_policy.md)                   | Create automated snapshot policies          | Schedule configuration, retention rules, automation |
 | [**Apply Snapshot Policy to Volume**](apply_snapshot_policy_to_volume.md) | Apply existing snapshot policies to volumes | Policy assignment, volume protection, automation    |
+| [**List Available Snapshots**](list_available_snapshots.md)               | Retrieve list of snapshots for a volume    | Snapshot discovery, filtering, pagination, monitoring |
 
 ### 🗑️ Resource Management
 
