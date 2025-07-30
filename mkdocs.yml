@@ -1,5 +1,5 @@
-site_name: IDP Workload Estimation Tool - Lab NetApp ActiveIQ
-site_description: Comprehensive IDP (Internal Developer Platform) workload estimation tool with role-based analysis and multi-phase planning capabilities
+site_name: Lab NetApp ActiveIQ
+site_description: "NetApp Active IQ : Workflow creation"
 site_author: brunseba
 site_url: https://brunseba.github.io/lab-netapp-activeiq/
 
@@ -9,7 +9,7 @@ repo_url: https://github.com/brunseba/lab-netapp-activeiq
 edit_uri: edit/main/docs/
 
 # Copyright
-copyright: Copyright &copy; 2024 IDP Workload Estimation Tool - Lab NetApp ActiveIQ
+copyright: Copyright &copy; 2024 - Lab NetApp ActiveIQ
 
 # Configuration
 theme:
@@ -205,6 +205,18 @@ nav:
       - 📐 Capacity Planning: use-cases/capacity-planning.md
       - 🖥️ SVM Management: use-cases/svm-management.md
       - 💽 Volume Operations: use-cases/volume-operations.md
+
+  - 🏷️ Metadata & Tagging:
+      - 📋 Use Cases Overview: use-cases/netapp_api_use_cases_overview.md
+      - 📝 Provisioning NFS File Share: use-cases/provision_nfs_fileshare.md
+      - 🗑️ Decommissioning File Share: use-cases/decommission_fileshare.md
+      - 📈 Expanding a LUN: use-cases/expand_lun.md
+      - 📊 Monitoring Cluster Performance: use-cases/monitor_cluster_performance.md
+      - 🏷️ Annotating Events: use-cases/annotate_event.md
+      - 🏗️ Volume Name Tagging: use-cases/tag_volume_with_nametag.md
+      - 🖥️ SVM Event Annotation: use-cases/tag_svm_with_event_annotation.md
+      - 📎 Generic Metadata Attachment: use-cases/attach_metadata_to_object.md
+      - 🔍 Searching by Metadata: use-cases/search_object_by_metadata.md
 
   - 💻 Implementation Examples:
       - 🔰 Basic Examples: examples.md
