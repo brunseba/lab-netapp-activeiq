@@ -21,6 +21,13 @@ NetApp API use cases provide structured approaches to:
 | [**Provision NFS File Share**](provision_nfs_fileshare.md) | Create and configure NFS file shares | NFS setup, export policies, permissions |
 | [**Expand a LUN**](expand_lun.md)                          | Increase LUN capacity                | Capacity expansion, space allocation    |
 
+### 📸 Snapshot Management
+
+| Use Case                                                                  | Description                                 | Key Features                                        |
+| ------------------------------------------------------------------------- | ------------------------------------------- | --------------------------------------------------- |
+| [**Create Snapshot Policy**](create_snapshot_policy.md)                   | Create automated snapshot policies          | Schedule configuration, retention rules, automation |
+| [**Apply Snapshot Policy to Volume**](apply_snapshot_policy_to_volume.md) | Apply existing snapshot policies to volumes | Policy assignment, volume protection, automation    |
+
 ### 🗑️ Resource Management
 
 | Use Case                                                 | Description               | Key Features                          |
