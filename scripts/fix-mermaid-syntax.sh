@@ -17,10 +17,10 @@ count=0
 # Find and fix encoded arrows in all markdown files
 find "$DOCS_DIR" -name "*.md" -exec grep -l "mermaid" {} \; | while read -r file; do
     echo "🔍 Processing: $file"
-    
+
     # Create backup
     cp "$file" "$file.bak"
-    
+
     # Use sed for more reliable regex replacement within mermaid blocks
     awk '
         /^```mermaid$/ { in_mermaid = 1; print; next }
@@ -44,7 +44,7 @@ find "$DOCS_DIR" -name "*.md" -exec grep -l "mermaid" {} \; | while read -r file
         }
         { print }
     ' "$file.bak" > "$file"
-    
+
     # Check if changes were made
     if ! cmp -s "$file" "$file.bak"; then
         echo "✅ Fixed: $file"
@@ -52,7 +52,7 @@ find "$DOCS_DIR" -name "*.md" -exec grep -l "mermaid" {} \; | while read -r file
     else
         echo "ℹ️  No changes: $file"
     fi
-    
+
     # Remove backup
     rm "$file.bak"
 done
