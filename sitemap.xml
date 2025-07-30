@@ -125,75 +125,83 @@
          <lastmod>2025-07-30</lastmod>
     </url>
     <url>
-         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/annotate_event/</loc>
-         <lastmod>2025-07-30</lastmod>
-    </url>
-    <url>
-         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/attach_metadata_to_object/</loc>
-         <lastmod>2025-07-30</lastmod>
-    </url>
-    <url>
-         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/backup-recovery/</loc>
-         <lastmod>2025-07-30</lastmod>
-    </url>
-    <url>
-         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/capacity-planning/</loc>
-         <lastmod>2025-07-30</lastmod>
-    </url>
-    <url>
-         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/decommission_fileshare/</loc>
-         <lastmod>2025-07-30</lastmod>
-    </url>
-    <url>
-         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/event-management/</loc>
-         <lastmod>2025-07-30</lastmod>
-    </url>
-    <url>
-         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/expand_lun/</loc>
-         <lastmod>2025-07-30</lastmod>
-    </url>
-    <url>
-         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/infrastructure-management/</loc>
-         <lastmod>2025-07-30</lastmod>
-    </url>
-    <url>
-         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/monitor_cluster_performance/</loc>
-         <lastmod>2025-07-30</lastmod>
-    </url>
-    <url>
          <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/netapp_api_use_cases_overview/</loc>
          <lastmod>2025-07-30</lastmod>
     </url>
     <url>
-         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/performance-analysis/</loc>
+         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/mcp-tools/annotate_event/</loc>
          <lastmod>2025-07-30</lastmod>
     </url>
     <url>
-         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/provision_nfs_fileshare/</loc>
+         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/mcp-tools/attach_metadata_to_object/</loc>
          <lastmod>2025-07-30</lastmod>
     </url>
     <url>
-         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/search_object_by_metadata/</loc>
+         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/mcp-tools/overview/</loc>
          <lastmod>2025-07-30</lastmod>
     </url>
     <url>
-         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/storage-monitoring/</loc>
+         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/mcp-tools/search_object_by_metadata/</loc>
          <lastmod>2025-07-30</lastmod>
     </url>
     <url>
-         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/svm-management/</loc>
+         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/mcp-tools/tag_svm_with_event_annotation/</loc>
          <lastmod>2025-07-30</lastmod>
     </url>
     <url>
-         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/tag_svm_with_event_annotation/</loc>
+         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/mcp-tools/tag_volume_with_nametag/</loc>
          <lastmod>2025-07-30</lastmod>
     </url>
     <url>
-         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/tag_volume_with_nametag/</loc>
+         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/netapp-api/backup-recovery/</loc>
          <lastmod>2025-07-30</lastmod>
     </url>
     <url>
-         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/volume-operations/</loc>
+         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/netapp-api/capacity-planning/</loc>
+         <lastmod>2025-07-30</lastmod>
+    </url>
+    <url>
+         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/netapp-api/decommission_fileshare/</loc>
+         <lastmod>2025-07-30</lastmod>
+    </url>
+    <url>
+         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/netapp-api/event-management/</loc>
+         <lastmod>2025-07-30</lastmod>
+    </url>
+    <url>
+         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/netapp-api/expand_lun/</loc>
+         <lastmod>2025-07-30</lastmod>
+    </url>
+    <url>
+         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/netapp-api/infrastructure-management/</loc>
+         <lastmod>2025-07-30</lastmod>
+    </url>
+    <url>
+         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/netapp-api/monitor_cluster_performance/</loc>
+         <lastmod>2025-07-30</lastmod>
+    </url>
+    <url>
+         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/netapp-api/overview/</loc>
+         <lastmod>2025-07-30</lastmod>
+    </url>
+    <url>
+         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/netapp-api/performance-analysis/</loc>
+         <lastmod>2025-07-30</lastmod>
+    </url>
+    <url>
+         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/netapp-api/provision_nfs_fileshare/</loc>
+         <lastmod>2025-07-30</lastmod>
+    </url>
+    <url>
+         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/netapp-api/storage-monitoring/</loc>
+         <lastmod>2025-07-30</lastmod>
+    </url>
+    <url>
+         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/netapp-api/svm-management/</loc>
+         <lastmod>2025-07-30</lastmod>
+    </url>
+    <url>
+         <loc>https://brunseba.github.io/lab-netapp-activeiq/use-cases/netapp-api/volume-operations/</loc>
          <lastmod>2025-07-30</lastmod>
     </url>
 </urlset>
