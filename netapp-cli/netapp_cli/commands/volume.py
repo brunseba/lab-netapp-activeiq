@@ -81,11 +81,23 @@ def list_volumes(ctx, svm, name, max_records):
 @volume.command()
 @click.argument("volume_name")
 @click.option("--svm", help="SVM name")
+@click.option("--skip-naming-validation", is_flag=True, help="Skip naming convention validation")
 @click.pass_context
-def show(ctx, volume_name, svm):
+def show(ctx, volume_name, svm, skip_naming_validation):
     """Show detailed information about a specific volume."""
     formatter = OutputFormatter(ctx.obj["output_format"], ctx.obj["verbose"])
     config = ctx.obj["config"]
+
+    # Validate naming convention unless explicitly skipped
+    if not skip_naming_validation and config.get("naming_convention", {}).get("enabled", True):
+        from netapp_cli.utils.naming import NamingConvention, NamingConventionError
+        try:
+            NamingConvention.validate(volume_name, "vol")
+            formatter.info(f"✓ Volume name '{volume_name}' follows naming convention")
+        except NamingConventionError as e:
+            formatter.warning(f"Naming convention violation: {e}")
+            if not click.confirm("Continue anyway?"):
+                raise click.Abort()
 
     if not config.is_configured():
         formatter.error("No NetApp configuration found. Run 'netapp auth configure' first.")
