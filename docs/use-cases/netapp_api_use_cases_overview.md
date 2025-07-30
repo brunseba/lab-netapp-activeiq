@@ -6,19 +6,37 @@ This document provides an overview of the use cases for NetApp ActiveIQ automati
 
 The use cases have been reorganized into two main categories:
 
-### 🔧 [MCP Tools Use Cases](mcp-tools/overview.md)
-**Model Context Protocol Integration** - Specialized use cases for metadata management:
-- **Event annotation** and tagging workflows
-- **Metadata attachment** to storage objects
-- **Search and discovery** by custom metadata
-- **Resource organization** and categorization
-
 ### 🌐 [NetApp API Use Cases](netapp-api/overview.md)
+
 **Standard Storage Operations** - Core NetApp ActiveIQ API functionality:
-- **Storage provisioning** and management
+
+- **Storage provisioning** and management (NFS file shares, LUN expansion)
+
+- **Resource management** (decommissioning, cleanup procedures)
+
 - **Performance monitoring** and analytics
+
+- **Tagging & annotation** workflows (event annotation, SVM tagging, volume name tags)
+
+- **Metadata management** (generic metadata attachment, search by metadata)
+
 - **Infrastructure operations** and maintenance
-- **Backup and recovery** procedures
+
+### 🔧 [MCP Tools Use Cases](mcp-tools/overview.md)
+
+**Model Context Protocol Integration** - Advanced DevOps workflows with MCP enhancement:
+
+- **Backup & Recovery** with MCP-enhanced context and AI-assisted recovery
+
+- **Capacity Planning** with AI forecasting and automated scaling
+
+- **Event Management** with intelligent correlation and automated workflows
+
+- **Performance Analysis** with AI-powered insights and predictive analytics
+
+- **SVM Management** with automated provisioning and AI optimization
+
+- **Volume Operations** with intelligent monitoring and automated optimization
 
 ## Authentication
 
@@ -83,7 +101,7 @@ All NetApp ActiveIQ API requests require **HTTP Basic Authentication**. Each aut
 
 **Common Errors**: Cluster not found, invalid time intervals, metrics unavailable, rate limiting.
 
-### 5. [Annotating an Event](mcp-tools/annotate_event.md)
+### 5. [Annotating an Event](netapp-api/annotate_event.md)
 
 **Objective**: Add metadata annotations to events for enhanced tracking, categorization, and automation workflows.
 
@@ -96,7 +114,7 @@ All NetApp ActiveIQ API requests require **HTTP Basic Authentication**. Each aut
 
 **Common Errors**: Event not found, invalid annotation format, permission issues, concurrent modification conflicts.
 
-### 6. [Tagging a Volume with `name_tag`](mcp-tools/tag_volume_with_nametag.md)
+### 6. [Tagging a Volume with `name_tag`](netapp-api/tag_volume_with_nametag.md)
 
 **Objective**: Use `name_tag` to create consistently named volumes during LUN creation for better organization and searchability.
 
@@ -109,7 +127,7 @@ All NetApp ActiveIQ API requests require **HTTP Basic Authentication**. Each aut
 
 **Common Errors**: Invalid name_tag format, volume name conflicts, insufficient space, SVM not found, job failures.
 
-### 7. [Tagging an SVM via Event Annotation](mcp-tools/tag_svm_with_event_annotation.md)
+### 7. [Tagging an SVM via Event Annotation](netapp-api/tag_svm_with_event_annotation.md)
 
 **Objective**: Add custom metadata tags to SVMs by creating associated events with annotations, enabling SVM categorization and management.
 
@@ -123,7 +141,7 @@ All NetApp ActiveIQ API requests require **HTTP Basic Authentication**. Each aut
 
 **Common Errors**: SVM not found, invalid event payload, job failures, annotation format issues.
 
-### 8. [Attaching Metadata to any Object](mcp-tools/attach_metadata_to_object.md)
+### 8. [Attaching Metadata to any Object](netapp-api/attach_metadata_to_object.md)
 
 **Objective**: Provide a universal mechanism for attaching custom metadata to any object within ActiveIQ Unified Manager using the console's event annotation capabilities.
 
@@ -136,7 +154,7 @@ All NetApp ActiveIQ API requests require **HTTP Basic Authentication**. Each aut
 
 **Common Errors**: Object not found, invalid metadata format, permission denied, job failures.
 
-### 9. [Searching for Objects by Metadata](mcp-tools/search_object_by_metadata.md)
+### 9. [Searching for Objects by Metadata](netapp-api/search_object_by_metadata.md)
 
 **Objective**: Enable powerful search capabilities to find objects based on their attached metadata tags, supporting both API-based automation and console-based user interfaces.
 

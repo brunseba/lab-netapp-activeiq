@@ -507,12 +507,14 @@ recovery_test_scenarios:
 ### Common Backup Issues
 
 1. **Backup Failures**
+
    - Check storage space availability
    - Verify network connectivity
    - Review SnapMirror relationships
    - Analyze error logs and messages
 
 2. **Slow Backup Performance**
+
    - Optimize backup schedules
    - Review network bandwidth
    - Check storage performance

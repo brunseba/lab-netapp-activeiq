@@ -5,6 +5,7 @@ This section contains use cases for **standard NetApp ActiveIQ API operations**.
 ## 🎯 Purpose
 
 NetApp API use cases provide structured approaches to:
+
 - **Manage storage resources** (volumes, LUNs, file shares)
 - **Monitor performance** and capacity metrics
 - **Automate provisioning** and decommissioning
@@ -15,56 +16,63 @@ NetApp API use cases provide structured approaches to:
 
 ### 💾 Storage Provisioning
 
-| Use Case | Description | Key Features |
-|----------|-------------|--------------|
+| Use Case                                                   | Description                          | Key Features                            |
+| ---------------------------------------------------------- | ------------------------------------ | --------------------------------------- |
 | [**Provision NFS File Share**](provision_nfs_fileshare.md) | Create and configure NFS file shares | NFS setup, export policies, permissions |
-| [**Expand a LUN**](expand_lun.md) | Increase LUN capacity | Capacity expansion, space allocation |
+| [**Expand a LUN**](expand_lun.md)                          | Increase LUN capacity                | Capacity expansion, space allocation    |
 
 ### 🗑️ Resource Management
 
-| Use Case | Description | Key Features |
-|----------|-------------|--------------|
+| Use Case                                                 | Description               | Key Features                          |
+| -------------------------------------------------------- | ------------------------- | ------------------------------------- |
 | [**Decommission File Share**](decommission_fileshare.md) | Safely remove file shares | Cleanup procedures, dependency checks |
-| [**SVM Management**](svm-management.md) | Storage Virtual Machine operations | SVM lifecycle, configuration management |
-| [**Volume Operations**](volume-operations.md) | Volume creation, modification, deletion | Volume management, space optimization |
 
 ### 📊 Monitoring & Analytics
 
-| Use Case | Description | Key Features |
-|----------|-------------|--------------|
+| Use Case                                                          | Description                      | Key Features                     |
+| ----------------------------------------------------------------- | -------------------------------- | -------------------------------- |
 | [**Monitor Cluster Performance**](monitor_cluster_performance.md) | Track cluster metrics and health | Performance monitoring, alerting |
-| [**Performance Analysis**](performance-analysis.md) | Analyze storage performance patterns | Trend analysis, bottleneck identification |
-| [**Storage Monitoring**](storage-monitoring.md) | Monitor storage utilization and health | Capacity tracking, health checks |
-| [**Capacity Planning**](capacity-planning.md) | Plan for future storage needs | Growth analysis, forecasting |
 
-### 🔔 Event & Alert Management
+### 🏷️ Tagging & Annotation
 
-| Use Case | Description | Key Features |
-|----------|-------------|--------------|
-| [**Event Management**](event-management.md) | Handle system events and alerts | Event processing, notification workflows |
+| Use Case                                                     | Description                                  | Key Features                         |
+| ------------------------------------------------------------ | -------------------------------------------- | ------------------------------------ |
+| [**Annotating an Event**](annotate_event.md)                 | Add or update annotations on existing events | Event modification, metadata updates |
+| [**SVM Event Annotation**](tag_svm_with_event_annotation.md) | Tag SVMs by creating annotated events        | SVM identification, custom tagging   |
+| [**Volume Name Tagging**](tag_volume_with_nametag.md)        | Use name tags for consistent volume naming   | Naming conventions, volume creation  |
+
+### 📎 Metadata Management
+
+| Use Case                                                        | Description                            | Key Features                             |
+| --------------------------------------------------------------- | -------------------------------------- | ---------------------------------------- |
+| [**Generic Metadata Attachment**](attach_metadata_to_object.md) | Attach metadata to any ActiveIQ object | Universal tagging, object categorization |
+| [**Search by Metadata**](search_object_by_metadata.md)          | Find objects using metadata queries    | Advanced filtering, bulk operations      |
 
 ### 🏗️ Infrastructure Operations
 
-| Use Case | Description | Key Features |
-|----------|-------------|--------------|
-| [**Infrastructure Management**](infrastructure-management.md) | Manage infrastructure components | Hardware monitoring, system maintenance |
-| [**Backup & Recovery**](backup-recovery.md) | Implement backup and recovery procedures | Data protection, disaster recovery |
+| Use Case                                                               | Description                            | Key Features                            |
+| ---------------------------------------------------------------------- | -------------------------------------- | --------------------------------------- |
+| [**Infrastructure Management**](../other/infrastructure-management.md) | Manage infrastructure components       | Hardware monitoring, system maintenance |
+| [**Storage Monitoring**](../other/storage-monitoring.md)               | Monitor storage utilization and health | Capacity tracking, health checks        |
 
 ## 🔧 Common API Integration Patterns
 
 ### 1. CRUD Operations
+
 - **Create**: Provision new storage resources
 - **Read**: Retrieve configuration and status information
 - **Update**: Modify existing resource settings
 - **Delete**: Safely decommission resources
 
 ### 2. Monitoring Workflows
+
 - Collect performance metrics
 - Analyze trends and patterns
 - Generate alerts and notifications
 - Create reports and dashboards
 
 ### 3. Automation Sequences
+
 - Multi-step provisioning workflows
 - Automated scaling operations
 - Scheduled maintenance tasks
@@ -89,6 +97,7 @@ graph TD
 ## 📈 Performance Metrics Examples
 
 ### Cluster Performance
+
 ```json
 {
   "cluster_utilization": "75%",
@@ -101,6 +110,7 @@ graph TD
 ```
 
 ### Volume Analytics
+
 ```json
 {
   "volume_size_gb": 1024,
@@ -124,16 +134,19 @@ graph TD
 ## 📋 Common Error Scenarios
 
 ### Authentication Issues
+
 - Invalid credentials (401 Unauthorized)
 - Insufficient permissions (403 Forbidden)
 - Token expiration
 
 ### Resource Conflicts
+
 - Naming conflicts (409 Conflict)
 - Resource not found (404 Not Found)
 - Capacity constraints (400 Bad Request)
 
 ### Network Issues
+
 - Connection timeouts
 - Service unavailable (503)
 - Rate limiting (429 Too Many Requests)
@@ -149,24 +162,28 @@ graph TD
 ## 📝 Best Practices
 
 ### Security
+
 - Use HTTPS for all API communications
 - Implement proper authentication and authorization
 - Rotate API credentials regularly
 - Follow principle of least privilege
 
 ### Performance
+
 - Implement connection pooling
 - Use appropriate timeout values
 - Handle rate limiting gracefully
 - Cache frequently accessed data
 
 ### Reliability
+
 - Implement retry logic with exponential backoff
 - Validate inputs before making API calls
 - Monitor API health and availability
 - Maintain audit logs for all operations
 
 ### Monitoring
+
 - Track API response times
 - Monitor error rates and types
 - Set up alerts for critical failures

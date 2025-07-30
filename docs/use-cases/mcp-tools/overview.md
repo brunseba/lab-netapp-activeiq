@@ -5,6 +5,7 @@ This section contains use cases specifically designed for **Model Context Protoc
 ## 🎯 Purpose
 
 MCP tools provide a structured way to:
+
 - **Tag and categorize** storage objects (SVMs, volumes, LUNs)
 - **Attach custom metadata** for organizational purposes
 - **Search and filter** resources based on annotations
@@ -13,34 +14,33 @@ MCP tools provide a structured way to:
 
 ## 📚 Available Use Cases
 
-### 🏷️ Tagging & Annotation
+### 🔧 DevOps Workflows with MCP Integration
 
-| Use Case | Description | Key Features |
-|----------|-------------|--------------|
-| [**Annotating an Event**](annotate_event.md) | Add or update annotations on existing events | Event modification, metadata updates |
-| [**SVM Event Annotation**](tag_svm_with_event_annotation.md) | Tag SVMs by creating annotated events | SVM identification, custom tagging |
-| [**Volume Name Tagging**](tag_volume_with_nametag.md) | Use name tags for consistent volume naming | Naming conventions, volume creation |
-
-### 📎 Metadata Management
-
-| Use Case | Description | Key Features |
-|----------|-------------|--------------|
-| [**Generic Metadata Attachment**](attach_metadata_to_object.md) | Attach metadata to any ActiveIQ object | Universal tagging, object categorization |
-| [**Search by Metadata**](search_object_by_metadata.md) | Find objects using metadata queries | Advanced filtering, bulk operations |
+| Use Case                                            | Description                                       | Key Features                                   |
+| --------------------------------------------------- | ------------------------------------------------- | ---------------------------------------------- |
+| [**Backup & Recovery**](backup-recovery.md)         | Automated backup and recovery operations          | MCP-enhanced context, AI-assisted recovery     |
+| [**Capacity Planning**](capacity-planning.md)       | Predictive storage capacity management            | AI forecasting, automated scaling              |
+| [**Event Management**](event-management.md)         | Intelligent event processing and response         | AI correlation, automated workflows            |
+| [**Performance Analysis**](performance-analysis.md) | Real-time performance monitoring and optimization | AI-powered insights, predictive analytics      |
+| [**SVM Management**](svm-management.md)             | Comprehensive Storage Virtual Machine lifecycle   | Automated provisioning, AI optimization        |
+| [**Volume Operations**](volume-operations.md)       | Advanced volume lifecycle management              | Intelligent monitoring, automated optimization |
 
 ## 🔧 Common MCP Integration Patterns
 
 ### 1. Event-Based Metadata
+
 - Create events with custom annotations
 - Associate events with storage objects
 - Use event annotations as metadata containers
 
 ### 2. Search and Discovery
+
 - Query events by annotation content
 - Filter objects by multiple metadata criteria
 - Aggregate results for reporting
 
 ### 3. Automation Workflows
+
 - Implement tagging standards
 - Automate compliance checking
 - Enable resource lifecycle management
@@ -63,6 +63,7 @@ graph TD
 ## 🎨 Metadata Schema Examples
 
 ### Project-Based Tagging
+
 ```json
 {
   "project": "quarterly-reporting",
@@ -73,6 +74,7 @@ graph TD
 ```
 
 ### Compliance Tagging
+
 ```json
 {
   "compliance": "sox",
@@ -83,6 +85,7 @@ graph TD
 ```
 
 ### Team-Based Organization
+
 ```json
 {
   "team": "storage-admins",

@@ -522,12 +522,14 @@ class ProtocolPerformanceMonitor:
 ### Common SVM Issues
 
 1. **Performance Degradation**
+
    - Check resource utilization (CPU, memory, network)
    - Analyze protocol-specific metrics
    - Review client connection patterns
    - Investigate storage backend performance
 
 2. **Connectivity Issues**
+
    - Verify network configuration
    - Check firewall rules and security policies
    - Validate DNS resolution

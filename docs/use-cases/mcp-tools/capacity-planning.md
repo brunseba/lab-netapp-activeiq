@@ -532,12 +532,14 @@ cost_optimization_metrics:
 ### Common Capacity Issues
 
 1. **Rapid Capacity Consumption**
+
    - Investigate unexpected data growth
    - Check for data duplication opportunities
    - Review application behavior changes
    - Analyze user access patterns
 
 2. **Inefficient Space Utilization**
+
    - Optimize thin provisioning settings
    - Implement or tune deduplication
    - Review compression configurations

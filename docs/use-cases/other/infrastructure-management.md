@@ -9,24 +9,28 @@ NetApp infrastructure management encompasses the complete lifecycle of storage s
 ## Core Management Capabilities
 
 ### 🏗️ **Cluster Management**
+
 - **Cluster discovery and onboarding** of new NetApp systems
 - **Health monitoring and maintenance** of cluster operations
 - **Version management and upgrade planning**
 - **Node configuration and optimization**
 
 ### 🖥️ **Storage Virtual Machine (SVM) Management**
+
 - **SVM creation and configuration** for multi-tenant environments
 - **Protocol configuration** (NFS, CIFS, iSCSI, FC)
 - **Network interface management** and optimization
 - **Security and access control** configuration
 
 ### 📁 **Volume and Storage Management**
+
 - **Volume provisioning and lifecycle management**
 - **Storage efficiency optimization** (deduplication, compression)
 - **Snapshot and backup management**
 - **Quality of Service (QoS) configuration**
 
 ### 🔗 **Network and Connectivity**
+
 - **Network interface configuration**
 - **Inter-cluster networking setup**
 - **Protocol optimization and tuning**
@@ -35,6 +39,7 @@ NetApp infrastructure management encompasses the complete lifecycle of storage s
 ## Natural Language Management Commands
 
 ### Cluster Operations
+
 ```
 "Add a new cluster to monitoring"
 "Show me the version status of all clusters"
@@ -44,6 +49,7 @@ NetApp infrastructure management encompasses the complete lifecycle of storage s
 ```
 
 ### SVM Management
+
 ```
 "Create a new SVM for the development team"
 "Enable NFS protocol on the marketing SVM"
@@ -53,6 +59,7 @@ NetApp infrastructure management encompasses the complete lifecycle of storage s
 ```
 
 ### Storage Provisioning
+
 ```
 "Create a 500GB volume for the database team"
 "Set up a new file share for project documents"
@@ -62,6 +69,7 @@ NetApp infrastructure management encompasses the complete lifecycle of storage s
 ```
 
 ### Network Configuration
+
 ```
 "Configure a new data LIF for NFS access"
 "Show me all network interfaces and their status"
@@ -77,6 +85,7 @@ NetApp infrastructure management encompasses the complete lifecycle of storage s
 **Scenario**: Setting up storage for a new business unit
 
 **Process**:
+
 1. **Cluster Assessment**: Validate cluster capacity and health
 2. **SVM Creation**: Create dedicated SVM with appropriate protocols
 3. **Network Configuration**: Set up data and management LIFs
@@ -85,6 +94,7 @@ NetApp infrastructure management encompasses the complete lifecycle of storage s
 6. **Monitoring Setup**: Configure alerts and monitoring
 
 **Natural Language Flow**:
+
 ```
 "I need to set up storage for the new finance department"
 → "Check available capacity on our clusters"
@@ -99,6 +109,7 @@ NetApp infrastructure management encompasses the complete lifecycle of storage s
 **Scenario**: Expanding storage capacity for growing data requirements
 
 **Process**:
+
 1. **Capacity Analysis**: Assess current utilization and growth trends
 2. **Resource Planning**: Identify optimal expansion strategy
 3. **Hardware Planning**: Determine disk additions or new aggregates
@@ -110,6 +121,7 @@ NetApp infrastructure management encompasses the complete lifecycle of storage s
 **Scenario**: Optimizing storage performance for critical workloads
 
 **Process**:
+
 1. **Performance Assessment**: Analyze current performance metrics
 2. **Bottleneck Identification**: Find performance constraints
 3. **Optimization Planning**: Design performance improvements
@@ -121,6 +133,7 @@ NetApp infrastructure management encompasses the complete lifecycle of storage s
 **Scenario**: Implementing disaster recovery and data protection
 
 **Process**:
+
 1. **DR Planning**: Design disaster recovery strategy
 2. **Replication Setup**: Configure SnapMirror relationships
 3. **Network Configuration**: Set up inter-site connectivity
@@ -207,6 +220,7 @@ def provision_storage_for_team(team_name, requirements):
 ### Standard SVM Configurations
 
 #### Development Environment
+
 ```yaml
 svm_template_dev:
   protocols: [nfs, cifs]
@@ -224,6 +238,7 @@ network_config:
 ```
 
 #### Production Environment
+
 ```yaml
 svm_template_prod:
   protocols: [nfs, cifs, iscsi]
@@ -245,6 +260,7 @@ network_config:
 ### Volume Provisioning Standards
 
 #### Database Volumes
+
 ```yaml
 database_volume_template:
   size: 1TB
@@ -257,6 +273,7 @@ database_volume_template:
 ```
 
 #### File Share Volumes
+
 ```yaml
 fileshare_volume_template:
   size: 500GB
@@ -271,18 +288,21 @@ fileshare_volume_template:
 ## Change Management and Compliance
 
 ### Configuration Management
+
 - **Version Control**: Track all configuration changes
 - **Approval Workflows**: Require approval for production changes
 - **Rollback Procedures**: Quick rollback for failed changes
 - **Audit Trails**: Complete change history and compliance
 
 ### Compliance Monitoring
+
 - **Security Policies**: Enforce security configuration standards
 - **Best Practices**: Validate against NetApp best practices
 - **Regulatory Requirements**: Meet industry compliance standards
 - **Documentation**: Maintain configuration documentation
 
 ### Change Approval Process
+
 1. **Change Request**: Submit change through approved process
 2. **Impact Assessment**: Analyze potential impact and risks
 3. **Approval**: Get required approvals from stakeholders
@@ -293,18 +313,21 @@ fileshare_volume_template:
 ## Infrastructure Optimization
 
 ### Performance Optimization
+
 - **Workload Analysis**: Understand application requirements
 - **Resource Allocation**: Optimize CPU, memory, and storage allocation
 - **Network Tuning**: Optimize network configuration for performance
 - **Cache Optimization**: Configure and tune storage caching
 
 ### Capacity Optimization
+
 - **Storage Efficiency**: Maximize deduplication and compression
 - **Thin Provisioning**: Optimize space utilization
 - **Data Tiering**: Move data to appropriate storage tiers
 - **Lifecycle Management**: Automate data lifecycle policies
 
 ### Cost Optimization
+
 - **Resource Utilization**: Identify underutilized resources
 - **Right-sizing**: Match resources to actual requirements
 - **Efficiency Features**: Maximize storage efficiency benefits
@@ -315,6 +338,7 @@ fileshare_volume_template:
 ### Common Infrastructure Issues
 
 #### Connectivity Problems
+
 ```
 "Why can't clients connect to the file server?"
 → Check network interface status
@@ -324,6 +348,7 @@ fileshare_volume_template:
 ```
 
 #### Performance Issues
+
 ```
 "Storage performance is slow, what's wrong?"
 → Analyze volume performance metrics
@@ -333,6 +358,7 @@ fileshare_volume_template:
 ```
 
 #### Capacity Issues
+
 ```
 "We're running out of space, what are our options?"
 → Analyze current capacity utilization
@@ -342,6 +368,7 @@ fileshare_volume_template:
 ```
 
 ### Support Integration
+
 - **NetApp Support**: Automatic case creation for hardware issues
 - **Knowledge Base**: Integration with NetApp knowledge articles
 - **Community Support**: Access to NetApp community resources
@@ -350,6 +377,7 @@ fileshare_volume_template:
 ## Best Practices
 
 ### Infrastructure Design
+
 1. **Plan for Growth**: Design with future capacity and performance needs
 2. **High Availability**: Implement redundancy and failover capabilities
 3. **Security First**: Apply security best practices from the start
@@ -357,6 +385,7 @@ fileshare_volume_template:
 5. **Documentation**: Maintain detailed infrastructure documentation
 
 ### Operational Excellence
+
 1. **Automation**: Automate routine tasks and procedures
 2. **Standardization**: Use consistent configurations and templates
 3. **Change Control**: Implement proper change management processes

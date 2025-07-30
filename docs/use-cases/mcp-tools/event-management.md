@@ -36,18 +36,21 @@ sequenceDiagram
 ## Event Categories
 
 ### 1. Critical Events
+
 - **Hardware Failures**: Disk failures, controller issues, network problems
 - **Data Protection Issues**: Backup failures, replication errors
 - **Security Events**: Unauthorized access attempts, configuration changes
 - **Service Outages**: Complete system unavailability
 
 ### 2. Warning Events
+
 - **Performance Degradation**: High latency, reduced throughput
 - **Capacity Issues**: Low disk space, approaching limits
 - **Configuration Changes**: Unauthorized or risky modifications
 - **Maintenance Windows**: Scheduled maintenance notifications
 
 ### 3. Informational Events
+
 - **System Status Updates**: Normal operation confirmations
 - **Scheduled Tasks**: Backup completions, maintenance tasks
 - **Performance Reports**: Regular performance summaries
@@ -479,12 +482,14 @@ notification_rules:
 ### Common Event Management Issues
 
 1. **Alert Fatigue**
+
    - Review and tune event classification rules
    - Implement intelligent event correlation
    - Use AI-powered noise reduction
    - Optimize notification thresholds
 
 2. **Missed Critical Events**
+
    - Audit event source configurations
    - Review filtering and routing rules
    - Validate notification delivery mechanisms

@@ -33,11 +33,13 @@ sequenceDiagram
 ### Storage Performance Indicators
 
 - **IOPS (Input/Output Operations Per Second)**
+
   - Read IOPS
   - Write IOPS
   - Random vs Sequential patterns
 
 - **Latency Metrics**
+
   - Average response time
   - 95th percentile latency
   - Peak latency periods
@@ -50,11 +52,13 @@ sequenceDiagram
 ### Resource Utilization
 
 - **CPU Usage**
+
   - Controller CPU utilization
   - Node-level CPU metrics
   - Process-specific CPU consumption
 
 - **Memory Utilization**
+
   - Buffer cache efficiency
   - Memory allocation patterns
   - Free memory trends
@@ -251,12 +255,14 @@ class AIPerformanceOptimizer:
 ### Common Performance Issues
 
 1. **High Latency**
+
    - Check network connectivity
    - Analyze disk performance
    - Review cache utilization
    - Examine workload patterns
 
 2. **Low IOPS**
+
    - Verify storage configuration
    - Check for bottlenecks
    - Analyze queue depths

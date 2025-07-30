@@ -167,27 +167,28 @@ nav:
 
   - 📚 Use Cases:
       - 📋 Overview: use-cases/netapp_api_use_cases_overview.md
-      - 🔧 MCP Tools:
-          - 📖 Overview: use-cases/mcp-tools/overview.md
-          - 🏷️ Annotating Events: use-cases/mcp-tools/annotate_event.md
-          - 🏗️ Volume Name Tagging: use-cases/mcp-tools/tag_volume_with_nametag.md
-          - 🖥️ SVM Event Annotation: use-cases/mcp-tools/tag_svm_with_event_annotation.md
-          - 📎 Generic Metadata Attachment: use-cases/mcp-tools/attach_metadata_to_object.md
-          - 🔍 Searching by Metadata: use-cases/mcp-tools/search_object_by_metadata.md
       - 🌐 NetApp API:
           - 📖 Overview: use-cases/netapp-api/overview.md
           - 📝 Provisioning NFS File Share: use-cases/netapp-api/provision_nfs_fileshare.md
           - 🗑️ Decommissioning File Share: use-cases/netapp-api/decommission_fileshare.md
           - 📈 Expanding a LUN: use-cases/netapp-api/expand_lun.md
           - 📊 Monitoring Cluster Performance: use-cases/netapp-api/monitor_cluster_performance.md
-          - 📈 Storage Monitoring: use-cases/netapp-api/storage-monitoring.md
-          - 🏗️ Infrastructure Management: use-cases/netapp-api/infrastructure-management.md
-          - 📊 Performance Analysis: use-cases/netapp-api/performance-analysis.md
-          - 🔔 Event Management: use-cases/netapp-api/event-management.md
-          - 💾 Backup & Recovery: use-cases/netapp-api/backup-recovery.md
-          - 📐 Capacity Planning: use-cases/netapp-api/capacity-planning.md
-          - 🖥️ SVM Management: use-cases/netapp-api/svm-management.md
-          - 💽 Volume Operations: use-cases/netapp-api/volume-operations.md
+          - 🏷️ Annotating Events: use-cases/netapp-api/annotate_event.md
+          - 🏗️ Volume Name Tagging: use-cases/netapp-api/tag_volume_with_nametag.md
+          - 🖥️ SVM Event Annotation: use-cases/netapp-api/tag_svm_with_event_annotation.md
+          - 📎 Generic Metadata Attachment: use-cases/netapp-api/attach_metadata_to_object.md
+          - 🔍 Searching by Metadata: use-cases/netapp-api/search_object_by_metadata.md
+      - 🔧 MCP Tools:
+          - 📖 Overview: use-cases/mcp-tools/overview.md
+          - 💾 Backup & Recovery: use-cases/mcp-tools/backup-recovery.md
+          - 📐 Capacity Planning: use-cases/mcp-tools/capacity-planning.md
+          - 🔔 Event Management: use-cases/mcp-tools/event-management.md
+          - 📊 Performance Analysis: use-cases/mcp-tools/performance-analysis.md
+          - 🖥️ SVM Management: use-cases/mcp-tools/svm-management.md
+          - 💽 Volume Operations: use-cases/mcp-tools/volume-operations.md
+      - 🌐 Others:
+          - 📈 Storage Monitoring: use-cases/other/storage-monitoring.md
+          - 🏗️ Infrastructure Management: use-cases/other/infrastructure-management.md
 
   - 💻 Implementation Examples:
       - 🔰 Basic Examples: examples.md
@@ -223,8 +224,8 @@ nav:
 
   - 🤖 Day-2 AI Operations:
       - 🧠 AI Assistant Integration: advanced-use-cases.md
-      - 📈 Predictive Analytics: use-cases/netapp-api/capacity-planning.md
-      - 🎯 Automated Operations: use-cases/netapp-api/event-management.md
+      - 📈 Predictive Analytics: use-cases/mcp-tools/capacity-planning.md
+      - 🎯 Automated Operations: use-cases/mcp-tools/event-management.md
 
   - 🧪 Testing & Development:
       - 📊 Mermaid Diagram Test: testing/mermaid-test-page.md

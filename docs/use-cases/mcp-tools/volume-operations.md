@@ -599,12 +599,14 @@ class VolumeEfficiencyManager:
 ### Common Volume Issues
 
 1. **Performance Problems**
+
    - Check QoS policy limits and utilization
    - Analyze workload patterns and access methods
    - Review aggregate performance and capacity
    - Investigate network and client-side issues
 
 2. **Capacity Issues**
+
    - Monitor volume space utilization and growth
    - Check snapshot space consumption
    - Analyze storage efficiency opportunities
