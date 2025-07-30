@@ -1,0 +1,343 @@
+/* PDF Export Optimized Styles */
+
+/* Print-specific styles */
+@media print {
+  /* Page setup */
+  @page {
+    size: A4;
+    margin: 2cm 1.5cm 2cm 1.5cm;
+
+    @top-left {
+      content: "NetApp ActiveIQ MCP Server";
+      font-size: 10pt;
+      color: #666;
+    }
+
+    @top-right {
+      content: "Page " counter(page);
+      font-size: 10pt;
+      color: #666;
+    }
+
+    @bottom-center {
+      content: "Copyright © 2024 NetApp API Documentation";
+      font-size: 8pt;
+      color: #999;
+    }
+  }
+
+  /* Chapter page breaks */
+  .md-nav__item--section > .md-nav__link {
+    page-break-before: always;
+  }
+
+  /* Prevent page breaks inside important elements */
+  .mermaid,
+  .highlight,
+  .admonition,
+  table,
+  pre {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Hide web-only elements */
+  .md-header,
+  .md-sidebar,
+  .md-footer,
+  .md-nav__button,
+  .md-top {
+    display: none !important;
+  }
+
+  /* Adjust main content for print */
+  .md-main {
+    margin: 0 !important;
+  }
+
+  .md-content {
+    margin: 0 !important;
+    max-width: none !important;
+  }
+}
+
+/* Mermaid diagram optimizations for PDF */
+.mermaid {
+  /* Ensure diagrams are visible and properly sized */
+  max-width: 100% !important;
+  height: auto !important;
+  display: block !important;
+  margin: 1em 0 !important;
+
+  /* Better contrast for print */
+  background-color: transparent !important;
+
+  /* Force text to be black for better readability */
+  color: #000 !important;
+}
+
+/* Mermaid SVG styling */
+.mermaid svg {
+  max-width: 100% !important;
+  height: auto !important;
+  background: transparent !important;
+
+  /* Ensure text is readable in PDF */
+  font-family: "Roboto", "Helvetica Neue", Arial, sans-serif !important;
+  font-size: 12px !important;
+}
+
+/* Force Mermaid text to be dark */
+.mermaid text,
+.mermaid .nodeLabel,
+.mermaid .edgeLabel,
+.mermaid .messageText,
+.mermaid .labelText {
+  fill: #000 !important;
+  color: #000 !important;
+  font-weight: 400 !important;
+}
+
+/* Mermaid node styling for better PDF rendering */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke: #333 !important;
+  stroke-width: 1.5px !important;
+  fill: #f9f9f9 !important;
+}
+
+/* Mermaid edge styling */
+.mermaid .edgePath path {
+  stroke: #333 !important;
+  stroke-width: 1.5px !important;
+}
+
+/* Mermaid arrow styling */
+.mermaid .arrowheadPath {
+  fill: #333 !important;
+  stroke: #333 !important;
+}
+
+/* Table of Contents styling */
+.md-nav {
+  font-size: 0.9rem;
+}
+
+.md-nav__title {
+  font-weight: 700;
+  color: #2196f3;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.md-nav__item {
+  margin: 0.25rem 0;
+}
+
+.md-nav__link {
+  color: #333;
+  text-decoration: none;
+  padding: 0.25rem 0;
+  display: block;
+}
+
+.md-nav__link:hover {
+  color: #2196f3;
+}
+
+/* Code block styling for PDF */
+.highlight {
+  background-color: #f8f8f8 !important;
+  border: 1px solid #e0e0e0 !important;
+  border-radius: 4px !important;
+  padding: 1rem !important;
+  margin: 1rem 0 !important;
+  overflow: visible !important;
+}
+
+.highlight pre {
+  background: transparent !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 0.85rem !important;
+  line-height: 1.4 !important;
+}
+
+.highlight code {
+  background: transparent !important;
+  color: #333 !important;
+  font-family: "Roboto Mono", "Courier New", monospace !important;
+}
+
+/* Admonition styling for PDF */
+.admonition {
+  border-left: 4px solid #2196f3 !important;
+  background-color: #f5f5f5 !important;
+  padding: 1rem !important;
+  margin: 1rem 0 !important;
+  border-radius: 0 4px 4px 0 !important;
+}
+
+.admonition-title {
+  font-weight: 700 !important;
+  color: #2196f3 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* Table styling for PDF */
+table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  margin: 1rem 0 !important;
+  font-size: 0.9rem !important;
+}
+
+table th,
+table td {
+  border: 1px solid #ddd !important;
+  padding: 0.5rem !important;
+  text-align: left !important;
+}
+
+table th {
+  background-color: #f5f5f5 !important;
+  font-weight: 700 !important;
+  color: #333 !important;
+}
+
+table tr:nth-child(even) {
+  background-color: #fafafa !important;
+}
+
+/* Heading styling for PDF */
+h1, h2, h3, h4, h5, h6 {
+  color: #333 !important;
+  margin-top: 2rem !important;
+  margin-bottom: 1rem !important;
+  line-height: 1.2 !important;
+}
+
+h1 {
+  font-size: 2.5rem !important;
+  border-bottom: 2px solid #2196f3 !important;
+  padding-bottom: 0.5rem !important;
+}
+
+h2 {
+  font-size: 2rem !important;
+  color: #2196f3 !important;
+}
+
+h3 {
+  font-size: 1.5rem !important;
+}
+
+h4 {
+  font-size: 1.25rem !important;
+}
+
+/* Link styling for PDF */
+a {
+  color: #2196f3 !important;
+  text-decoration: underline !important;
+}
+
+/* List styling for PDF */
+ul, ol {
+  margin: 1rem 0 !important;
+  padding-left: 2rem !important;
+}
+
+li {
+  margin: 0.5rem 0 !important;
+  line-height: 1.6 !important;
+}
+
+/* Blockquote styling for PDF */
+blockquote {
+  border-left: 4px solid #e0e0e0 !important;
+  padding-left: 1rem !important;
+  margin: 1rem 0 !important;
+  color: #666 !important;
+  font-style: italic !important;
+}
+
+/* Image styling for PDF */
+img {
+  max-width: 100% !important;
+  height: auto !important;
+  display: block !important;
+  margin: 1rem auto !important;
+}
+
+/* Ensure good contrast for all text */
+body, .md-typeset {
+  color: #333 !important;
+  font-family: "Roboto", "Helvetica Neue", Arial, sans-serif !important;
+  line-height: 1.6 !important;
+}
+
+/* Tab content visibility for PDF */
+.tabbed-set {
+  margin: 1rem 0 !important;
+}
+
+.tabbed-content {
+  display: block !important;
+  border: 1px solid #e0e0e0 !important;
+  padding: 1rem !important;
+  background-color: #fafafa !important;
+}
+
+/* Task list styling */
+.task-list-item {
+  list-style: none !important;
+}
+
+.task-list-item input[type="checkbox"] {
+  margin-right: 0.5rem !important;
+}
+
+/* Definition list styling */
+dt {
+  font-weight: 700 !important;
+  color: #2196f3 !important;
+  margin-top: 1rem !important;
+}
+
+dd {
+  margin-left: 2rem !important;
+  margin-bottom: 1rem !important;
+}
+
+/* Footnote styling */
+.footnote {
+  font-size: 0.85rem !important;
+  color: #666 !important;
+  border-top: 1px solid #e0e0e0 !important;
+  padding-top: 1rem !important;
+  margin-top: 2rem !important;
+}
+
+/* Make sure sequence diagrams render properly */
+.mermaid .actor {
+  fill: #f9f9f9 !important;
+  stroke: #333 !important;
+}
+
+.mermaid .actor-line {
+  stroke: #333 !important;
+}
+
+.mermaid .messageLine0,
+.mermaid .messageLine1 {
+  stroke: #333 !important;
+}
+
+.mermaid .note {
+  fill: #ffffcc !important;
+  stroke: #333 !important;
+}

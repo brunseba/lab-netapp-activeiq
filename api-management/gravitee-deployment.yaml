@@ -1,0 +1,736 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: netapp-api-management
+  labels:
+    app.kubernetes.io/name: gravitee
+    app.kubernetes.io/instance: netapp-storage
+    app.kubernetes.io/component: api-management
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gravitee-config
+  namespace: netapp-api-management
+data:
+  gravitee.yml: |
+    ############################################################################################################
+    # Gravitee.io Gateway - Configuration file
+    ############################################################################################################
+
+    # Gateway HTTP server
+    http:
+      port: 8082
+      host: 0.0.0.0
+      idleTimeout: 60000
+      tcpKeepAlive: true
+      compressionSupported: true
+      pool:
+        workers: 4
+
+    # Gateway management configuration
+    management:
+      type: http
+      http:
+        url: http://gravitee-management-api:8083/management/organizations/DEFAULT/environments/DEFAULT/
+        keepAlive: true
+        idleTimeout: 30000
+        connectTimeout: 10000
+        username: admin
+        password: ${GRAVITEE_MANAGEMENT_PASSWORD:admin}
+
+    # Gateway rate limiting configuration
+    ratelimit:
+      type: redis
+      redis:
+        host: ${REDIS_HOST:redis}
+        port: ${REDIS_PORT:6379}
+        password: ${REDIS_PASSWORD:}
+        timeout: 2000
+
+    # Gateway cache configuration
+    cache:
+      type: ehcache
+      ehcache:
+        diskSize: 10g
+        maxElementsInMemory: 1000
+        timeToIdleSeconds: 600
+        timeToLiveSeconds: 600
+
+    # Gateway analytics configuration
+    analytics:
+      type: elasticsearch
+      elasticsearch:
+        endpoints:
+          - http://elasticsearch:9200
+        index: gravitee
+        security:
+          username: ${ELASTICSEARCH_USERNAME:}
+          password: ${ELASTICSEARCH_PASSWORD:}
+
+    # Gateway security configuration
+    security:
+      keystore:
+        type: ${GRAVITEE_SECURITY_KEYSTORE_TYPE:PKCS12}
+        path: ${GRAVITEE_SECURITY_KEYSTORE_PATH:}
+        password: ${GRAVITEE_SECURITY_KEYSTORE_PASSWORD:}
+      truststore:
+        type: ${GRAVITEE_SECURITY_TRUSTSTORE_TYPE:PKCS12}
+        path: ${GRAVITEE_SECURITY_TRUSTSTORE_PATH:}
+        password: ${GRAVITEE_SECURITY_TRUSTSTORE_PASSWORD:}
+
+    # Gateway cluster configuration
+    cluster:
+      hazelcast:
+        config-path: ${GRAVITEE_CLUSTER_HAZELCAST_CONFIG_PATH:${gravitee.home}/config/hazelcast.xml}
+
+    # Gateway handlers configuration
+    handlers:
+      request:
+        transaction:
+          header: X-Gravitee-Transaction-Id
+        request:
+          header: X-Gravitee-Request-Id
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: gravitee-secrets
+  namespace: netapp-api-management
+type: Opaque
+data:
+  mongodb-uri: bW9uZ29kYjovL21vbmdvZGI6MjcwMTcvZ3Jhdml0ZWU=  # mongodb://mongodb:27017/gravitee
+  elasticsearch-password: ""
+  oauth-client-secret: <BASE64_ENCODED_OAUTH_SECRET>
+  jwt-public-key: <BASE64_ENCODED_JWT_PUBLIC_KEY>
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gravitee-gateway
+  namespace: netapp-api-management
+  labels:
+    app.kubernetes.io/name: gravitee-gateway
+    app.kubernetes.io/instance: netapp-storage
+    app.kubernetes.io/component: gateway
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: gravitee-gateway
+      app.kubernetes.io/instance: netapp-storage
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: gravitee-gateway
+        app.kubernetes.io/instance: netapp-storage
+        app.kubernetes.io/component: gateway
+    spec:
+      containers:
+      - name: gravitee-gateway
+        image: graviteeio/apim-gateway:4.1.0
+        ports:
+        - containerPort: 8082
+          name: http
+        env:
+        - name: GRAVITEE_MANAGEMENT_MONGODB_URI
+          valueFrom:
+            secretKeyRef:
+              name: gravitee-secrets
+              key: mongodb-uri
+        - name: GRAVITEE_RATELIMIT_REDIS_HOST
+          value: "redis"
+        - name: GRAVITEE_RATELIMIT_REDIS_PORT
+          value: "6379"
+        - name: GRAVITEE_ANALYTICS_ELASTICSEARCH_ENDPOINTS_0
+          value: "http://elasticsearch:9200"
+        - name: GRAVITEE_MANAGEMENT_PASSWORD
+          value: "admin"
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /_node/health
+            port: 8082
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /_node/health
+            port: 8082
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        volumeMounts:
+        - name: config
+          mountPath: /opt/graviteeio-gateway/config/gravitee.yml
+          subPath: gravitee.yml
+      volumes:
+      - name: config
+        configMap:
+          name: gravitee-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gravitee-gateway
+  namespace: netapp-api-management
+  labels:
+    app.kubernetes.io/name: gravitee-gateway
+    app.kubernetes.io/instance: netapp-storage
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8082
+    targetPort: 8082
+    protocol: TCP
+    name: http
+  selector:
+    app.kubernetes.io/name: gravitee-gateway
+    app.kubernetes.io/instance: netapp-storage
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gravitee-management-api
+  namespace: netapp-api-management
+  labels:
+    app.kubernetes.io/name: gravitee-management-api
+    app.kubernetes.io/instance: netapp-storage
+    app.kubernetes.io/component: management-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: gravitee-management-api
+      app.kubernetes.io/instance: netapp-storage
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: gravitee-management-api
+        app.kubernetes.io/instance: netapp-storage
+        app.kubernetes.io/component: management-api
+    spec:
+      containers:
+      - name: gravitee-management-api
+        image: graviteeio/apim-management-api:4.1.0
+        ports:
+        - containerPort: 8083
+          name: http
+        env:
+        - name: GRAVITEE_MANAGEMENT_MONGODB_URI
+          valueFrom:
+            secretKeyRef:
+              name: gravitee-secrets
+              key: mongodb-uri
+        - name: GRAVITEE_ANALYTICS_ELASTICSEARCH_ENDPOINTS_0
+          value: "http://elasticsearch:9200"
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /management/organizations/DEFAULT/console
+            port: 8083
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /management/organizations/DEFAULT/console
+            port: 8083
+          initialDelaySeconds: 10
+          periodSeconds: 10
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gravitee-management-api
+  namespace: netapp-api-management
+  labels:
+    app.kubernetes.io/name: gravitee-management-api
+    app.kubernetes.io/instance: netapp-storage
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8083
+    targetPort: 8083
+    protocol: TCP
+    name: http
+  selector:
+    app.kubernetes.io/name: gravitee-management-api
+    app.kubernetes.io/instance: netapp-storage
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gravitee-management-ui
+  namespace: netapp-api-management
+  labels:
+    app.kubernetes.io/name: gravitee-management-ui
+    app.kubernetes.io/instance: netapp-storage
+    app.kubernetes.io/component: management-ui
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: gravitee-management-ui
+      app.kubernetes.io/instance: netapp-storage
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: gravitee-management-ui
+        app.kubernetes.io/instance: netapp-storage
+        app.kubernetes.io/component: management-ui
+    spec:
+      containers:
+      - name: gravitee-management-ui
+        image: graviteeio/apim-management-ui:4.1.0
+        ports:
+        - containerPort: 8080
+          name: http
+        env:
+        - name: MGMT_API_URL
+          value: "http://gravitee-management-api:8083/management/organizations/DEFAULT/environments/DEFAULT/"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "200m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gravitee-management-ui
+  namespace: netapp-api-management
+  labels:
+    app.kubernetes.io/name: gravitee-management-ui
+    app.kubernetes.io/instance: netapp-storage
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    targetPort: 8080
+    protocol: TCP
+    name: http
+  selector:
+    app.kubernetes.io/name: gravitee-management-ui
+    app.kubernetes.io/instance: netapp-storage
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gravitee-portal-ui
+  namespace: netapp-api-management
+  labels:
+    app.kubernetes.io/name: gravitee-portal-ui
+    app.kubernetes.io/instance: netapp-storage
+    app.kubernetes.io/component: portal-ui
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: gravitee-portal-ui
+      app.kubernetes.io/instance: netapp-storage
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: gravitee-portal-ui
+        app.kubernetes.io/instance: netapp-storage
+        app.kubernetes.io/component: portal-ui
+    spec:
+      containers:
+      - name: gravitee-portal-ui
+        image: graviteeio/apim-portal-ui:4.1.0
+        ports:
+        - containerPort: 8080
+          name: http
+        env:
+        - name: PORTAL_API_URL
+          value: "http://gravitee-management-api:8083/portal/environments/DEFAULT/"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "200m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gravitee-portal-ui
+  namespace: netapp-api-management
+  labels:
+    app.kubernetes.io/name: gravitee-portal-ui
+    app.kubernetes.io/instance: netapp-storage
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    targetPort: 8080
+    protocol: TCP
+    name: http
+  selector:
+    app.kubernetes.io/name: gravitee-portal-ui
+    app.kubernetes.io/instance: netapp-storage
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb
+  namespace: netapp-api-management
+  labels:
+    app.kubernetes.io/name: mongodb
+    app.kubernetes.io/instance: netapp-storage
+    app.kubernetes.io/component: database
+spec:
+  serviceName: mongodb
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mongodb
+      app.kubernetes.io/instance: netapp-storage
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: mongodb
+        app.kubernetes.io/instance: netapp-storage
+        app.kubernetes.io/component: database
+    spec:
+      containers:
+      - name: mongodb
+        image: mongo:6.0
+        ports:
+        - containerPort: 27017
+          name: mongodb
+        env:
+        - name: MONGO_INITDB_DATABASE
+          value: gravitee
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        volumeMounts:
+        - name: mongodb-storage
+          mountPath: /data/db
+  volumeClaimTemplates:
+  - metadata:
+      name: mongodb-storage
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 20Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+  namespace: netapp-api-management
+  labels:
+    app.kubernetes.io/name: mongodb
+    app.kubernetes.io/instance: netapp-storage
+spec:
+  type: ClusterIP
+  ports:
+  - port: 27017
+    targetPort: 27017
+    protocol: TCP
+    name: mongodb
+  selector:
+    app.kubernetes.io/name: mongodb
+    app.kubernetes.io/instance: netapp-storage
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: elasticsearch
+  namespace: netapp-api-management
+  labels:
+    app.kubernetes.io/name: elasticsearch
+    app.kubernetes.io/instance: netapp-storage
+    app.kubernetes.io/component: analytics
+spec:
+  serviceName: elasticsearch
+  replicas: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: elasticsearch
+      app.kubernetes.io/instance: netapp-storage
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: elasticsearch
+        app.kubernetes.io/instance: netapp-storage
+        app.kubernetes.io/component: analytics
+    spec:
+      initContainers:
+      - name: fix-permissions
+        image: busybox
+        command: ["sh", "-c", "chown -R 1000:1000 /usr/share/elasticsearch/data"]
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: elasticsearch-storage
+          mountPath: /usr/share/elasticsearch/data
+      containers:
+      - name: elasticsearch
+        image: docker.elastic.co/elasticsearch/elasticsearch:8.8.0
+        ports:
+        - containerPort: 9200
+          name: http
+        - containerPort: 9300
+          name: transport
+        env:
+        - name: discovery.type
+          value: single-node
+        - name: ES_JAVA_OPTS
+          value: "-Xms2g -Xmx2g"
+        - name: xpack.security.enabled
+          value: "false"
+        - name: xpack.security.enrollment.enabled
+          value: "false"
+        resources:
+          requests:
+            memory: "4Gi"
+            cpu: "1000m"
+          limits:
+            memory: "8Gi"
+            cpu: "2000m"
+        volumeMounts:
+        - name: elasticsearch-storage
+          mountPath: /usr/share/elasticsearch/data
+  volumeClaimTemplates:
+  - metadata:
+      name: elasticsearch-storage
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 100Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch
+  namespace: netapp-api-management
+  labels:
+    app.kubernetes.io/name: elasticsearch
+    app.kubernetes.io/instance: netapp-storage
+spec:
+  type: ClusterIP
+  ports:
+  - port: 9200
+    targetPort: 9200
+    protocol: TCP
+    name: http
+  - port: 9300
+    targetPort: 9300
+    protocol: TCP
+    name: transport
+  selector:
+    app.kubernetes.io/name: elasticsearch
+    app.kubernetes.io/instance: netapp-storage
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: netapp-api-management
+  labels:
+    app.kubernetes.io/name: redis
+    app.kubernetes.io/instance: netapp-storage
+    app.kubernetes.io/component: cache
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: redis
+      app.kubernetes.io/instance: netapp-storage
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: redis
+        app.kubernetes.io/instance: netapp-storage
+        app.kubernetes.io/component: cache
+    spec:
+      containers:
+      - name: redis
+        image: redis:7-alpine
+        ports:
+        - containerPort: 6379
+          name: redis
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: netapp-api-management
+  labels:
+    app.kubernetes.io/name: redis
+    app.kubernetes.io/instance: netapp-storage
+spec:
+  type: ClusterIP
+  ports:
+  - port: 6379
+    targetPort: 6379
+    protocol: TCP
+    name: redis
+  selector:
+    app.kubernetes.io/name: redis
+    app.kubernetes.io/instance: netapp-storage
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gravitee-ingress
+  namespace: netapp-api-management
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+spec:
+  tls:
+  - hosts:
+    - api.netapp-storage.company.com
+    - portal.netapp-storage.company.com
+    - console.netapp-storage.company.com
+    secretName: gravitee-tls
+  rules:
+  - host: api.netapp-storage.company.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: gravitee-gateway
+            port:
+              number: 8082
+  - host: portal.netapp-storage.company.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: gravitee-portal-ui
+            port:
+              number: 8080
+  - host: console.netapp-storage.company.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: gravitee-management-ui
+            port:
+              number: 8080
+      - path: /management
+        pathType: Prefix
+        backend:
+          service:
+            name: gravitee-management-api
+            port:
+              number: 8083
+
+---
+apiVersion: v1
+kind: ServiceMonitor
+metadata:
+  name: gravitee-gateway-monitoring
+  namespace: netapp-api-management
+  labels:
+    app.kubernetes.io/name: gravitee-gateway
+    app.kubernetes.io/instance: netapp-storage
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: gravitee-gateway
+      app.kubernetes.io/instance: netapp-storage
+  endpoints:
+  - port: http
+    path: /_node/metrics/prometheus
+    interval: 30s
+
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: gravitee-gateway-pdb
+  namespace: netapp-api-management
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: gravitee-gateway
+      app.kubernetes.io/instance: netapp-storage
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: gravitee-gateway-hpa
+  namespace: netapp-api-management
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: gravitee-gateway
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
