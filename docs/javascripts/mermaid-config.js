@@ -1,11 +1,29 @@
 /**
  * Mermaid Configuration for NetApp ActiveIQ MCP Server Documentation
- * This script initializes Mermaid with theme support and responsive diagrams
+ * This script configures Mermaid for native MkDocs Material integration
+ * with theme support and responsive diagrams
  */
 
-document.addEventListener('DOMContentLoaded', function() {
-  // Check if Mermaid is loaded
-  if (typeof mermaid !== 'undefined') {
+// Wait for the page to load and Mermaid to be available
+window.addEventListener('DOMContentLoaded', function() {
+  // Function to initialize Mermaid when it becomes available
+  function initializeMermaid() {
+    if (typeof mermaid !== 'undefined') {
+      console.log('Initializing Mermaid with Material theme support...');
+      
+      // Initialize Mermaid with configuration
+      setupMermaidConfig();
+    } else {
+      // Retry after a short delay if Mermaid isn't loaded yet
+      setTimeout(initializeMermaid, 100);
+    }
+  }
+  
+  initializeMermaid();
+});
+
+// Configuration function
+function setupMermaidConfig() {
     
     // Get current theme
     const palette = JSON.parse(localStorage.getItem('__palette') || '{"index": 0}');
