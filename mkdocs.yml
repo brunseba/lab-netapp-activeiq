@@ -88,7 +88,6 @@ theme:
   # Custom JavaScript
   extra_javascript:
     - javascripts/mermaid-config.js
-    - https://unpkg.com/mermaid@11.4.0/dist/mermaid.min.js
 
 # Plugins
 plugins:
@@ -102,37 +101,6 @@ plugins:
       locale: en
       fallback_to_build_date: true
       enable_creation_date: true
-  - mermaid2:
-      version: "11.4.0"
-      arguments:
-        startOnLoad: true
-        theme: "base"
-        themeVariables:
-          primaryColor: "#2196f3"
-          primaryTextColor: "#000000"
-          primaryBorderColor: "#1976d2"
-          lineColor: "#333333"
-          secondaryColor: "#ff9800"
-          tertiaryColor: "#4caf50"
-          background: "#ffffff"
-          mainBkg: "#ffffff"
-          secondBkg: "#f5f5f5"
-        flowchart:
-          htmlLabels: true
-          useMaxWidth: true
-          curve: "basis"
-        sequence:
-          actorMargin: 50
-          boxMargin: 10
-          boxTextMargin: 5
-          noteMargin: 10
-          messageMargin: 35
-          useMaxWidth: true
-        gantt:
-          numberSectionStyles: 4
-          useMaxWidth: true
-        gitgraph:
-          useMaxWidth: true
 
 # Extensions
 markdown_extensions:
@@ -171,7 +139,7 @@ markdown_extensions:
       custom_fences:
         - name: mermaid
           class: mermaid
-          format: !!python/name:mermaid2.fence_mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.tabbed:
       alternate_style: true
   - pymdownx.tasklist:
