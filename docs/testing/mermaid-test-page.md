@@ -281,7 +281,7 @@ mindmap
 
 ## Common Issues to Watch For
 
-1. **Arrow syntax**: Ensure `-->` not `--&gt;` or `--\u003e`
+1. **Arrow syntax**: Ensure `-->` not `--&gt;` or `-->`
 2. **Quote escaping**: Proper handling of quotes in labels
 3. **Theme compatibility**: Mermaid v11.4.0 theme variables
 4. **Plugin configuration**: mermaid2 plugin settings
@@ -314,18 +314,18 @@ Current plugin configuration from mkdocs.yml:
 
 ```yaml
 - mermaid2:
-    version: '11.4.0'
+    version: "11.4.0"
     arguments:
       startOnLoad: true
-      theme: 'base'
+      theme: "base"
       themeVariables:
-        primaryColor: '#2196f3'
-        primaryTextColor: '#000000'
-        primaryBorderColor: '#1976d2'
-        lineColor: '#333333'
-        secondaryColor: '#ff9800'
-        tertiaryColor: '#4caf50'
-        background: '#ffffff'
-        mainBkg: '#ffffff'
-        secondBkg: '#f5f5f5'
+        primaryColor: "#2196f3"
+        primaryTextColor: "#000000"
+        primaryBorderColor: "#1976d2"
+        lineColor: "#333333"
+        secondaryColor: "#ff9800"
+        tertiaryColor: "#4caf50"
+        background: "#ffffff"
+        mainBkg: "#ffffff"
+        secondBkg: "#f5f5f5"
 ```

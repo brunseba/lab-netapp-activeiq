@@ -13,11 +13,11 @@ find "$DOCS_DIR" -name "*.md" -exec grep -l "mermaid" {} \; | while read -r file
     perl -i -pe '
         if (/^```mermaid$/ .. /^```$/) {
             s/--&gt;/-->/g;
-            s/--\\u003e/-->/g;
+            s/--\>/-->/g;
             s/-&gt;&gt;/->>>/g;
-            s/-\\u003e\\u003e/->>>/g;
+            s/-\>\>/->>>/g;
             s/--&gt;&gt;/-->>/g;
-            s/--\\u003e\\u003e/-->>>/g;
+            s/--\>\>/-->>>/g;
         }
     ' "$file"
 
