@@ -26,6 +26,64 @@ sequenceDiagram
 
 ```
 
+## Inputs
+
+### Authentication
+
+- **Username**: NetApp ActiveIQ API username with permission to access event annotations
+- **Password**: Corresponding password for API authentication
+- **Base URL**: NetApp ActiveIQ Unified Manager base URL (e.g., `https://aiq-um.example.com`)
+
+### Search Criteria
+
+- **Annotation Key-Value Pairs**: Specific metadata key-value pairs to search for
+  - **Type**: String
+  - **Format**: `key:value` pairs separated by commas
+  - **Examples**: `owner:team_a`, `project:Q2_2025`, `environment:production`
+
+### Query Parameters
+
+- **annotation**: Key-value pair annotations to filter by
+- **max_records**: Maximum records to return (default: 100)
+- **order_by**: Sort results by specific fields (e.g., `timestamp`)
+- **fields**: Specify fields to include in the response
+- **offset**: Set pagination offset for large result sets
+
+### API Search Examples
+
+```bash
+# Single tag search
+GET /management-server/events?annotation=environment:production
+
+# Multiple tags search
+GET /management-server/events?annotation=environment:production,owner:team_a
+
+# Owner-based search
+GET /management-server/events?annotation=owner:john.doe
+```
+
+### Console Interface Examples
+
+- **Basic Usage**: Navigate to `Search by Metadata` in the console and enter criteria
+  - **Interface Features**:
+    - Metadata filters
+    - Object-based categorization
+    - Real-time display of matched results
+
+### Request Configuration (Search Interface)
+
+- **Navigational Path**:
+  - **Step 1**: Access the console dashboard
+  - **Step 2**: Select `Search by Metadata`
+  - **Step 3**: Use the search form to enter criteria (e.g., owner=team_a)
+
+### Input Validation Requirements
+
+- Annotation syntax must be valid (`key:value` format)
+- User must have appropriate privileges to access annotations
+- Search criteria must align with existing metadata and conventions
+- Pagination should be handled for large results with `_links.next`
+
 ## Console-Based Search Interface
 
 ```mermaid

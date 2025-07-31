@@ -6,7 +6,7 @@ This use case describes how to apply an existing Snapshot policy to a Volume usi
 
 ## API Endpoint
 
-- **PATCH** `/api/storage/volumes/{volume_uuid}` 
+- **PATCH** `/api/storage/volumes/{volume_uuid}`
 - **Permissions**: `cluster-admin` or `volume-admin`
 
 ## Sequence Diagram
@@ -25,7 +25,7 @@ sequenceDiagram
 
     Client->>NetApp_API: PATCH /api/storage/volumes/{volume_uuid}
     Note over Client,NetApp_API: Apply Snapshot Policy
-    
+
     NetApp_API->>ONTAP_Cluster: Find Volume by UUID
     alt Volume Found
         ONTAP_Cluster->>ONTAP_Cluster: Find Snapshot Policy
@@ -48,6 +48,62 @@ sequenceDiagram
         NetApp_API-->>Client: 500 Internal Server Error
     end
 ```
+
+## Inputs
+
+### Authentication
+
+- **Username**: NetApp ONTAP API username with `cluster-admin` or `volume-admin` privileges
+- **Password**: Corresponding password for API authentication
+- **Base URL**: NetApp ONTAP cluster management IP or FQDN (e.g., `https://cluster1.example.com`)
+
+### Volume Identification
+
+- **Volume Name**: Name of the target volume (e.g., `volume_prod_data`)
+- **Volume UUID**: Unique identifier of the target volume (alternative to volume name)
+- **SVM Name**: Storage Virtual Machine name where the volume resides (if filtering by SVM)
+
+### Snapshot Policy Information
+
+- **Policy Name**: Name of the existing snapshot policy to apply (e.g., `Daily_and_Weekly_Snapshots`)
+- **Policy UUID**: Unique identifier of the snapshot policy (alternative to policy name)
+
+### Request Parameters (for GET /api/storage/volumes)
+
+- **name**: Filter volumes by name
+- **svm.name**: Filter volumes by SVM name
+- **uuid**: Filter by specific volume UUID
+- **fields**: Specify which fields to return (e.g., `name,uuid,svm,snapshot_policy`)
+- **max_records**: Maximum number of records to return (default: 10000)
+- **order_by**: Sort results by specified field
+
+### PATCH Request Body
+
+```json
+{
+  "snapshot_policy": {
+    "name": "Daily_and_Weekly_Snapshots"
+  }
+}
+```
+
+### Alternative Request Body (using UUID)
+
+```json
+{
+  "snapshot_policy": {
+    "uuid": "12345678-1234-1234-1234-123456789012"
+  }
+}
+```
+
+### Input Validation Requirements
+
+- Volume must exist and be accessible
+- Snapshot policy must exist in the same cluster
+- User must have appropriate permissions (`cluster-admin` or `volume-admin`)
+- Volume must be online and available
+- Sufficient space should be available for snapshot creation
 
 ## Prerequisites
 

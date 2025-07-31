@@ -24,6 +24,51 @@ sequenceDiagram
     end
 ```
 
+## Inputs
+
+### Authentication
+
+- **Username**: NetApp ActiveIQ API username with file share management privileges
+- **Password**: Corresponding password for API authentication
+- **Base URL**: NetApp ActiveIQ Unified Manager base URL (e.g., `https://aiq-um.example.com`)
+
+### File Share Identification
+
+- **File Share Key**: Unique key for the file share (e.g., CIFS share name, export path, or internal UUID)
+- **File Share Name**: Human-readable name or path for the file share (alternative to key)
+- **SVM Context**: Storage Virtual Machine where the file share resides
+
+### Search/Filter Parameters (for GET /storage-provider/file-shares)
+
+- **name**: Filter file shares by name or path
+- **svm.name**: Filter by SVM name
+- **max_records**: Maximum number of records to return (default: 20)
+- **order_by**: Sort results by specified field (e.g., `name`, `creation_time`, `usage`)
+
+### Decommission Parameters
+
+- **Force Delete**: Indicates whether to force file share deletion if in use
+  - **Type**: Boolean
+  - **Default**: false
+- **Delete Reason**: Optional metadata for deletion audit trail
+  - **Type**: String
+  - **Examples**:
+    - `"End of Project Lifecycle"`
+    - `"Security Risks Identified"`
+    - `"Migrated to New SVM"`
+
+### DELETE Request Configuration
+
+- **URL Format**: `DELETE /storage-provider/file-shares/{key}`
+- **Headers**: Include `Authorization` and `Content-Type: application/json`
+- **Force or Safe**: Apply force delete only when absolutely necessary
+
+### Pre-Delete Checks
+
+- **Active Connections**: Verify no active connections before deletion (unless forced)
+- **User Notifications**: Inform users of pending decommission
+- **Audit Requirements**: Ensure audit compliance and record deletion reason
+
 ### Error Handling
 
 - **Authentication Failure (401 Unauthorized)**: If authentication fails, the script should log the error and terminate. Ensure that the API credentials are correct and have the necessary permissions.
