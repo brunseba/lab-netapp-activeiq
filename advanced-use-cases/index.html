@@ -561,161 +561,135 @@
 </span><span id=__span-11-98><a id=__codelineno-11-98 name=__codelineno-11-98 href=#__codelineno-11-98></a>                <span class=k>return</span> <span class=kc>True</span>
 </span><span id=__span-11-99><a id=__codelineno-11-99 name=__codelineno-11-99 href=#__codelineno-11-99></a>
 </span><span id=__span-11-100><a id=__codelineno-11-100 name=__codelineno-11-100 href=#__codelineno-11-100></a>    <span class=k>return</span> <span class=kc>False</span>
-</span></code></pre></div> <h2 id=sequence-diagrams>Sequence Diagrams<a class=headerlink href=#sequence-diagrams title="Permanent link">&para;</a></h2> <h3 id=svm-creation-sequence>SVM Creation Sequence<a class=headerlink href=#svm-creation-sequence title="Permanent link">&para;</a></h3> <pre class=mermaid><code>sequenceDiagram
-    participant Client
-    participant UM as Unified Manager
-    participant Cluster
-    participant SVM
-    participant Network
+</span></code></pre></div> <h2 id=sequence-diagrams>Sequence Diagrams<a class=headerlink href=#sequence-diagrams title="Permanent link">&para;</a></h2> <h3 id=svm-creation-sequence>SVM Creation Sequence<a class=headerlink href=#svm-creation-sequence title="Permanent link">&para;</a></h3> <p>```mermaid sequenceDiagram participant Client participant UM as Unified Manager participant Cluster participant SVM participant Network</p> <div class="language-text highlight"><pre><span></span><code>Client-&gt;&gt;UM: 1. Validate Cluster Health
+UM-&gt;&gt;Cluster: Check cluster status
+Cluster--&gt;&gt;UM: Return health status
+UM--&gt;&gt;Client: Cluster validation result
 
-    Client-&gt;&gt;UM: 1. Validate Cluster Health
-    UM-&gt;&gt;Cluster: Check cluster status
-    Cluster--&gt;&gt;UM: Return health status
-    UM--&gt;&gt;Client: Cluster validation result
+Client-&gt;&gt;UM: 2. Get Available Aggregates
+UM-&gt;&gt;Cluster: Query aggregates
+Cluster--&gt;&gt;UM: Return aggregate list
+UM--&gt;&gt;Client: Available aggregates
 
-    Client-&gt;&gt;UM: 2. Get Available Aggregates
-    UM-&gt;&gt;Cluster: Query aggregates
-    Cluster--&gt;&gt;UM: Return aggregate list
-    UM--&gt;&gt;Client: Available aggregates
+Client-&gt;&gt;UM: 3. Create SVM Request
+UM-&gt;&gt;Cluster: Create SVM command
+Cluster-&gt;&gt;SVM: Initialize SVM
+SVM--&gt;&gt;Cluster: SVM created
+Cluster--&gt;&gt;UM: Job started
+UM--&gt;&gt;Client: Job UUID
 
-    Client-&gt;&gt;UM: 3. Create SVM Request
-    UM-&gt;&gt;Cluster: Create SVM command
-    Cluster-&gt;&gt;SVM: Initialize SVM
-    SVM--&gt;&gt;Cluster: SVM created
-    Cluster--&gt;&gt;UM: Job started
-    UM--&gt;&gt;Client: Job UUID
+Client-&gt;&gt;UM: 4. Monitor Job Status
+loop Job Monitoring
+    UM-&gt;&gt;Cluster: Check job progress
+    Cluster--&gt;&gt;UM: Job status
+    UM--&gt;&gt;Client: Progress update
+end
 
-    Client-&gt;&gt;UM: 4. Monitor Job Status
-    loop Job Monitoring
-        UM-&gt;&gt;Cluster: Check job progress
-        Cluster--&gt;&gt;UM: Job status
-        UM--&gt;&gt;Client: Progress update
-    end
+Client-&gt;&gt;UM: 5. Create Management LIF
+UM-&gt;&gt;SVM: Configure mgmt interface
+SVM-&gt;&gt;Network: Setup network interface
+Network--&gt;&gt;SVM: Interface ready
+SVM--&gt;&gt;UM: LIF created
+UM--&gt;&gt;Client: Management LIF ready
 
-    Client-&gt;&gt;UM: 5. Create Management LIF
-    UM-&gt;&gt;SVM: Configure mgmt interface
-    SVM-&gt;&gt;Network: Setup network interface
-    Network--&gt;&gt;SVM: Interface ready
-    SVM--&gt;&gt;UM: LIF created
-    UM--&gt;&gt;Client: Management LIF ready
+Client-&gt;&gt;UM: 6. Create Data LIF
+UM-&gt;&gt;SVM: Configure data interface
+SVM-&gt;&gt;Network: Setup data interface
+Network--&gt;&gt;SVM: Interface ready
+SVM--&gt;&gt;UM: Data LIF created
+UM--&gt;&gt;Client: SVM fully configured
+</code></pre></div> <p>```</p> <h3 id=nfs-share-creation-sequence>NFS Share Creation Sequence<a class=headerlink href=#nfs-share-creation-sequence title="Permanent link">&para;</a></h3> <p>```mermaid sequenceDiagram participant Client participant UM as Unified Manager participant SVM participant Volume participant Export as Export Policy</p> <div class="language-text highlight"><pre><span></span><code>Client-&gt;&gt;UM: 1. Create Export Policy
+UM-&gt;&gt;SVM: Configure export policy
+SVM-&gt;&gt;Export: Create policy rules
+Export--&gt;&gt;SVM: Policy created
+SVM--&gt;&gt;UM: Export policy ready
+UM--&gt;&gt;Client: Policy creation success
 
-    Client-&gt;&gt;UM: 6. Create Data LIF
-    UM-&gt;&gt;SVM: Configure data interface
-    SVM-&gt;&gt;Network: Setup data interface
-    Network--&gt;&gt;SVM: Interface ready
-    SVM--&gt;&gt;UM: Data LIF created
-    UM--&gt;&gt;Client: SVM fully configured</code></pre> <h3 id=nfs-share-creation-sequence>NFS Share Creation Sequence<a class=headerlink href=#nfs-share-creation-sequence title="Permanent link">&para;</a></h3> <pre class=mermaid><code>sequenceDiagram
-    participant Client
-    participant UM as Unified Manager
-    participant SVM
-    participant Volume
-    participant Export as Export Policy
+Client-&gt;&gt;UM: 2. Create File Share
+UM-&gt;&gt;SVM: Create volume request
+SVM-&gt;&gt;Volume: Initialize volume
+Volume--&gt;&gt;SVM: Volume created
+SVM--&gt;&gt;UM: File share job started
+UM--&gt;&gt;Client: Job UUID
 
-    Client-&gt;&gt;UM: 1. Create Export Policy
-    UM-&gt;&gt;SVM: Configure export policy
-    SVM-&gt;&gt;Export: Create policy rules
-    Export--&gt;&gt;SVM: Policy created
-    SVM--&gt;&gt;UM: Export policy ready
-    UM--&gt;&gt;Client: Policy creation success
+loop Job Monitoring
+    Client-&gt;&gt;UM: Check job status
+    UM-&gt;&gt;SVM: Query job progress
+    SVM--&gt;&gt;UM: Job status
+    UM--&gt;&gt;Client: Progress update
+end
 
-    Client-&gt;&gt;UM: 2. Create File Share
-    UM-&gt;&gt;SVM: Create volume request
-    SVM-&gt;&gt;Volume: Initialize volume
-    Volume--&gt;&gt;SVM: Volume created
-    SVM--&gt;&gt;UM: File share job started
-    UM--&gt;&gt;Client: Job UUID
+Client-&gt;&gt;UM: 3. Apply Export Policy
+UM-&gt;&gt;Volume: Attach export policy
+Volume-&gt;&gt;Export: Link to policy
+Export--&gt;&gt;Volume: Policy attached
+Volume--&gt;&gt;UM: Export policy applied
+UM--&gt;&gt;Client: NFS share ready
 
-    loop Job Monitoring
-        Client-&gt;&gt;UM: Check job status
-        UM-&gt;&gt;SVM: Query job progress
-        SVM--&gt;&gt;UM: Job status
-        UM--&gt;&gt;Client: Progress update
-    end
+Client-&gt;&gt;UM: 4. Verify NFS Access
+UM-&gt;&gt;SVM: Check NFS service
+SVM--&gt;&gt;UM: NFS status
+UM--&gt;&gt;Client: NFS share accessible
+</code></pre></div> <p>```</p> <h3 id=nfs-credential-update-sequence>NFS Credential Update Sequence<a class=headerlink href=#nfs-credential-update-sequence title="Permanent link">&para;</a></h3> <p>```mermaid sequenceDiagram participant Client participant UM as Unified Manager participant SVM participant LDAP participant Kerberos as KDC participant Export as Export Policy</p> <div class="language-text highlight"><pre><span></span><code>Client-&gt;&gt;UM: 1. Update LDAP Config
+UM-&gt;&gt;SVM: Configure LDAP settings
+SVM-&gt;&gt;LDAP: Test LDAP connection
+LDAP--&gt;&gt;SVM: Connection verified
+SVM--&gt;&gt;UM: LDAP configured
+UM--&gt;&gt;Client: LDAP update success
 
-    Client-&gt;&gt;UM: 3. Apply Export Policy
-    UM-&gt;&gt;Volume: Attach export policy
-    Volume-&gt;&gt;Export: Link to policy
-    Export--&gt;&gt;Volume: Policy attached
-    Volume--&gt;&gt;UM: Export policy applied
-    UM--&gt;&gt;Client: NFS share ready
+Client-&gt;&gt;UM: 2. Configure Kerberos
+UM-&gt;&gt;SVM: Setup Kerberos realm
+SVM-&gt;&gt;Kerberos: Register with KDC
+Kerberos--&gt;&gt;SVM: Realm configured
+SVM--&gt;&gt;UM: Kerberos ready
+UM--&gt;&gt;Client: Kerberos configuration success
 
-    Client-&gt;&gt;UM: 4. Verify NFS Access
-    UM-&gt;&gt;SVM: Check NFS service
-    SVM--&gt;&gt;UM: NFS status
-    UM--&gt;&gt;Client: NFS share accessible</code></pre> <h3 id=nfs-credential-update-sequence>NFS Credential Update Sequence<a class=headerlink href=#nfs-credential-update-sequence title="Permanent link">&para;</a></h3> <pre class=mermaid><code>sequenceDiagram
-    participant Client
-    participant UM as Unified Manager
-    participant SVM
-    participant LDAP
-    participant Kerberos as KDC
-    participant Export as Export Policy
+Client-&gt;&gt;UM: 3. Update Export Rules
+UM-&gt;&gt;Export: Modify authentication rules
+Export-&gt;&gt;SVM: Apply new auth methods
+SVM--&gt;&gt;Export: Rules updated
+Export--&gt;&gt;UM: Export policy updated
+UM--&gt;&gt;Client: Authentication updated
 
-    Client-&gt;&gt;UM: 1. Update LDAP Config
-    UM-&gt;&gt;SVM: Configure LDAP settings
-    SVM-&gt;&gt;LDAP: Test LDAP connection
-    LDAP--&gt;&gt;SVM: Connection verified
-    SVM--&gt;&gt;UM: LDAP configured
-    UM--&gt;&gt;Client: LDAP update success
+Client-&gt;&gt;UM: 4. Verify Access
+UM-&gt;&gt;SVM: Test NFS with new auth
+SVM-&gt;&gt;LDAP: Validate user credentials
+LDAP--&gt;&gt;SVM: User validated
+SVM-&gt;&gt;Kerberos: Check Kerberos ticket
+Kerberos--&gt;&gt;SVM: Ticket valid
+SVM--&gt;&gt;UM: Access verified
+UM--&gt;&gt;Client: Credential update complete
+</code></pre></div> <p>```</p> <h3 id=complete-workflow-integration>Complete Workflow Integration<a class=headerlink href=#complete-workflow-integration title="Permanent link">&para;</a></h3> <p>```mermaid sequenceDiagram participant Admin participant Script participant UM as Unified Manager participant Cluster participant SVM participant NFS</p> <div class="language-text highlight"><pre><span></span><code>Admin-&gt;&gt;Script: 1. Execute Full Setup
 
-    Client-&gt;&gt;UM: 2. Configure Kerberos
-    UM-&gt;&gt;SVM: Setup Kerberos realm
-    SVM-&gt;&gt;Kerberos: Register with KDC
-    Kerberos--&gt;&gt;SVM: Realm configured
-    SVM--&gt;&gt;UM: Kerberos ready
-    UM--&gt;&gt;Client: Kerberos configuration success
+rect rgb(240, 248, 255)
+    Note over Script, Cluster: SVM Creation Phase
+    Script-&gt;&gt;UM: Validate cluster
+    Script-&gt;&gt;UM: Create SVM
+    Script-&gt;&gt;UM: Configure network
+end
 
-    Client-&gt;&gt;UM: 3. Update Export Rules
-    UM-&gt;&gt;Export: Modify authentication rules
-    Export-&gt;&gt;SVM: Apply new auth methods
-    SVM--&gt;&gt;Export: Rules updated
-    Export--&gt;&gt;UM: Export policy updated
-    UM--&gt;&gt;Client: Authentication updated
+rect rgb(240, 255, 240)
+    Note over Script, NFS: NFS Configuration Phase
+    Script-&gt;&gt;UM: Create export policy
+    Script-&gt;&gt;UM: Create NFS share
+    Script-&gt;&gt;UM: Apply export policy
+end
 
-    Client-&gt;&gt;UM: 4. Verify Access
-    UM-&gt;&gt;SVM: Test NFS with new auth
-    SVM-&gt;&gt;LDAP: Validate user credentials
-    LDAP--&gt;&gt;SVM: User validated
-    SVM-&gt;&gt;Kerberos: Check Kerberos ticket
-    Kerberos--&gt;&gt;SVM: Ticket valid
-    SVM--&gt;&gt;UM: Access verified
-    UM--&gt;&gt;Client: Credential update complete</code></pre> <h3 id=complete-workflow-integration>Complete Workflow Integration<a class=headerlink href=#complete-workflow-integration title="Permanent link">&para;</a></h3> <pre class=mermaid><code>sequenceDiagram
-    participant Admin
-    participant Script
-    participant UM as Unified Manager
-    participant Cluster
-    participant SVM
-    participant NFS
+rect rgb(255, 248, 240)
+    Note over Script, NFS: Security Configuration Phase
+    Script-&gt;&gt;UM: Configure LDAP
+    Script-&gt;&gt;UM: Setup Kerberos
+    Script-&gt;&gt;UM: Update export rules
+end
 
-    Admin-&gt;&gt;Script: 1. Execute Full Setup
-
-    rect rgb(240, 248, 255)
-        Note over Script, Cluster: SVM Creation Phase
-        Script-&gt;&gt;UM: Validate cluster
-        Script-&gt;&gt;UM: Create SVM
-        Script-&gt;&gt;UM: Configure network
-    end
-
-    rect rgb(240, 255, 240)
-        Note over Script, NFS: NFS Configuration Phase
-        Script-&gt;&gt;UM: Create export policy
-        Script-&gt;&gt;UM: Create NFS share
-        Script-&gt;&gt;UM: Apply export policy
-    end
-
-    rect rgb(255, 248, 240)
-        Note over Script, NFS: Security Configuration Phase
-        Script-&gt;&gt;UM: Configure LDAP
-        Script-&gt;&gt;UM: Setup Kerberos
-        Script-&gt;&gt;UM: Update export rules
-    end
-
-    Script-&gt;&gt;UM: 2. Validate Complete Setup
-    UM-&gt;&gt;SVM: Check SVM status
-    SVM-&gt;&gt;NFS: Verify NFS services
-    NFS--&gt;&gt;SVM: Services operational
-    SVM--&gt;&gt;UM: All services ready
-    UM--&gt;&gt;Script: Setup verification complete
-    Script--&gt;&gt;Admin: Full environment ready</code></pre> <h2 id=api-sequence-action-tables>API Sequence Action Tables<a class=headerlink href=#api-sequence-action-tables title="Permanent link">&para;</a></h2> <h3 id=svm-creation-sequence_1>SVM Creation Sequence<a class=headerlink href=#svm-creation-sequence_1 title="Permanent link">&para;</a></h3> <table> <thead> <tr> <th><strong>Step</strong></th> <th><strong>Description</strong></th> <th><strong>API Endpoint</strong></th> <th><strong>HTTP Method</strong></th> </tr> </thead> <tbody> <tr> <td>1</td> <td>Validate Cluster Health</td> <td><code>/datacenter/cluster/clusters/{cluster_key}</code></td> <td>GET</td> </tr> <tr> <td>2</td> <td>Get Available Aggregates</td> <td><code>/datacenter/storage/aggregates</code></td> <td>GET</td> </tr> <tr> <td>3</td> <td>Create SVM</td> <td><code>/datacenter/svm/svms</code></td> <td>POST</td> </tr> <tr> <td>4</td> <td>Monitor Job Status</td> <td><code>/management-server/jobs/{uuid}</code></td> <td>GET</td> </tr> <tr> <td>5</td> <td>Create Management LIF</td> <td><code>/datacenter/svm/svms/{svm_key}/network/ip/interfaces</code></td> <td>POST</td> </tr> <tr> <td>6</td> <td>Create Data LIF</td> <td><code>/datacenter/svm/svms/{svm_key}/network/ip/interfaces</code></td> <td>POST</td> </tr> </tbody> </table> <h3 id=nfs-share-creation-sequence_1>NFS Share Creation Sequence<a class=headerlink href=#nfs-share-creation-sequence_1 title="Permanent link">&para;</a></h3> <table> <thead> <tr> <th><strong>Step</strong></th> <th><strong>Description</strong></th> <th><strong>API Endpoint</strong></th> <th><strong>HTTP Method</strong></th> </tr> </thead> <tbody> <tr> <td>1</td> <td>Create Export Policy</td> <td><code>/datacenter/svm/svms/{svm_key}/export-policies</code></td> <td>POST</td> </tr> <tr> <td>2</td> <td>Create File Share</td> <td><code>/storage-provider/file-shares</code></td> <td>POST</td> </tr> <tr> <td>3</td> <td>Apply Export Policy</td> <td><code>/storage-provider/file-shares/{file_share_key}</code></td> <td>PATCH</td> </tr> <tr> <td>4</td> <td>Verify NFS Access</td> <td><code>/datacenter/svm/svms/{svm_key}</code></td> <td>GET</td> </tr> </tbody> </table> <h3 id=nfs-credential-update-sequence_1>NFS Credential Update Sequence<a class=headerlink href=#nfs-credential-update-sequence_1 title="Permanent link">&para;</a></h3> <table> <thead> <tr> <th><strong>Step</strong></th> <th><strong>Description</strong></th> <th><strong>API Endpoint</strong></th> <th><strong>HTTP Method</strong></th> </tr> </thead> <tbody> <tr> <td>1</td> <td>Update LDAP Config</td> <td><code>/datacenter/svm/svms/{svm_key}</code></td> <td>PATCH</td> </tr> <tr> <td>2</td> <td>Configure Kerberos</td> <td><code>/datacenter/svm/svms/{svm_key}</code></td> <td>PATCH</td> </tr> <tr> <td>3</td> <td>Update Export Rules</td> <td><code>/datacenter/svm/svms/{svm_key}/export-policies</code></td> <td>PATCH</td> </tr> <tr> <td>4</td> <td>Verify Access</td> <td><code>/datacenter/svm/svms/{svm_key}</code></td> <td>GET</td> </tr> </tbody> </table> <h3 id=complete-workflow-integration_1>Complete Workflow Integration<a class=headerlink href=#complete-workflow-integration_1 title="Permanent link">&para;</a></h3> <p>This workflow involves executing combined steps from SVM Creation, NFS Share Creation, and NFS Credential Update sequences. It leverages the same endpoints listed above in a phased manner.</p> <h2 id=complete-automation-scripts>Complete Automation Scripts<a class=headerlink href=#complete-automation-scripts title="Permanent link">&para;</a></h2> <h3 id=master-deployment-script>Master Deployment Script<a class=headerlink href=#master-deployment-script title="Permanent link">&para;</a></h3> <div class="language-python highlight"><pre><span></span><code><span id=__span-12-1><a id=__codelineno-12-1 name=__codelineno-12-1 href=#__codelineno-12-1></a><span class=ch>#!/usr/bin/env python3</span>
+Script-&gt;&gt;UM: 2. Validate Complete Setup
+UM-&gt;&gt;SVM: Check SVM status
+SVM-&gt;&gt;NFS: Verify NFS services
+NFS--&gt;&gt;SVM: Services operational
+SVM--&gt;&gt;UM: All services ready
+UM--&gt;&gt;Script: Setup verification complete
+Script--&gt;&gt;Admin: Full environment ready
+</code></pre></div> <p>```</p> <h2 id=api-sequence-action-tables>API Sequence Action Tables<a class=headerlink href=#api-sequence-action-tables title="Permanent link">&para;</a></h2> <h3 id=svm-creation-sequence_1>SVM Creation Sequence<a class=headerlink href=#svm-creation-sequence_1 title="Permanent link">&para;</a></h3> <table> <thead> <tr> <th><strong>Step</strong></th> <th><strong>Description</strong></th> <th><strong>API Endpoint</strong></th> <th><strong>HTTP Method</strong></th> </tr> </thead> <tbody> <tr> <td>1</td> <td>Validate Cluster Health</td> <td><code>/datacenter/cluster/clusters/{cluster_key}</code></td> <td>GET</td> </tr> <tr> <td>2</td> <td>Get Available Aggregates</td> <td><code>/datacenter/storage/aggregates</code></td> <td>GET</td> </tr> <tr> <td>3</td> <td>Create SVM</td> <td><code>/datacenter/svm/svms</code></td> <td>POST</td> </tr> <tr> <td>4</td> <td>Monitor Job Status</td> <td><code>/management-server/jobs/{uuid}</code></td> <td>GET</td> </tr> <tr> <td>5</td> <td>Create Management LIF</td> <td><code>/datacenter/svm/svms/{svm_key}/network/ip/interfaces</code></td> <td>POST</td> </tr> <tr> <td>6</td> <td>Create Data LIF</td> <td><code>/datacenter/svm/svms/{svm_key}/network/ip/interfaces</code></td> <td>POST</td> </tr> </tbody> </table> <h3 id=nfs-share-creation-sequence_1>NFS Share Creation Sequence<a class=headerlink href=#nfs-share-creation-sequence_1 title="Permanent link">&para;</a></h3> <table> <thead> <tr> <th><strong>Step</strong></th> <th><strong>Description</strong></th> <th><strong>API Endpoint</strong></th> <th><strong>HTTP Method</strong></th> </tr> </thead> <tbody> <tr> <td>1</td> <td>Create Export Policy</td> <td><code>/datacenter/svm/svms/{svm_key}/export-policies</code></td> <td>POST</td> </tr> <tr> <td>2</td> <td>Create File Share</td> <td><code>/storage-provider/file-shares</code></td> <td>POST</td> </tr> <tr> <td>3</td> <td>Apply Export Policy</td> <td><code>/storage-provider/file-shares/{file_share_key}</code></td> <td>PATCH</td> </tr> <tr> <td>4</td> <td>Verify NFS Access</td> <td><code>/datacenter/svm/svms/{svm_key}</code></td> <td>GET</td> </tr> </tbody> </table> <h3 id=nfs-credential-update-sequence_1>NFS Credential Update Sequence<a class=headerlink href=#nfs-credential-update-sequence_1 title="Permanent link">&para;</a></h3> <table> <thead> <tr> <th><strong>Step</strong></th> <th><strong>Description</strong></th> <th><strong>API Endpoint</strong></th> <th><strong>HTTP Method</strong></th> </tr> </thead> <tbody> <tr> <td>1</td> <td>Update LDAP Config</td> <td><code>/datacenter/svm/svms/{svm_key}</code></td> <td>PATCH</td> </tr> <tr> <td>2</td> <td>Configure Kerberos</td> <td><code>/datacenter/svm/svms/{svm_key}</code></td> <td>PATCH</td> </tr> <tr> <td>3</td> <td>Update Export Rules</td> <td><code>/datacenter/svm/svms/{svm_key}/export-policies</code></td> <td>PATCH</td> </tr> <tr> <td>4</td> <td>Verify Access</td> <td><code>/datacenter/svm/svms/{svm_key}</code></td> <td>GET</td> </tr> </tbody> </table> <h3 id=complete-workflow-integration_1>Complete Workflow Integration<a class=headerlink href=#complete-workflow-integration_1 title="Permanent link">&para;</a></h3> <p>This workflow involves executing combined steps from SVM Creation, NFS Share Creation, and NFS Credential Update sequences. It leverages the same endpoints listed above in a phased manner.</p> <h2 id=complete-automation-scripts>Complete Automation Scripts<a class=headerlink href=#complete-automation-scripts title="Permanent link">&para;</a></h2> <h3 id=master-deployment-script>Master Deployment Script<a class=headerlink href=#master-deployment-script title="Permanent link">&para;</a></h3> <div class="language-python highlight"><pre><span></span><code><span id=__span-12-1><a id=__codelineno-12-1 name=__codelineno-12-1 href=#__codelineno-12-1></a><span class=ch>#!/usr/bin/env python3</span>
 </span><span id=__span-12-2><a id=__codelineno-12-2 name=__codelineno-12-2 href=#__codelineno-12-2></a><span class=sd>&quot;&quot;&quot;</span>
 </span><span id=__span-12-3><a id=__codelineno-12-3 name=__codelineno-12-3 href=#__codelineno-12-3></a><span class=sd>NetApp Complete NFS Environment Deployment</span>
 </span><span id=__span-12-4><a id=__codelineno-12-4 name=__codelineno-12-4 href=#__codelineno-12-4></a><span class=sd>Automates SVM creation, NFS share setup, and security configuration</span>
