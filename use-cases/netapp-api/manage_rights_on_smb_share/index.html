@@ -12,41 +12,47 @@
 </span><span id=__span-0-12><a id=__codelineno-0-12 name=__codelineno-0-12 href=#__codelineno-0-12></a><span class=w>    </span><span class=p>}</span>
 </span><span id=__span-0-13><a id=__codelineno-0-13 name=__codelineno-0-13 href=#__codelineno-0-13></a><span class=w>  </span><span class=p>]</span>
 </span><span id=__span-0-14><a id=__codelineno-0-14 name=__codelineno-0-14 href=#__codelineno-0-14></a><span class=p>}</span>
-</span></code></pre></div> <h3 id=input-validation-requirements>Input Validation Requirements<a class=headerlink href=#input-validation-requirements title="Permanent link">&para;</a></h3> <ul> <li>User/group names must be valid in the domain</li> <li>Permission levels must be from supported options</li> <li>User must have SMB administration privileges</li> <li>Share must exist and be accessible</li> </ul> <h3 id=pre-configuration-checks>Pre-Configuration Checks<a class=headerlink href=#pre-configuration-checks title="Permanent link">&para;</a></h3> <ul> <li><strong>Domain Integration</strong>: Verify domain connectivity</li> <li><strong>User Validation</strong>: Confirm users/groups exist in domain</li> <li><strong>Share Status</strong>: Ensure SMB share is online and accessible</li> </ul> <h2 id=sequence-diagram>Sequence Diagram<a class=headerlink href=#sequence-diagram title="Permanent link">&para;</a></h2> <p>```mermaid sequenceDiagram participant Admin as Administrator participant API as NetApp API participant SMB as SMB Service participant AD as Active Directory participant FS as File System</p> <div class="language-text highlight"><pre><span></span><code>Admin-&gt;&gt;+API: Authenticate (Basic Auth)
-API--&gt;&gt;-Admin: 200 OK (Authentication Successful)
+</span></code></pre></div> <h3 id=input-validation-requirements>Input Validation Requirements<a class=headerlink href=#input-validation-requirements title="Permanent link">&para;</a></h3> <ul> <li>User/group names must be valid in the domain</li> <li>Permission levels must be from supported options</li> <li>User must have SMB administration privileges</li> <li>Share must exist and be accessible</li> </ul> <h3 id=pre-configuration-checks>Pre-Configuration Checks<a class=headerlink href=#pre-configuration-checks title="Permanent link">&para;</a></h3> <ul> <li><strong>Domain Integration</strong>: Verify domain connectivity</li> <li><strong>User Validation</strong>: Confirm users/groups exist in domain</li> <li><strong>Share Status</strong>: Ensure SMB share is online and accessible</li> </ul> <h2 id=sequence-diagram>Sequence Diagram<a class=headerlink href=#sequence-diagram title="Permanent link">&para;</a></h2> <pre class=mermaid><code>sequenceDiagram
+    participant Admin as Administrator
+    participant API as NetApp API
+    participant SMB as SMB Service
+    participant AD as Active Directory
+    participant FS as File System
 
-Note over Admin,API: All subsequent requests are authenticated
+    Admin-&gt;&gt;+API: Authenticate (Basic Auth)
+    API--&gt;&gt;-Admin: 200 OK (Authentication Successful)
 
-Admin-&gt;&gt;+API: GET /storage/smb-shares (Find SMB Share)
-API--&gt;&gt;-Admin: 200 OK (List of SMB Shares)
+    Note over Admin,API: All subsequent requests are authenticated
 
-Admin-&gt;&gt;+API: GET /storage/smb-shares/{share_id}/acl
-API--&gt;&gt;-Admin: 200 OK (Current ACL Entries)
+    Admin-&gt;&gt;+API: GET /storage/smb-shares (Find SMB Share)
+    API--&gt;&gt;-Admin: 200 OK (List of SMB Shares)
 
-Admin-&gt;&gt;+API: PATCH /storage/smb-shares/{share_id}/acl
-API-&gt;&gt;+SMB: Process ACL Update Request
+    Admin-&gt;&gt;+API: GET /storage/smb-shares/{share_id}/acl
+    API--&gt;&gt;-Admin: 200 OK (Current ACL Entries)
 
-loop For each user/group in ACL
-    SMB-&gt;&gt;+AD: Validate User/Group Identity
-    AD--&gt;&gt;-SMB: User/Group Validation Result
-end
+    Admin-&gt;&gt;+API: PATCH /storage/smb-shares/{share_id}/acl
+    API-&gt;&gt;+SMB: Process ACL Update Request
 
-alt All Users/Groups Valid
-    SMB-&gt;&gt;+FS: Apply ACL Changes to File System
-    FS--&gt;&gt;-SMB: ACL Applied Successfully
-    SMB--&gt;&gt;API: ACL Update Successful
-    API--&gt;&gt;-Admin: 200 OK (Permissions Updated)
-else Invalid User/Group Found
-    SMB--&gt;&gt;API: Validation Failed
-    API--&gt;&gt;Admin: 422 Unprocessable Entity Invalid User Group
-else Domain Connection Failed
-    SMB--&gt;&gt;API: Domain Unavailable
-    API--&gt;&gt;Admin: 503 Service Unavailable (Domain Error)
-end
+    loop For each user/group in ACL
+        SMB-&gt;&gt;+AD: Validate User/Group Identity
+        AD--&gt;&gt;-SMB: User/Group Validation Result
+    end
 
-Admin-&gt;&gt;+API: GET /storage/smb-shares/{share_id}/acl
-API--&gt;&gt;-Admin: 200 OK (Verify ACL Changes)
-</code></pre></div> <p>```</p> <h2 id=example-with-curl>Example with <code>curl</code><a class=headerlink href=#example-with-curl title="Permanent link">&para;</a></h2> <div class="language-bash highlight"><pre><span></span><code><span id=__span-1-1><a id=__codelineno-1-1 name=__codelineno-1-1 href=#__codelineno-1-1></a>curl<span class=w> </span>-X<span class=w> </span>PATCH<span class=w> </span><span class=s2>&quot;https://netapp.example.com/api/storage/smb-shares/{share_id}/acl&quot;</span><span class=w> </span><span class=se>\</span>
+    alt All Users/Groups Valid
+        SMB-&gt;&gt;+FS: Apply ACL Changes to File System
+        FS--&gt;&gt;-SMB: ACL Applied Successfully
+        SMB--&gt;&gt;API: ACL Update Successful
+        API--&gt;&gt;-Admin: 200 OK (Permissions Updated)
+    else Invalid User/Group Found
+        SMB--&gt;&gt;API: Validation Failed
+        API--&gt;&gt;Admin: 422 Unprocessable Entity Invalid User Group
+    else Domain Connection Failed
+        SMB--&gt;&gt;API: Domain Unavailable
+        API--&gt;&gt;Admin: 503 Service Unavailable (Domain Error)
+    end
+
+    Admin-&gt;&gt;+API: GET /storage/smb-shares/{share_id}/acl
+    API--&gt;&gt;-Admin: 200 OK (Verify ACL Changes)</code></pre> <h2 id=example-with-curl>Example with <code>curl</code><a class=headerlink href=#example-with-curl title="Permanent link">&para;</a></h2> <div class="language-bash highlight"><pre><span></span><code><span id=__span-1-1><a id=__codelineno-1-1 name=__codelineno-1-1 href=#__codelineno-1-1></a>curl<span class=w> </span>-X<span class=w> </span>PATCH<span class=w> </span><span class=s2>&quot;https://netapp.example.com/api/storage/smb-shares/{share_id}/acl&quot;</span><span class=w> </span><span class=se>\</span>
 </span><span id=__span-1-2><a id=__codelineno-1-2 name=__codelineno-1-2 href=#__codelineno-1-2></a><span class=w>     </span>-H<span class=w> </span><span class=s2>&quot;Authorization: Basic &lt;base64_auth_token&gt;&quot;</span><span class=w> </span><span class=se>\</span>
 </span><span id=__span-1-3><a id=__codelineno-1-3 name=__codelineno-1-3 href=#__codelineno-1-3></a><span class=w>     </span>-H<span class=w> </span><span class=s2>&quot;Content-Type: application/json&quot;</span><span class=w> </span><span class=se>\</span>
 </span><span id=__span-1-4><a id=__codelineno-1-4 name=__codelineno-1-4 href=#__codelineno-1-4></a><span class=w>     </span>-d<span class=w> </span><span class=s1>&#39;{</span>

@@ -7,29 +7,33 @@
 </span><span id=__span-0-7><a id=__codelineno-0-7 name=__codelineno-0-7 href=#__codelineno-0-7></a><span class=c1># Optional but recommended</span>
 </span><span id=__span-0-8><a id=__codelineno-0-8 name=__codelineno-0-8 href=#__codelineno-0-8></a>helm<span class=w> </span>&gt;<span class=o>=</span><span class=w> </span><span class=m>3</span>.8
 </span><span id=__span-0-9><a id=__codelineno-0-9 name=__codelineno-0-9 href=#__codelineno-0-9></a>istioctl<span class=w> </span>&gt;<span class=o>=</span><span class=w> </span><span class=m>1</span>.15<span class=w> </span><span class=o>(</span><span class=k>if</span><span class=w> </span>using<span class=w> </span>Istio<span class=o>)</span>
-</span></code></pre></div> <h3 id=access-requirements>Access Requirements<a class=headerlink href=#access-requirements title="Permanent link">&para;</a></h3> <ul> <li><strong>Kubernetes Cluster</strong>: Admin or sufficient RBAC permissions</li> <li><strong>NetApp ActiveIQ</strong>: API access credentials</li> <li><strong>Container Registry</strong>: Push/pull permissions</li> </ul> <h2 id=architecture-overview>Architecture Overview<a class=headerlink href=#architecture-overview title="Permanent link">&para;</a></h2> <h3 id=knative-serverless-architecture>Knative Serverless Architecture<a class=headerlink href=#knative-serverless-architecture title="Permanent link">&para;</a></h3> <p>```mermaid flowchart TD subgraph "Client Layer" AI[AI Assistant] end</p> <div class="language-text highlight"><pre><span></span><code>subgraph &quot;Knative Infrastructure&quot;
-    Gateway[Knative Gateway&lt;br/&gt;Istio/Kourier]
+</span></code></pre></div> <h3 id=access-requirements>Access Requirements<a class=headerlink href=#access-requirements title="Permanent link">&para;</a></h3> <ul> <li><strong>Kubernetes Cluster</strong>: Admin or sufficient RBAC permissions</li> <li><strong>NetApp ActiveIQ</strong>: API access credentials</li> <li><strong>Container Registry</strong>: Push/pull permissions</li> </ul> <h2 id=architecture-overview>Architecture Overview<a class=headerlink href=#architecture-overview title="Permanent link">&para;</a></h2> <h3 id=knative-serverless-architecture>Knative Serverless Architecture<a class=headerlink href=#knative-serverless-architecture title="Permanent link">&para;</a></h3> <pre class=mermaid><code>flowchart TD
+    subgraph "Client Layer"
+        AI[AI Assistant]
+    end
 
-    subgraph &quot;Knative Service&quot;
-        subgraph &quot;NetApp MCP Server Pod&quot;
-            subgraph &quot;MCP Server Container&quot;
-                FastMCP[FastMCP Framework]
-                NetAppClient[NetApp API Client]
-                MCPTools[17 MCP Tools]
+    subgraph "Knative Infrastructure"
+        Gateway[Knative Gateway&lt;br/&gt;Istio/Kourier]
+
+        subgraph "Knative Service"
+            subgraph "NetApp MCP Server Pod"
+                subgraph "MCP Server Container"
+                    FastMCP[FastMCP Framework]
+                    NetAppClient[NetApp API Client]
+                    MCPTools[17 MCP Tools]
+                end
             end
         end
     end
-end
 
-subgraph &quot;External Systems&quot;
-    NetAppUM[NetApp ActiveIQ&lt;br/&gt;Unified Manager]
-end
+    subgraph "External Systems"
+        NetAppUM[NetApp ActiveIQ&lt;br/&gt;Unified Manager]
+    end
 
-AI --&quot;MCP Protocol&quot;--&gt; Gateway
-Gateway --&gt; NetAppClient
-FastMCP --&gt; MCPTools
-NetAppClient --&quot;HTTPS API Calls&quot;--&gt; NetAppUM
-</code></pre></div> <p>```</p> <h3 id=key-benefits>Key Benefits<a class=headerlink href=#key-benefits title="Permanent link">&para;</a></h3> <ul> <li><strong>Auto-scaling</strong>: Scale to zero when idle, scale up on demand</li> <li><strong>Resource Efficiency</strong>: Pay only for actual usage</li> <li><strong>High Availability</strong>: Built-in redundancy and failover</li> <li><strong>Blue-Green Deployments</strong>: Zero-downtime updates</li> <li><strong>Traffic Splitting</strong>: Gradual rollout capabilities</li> </ul> <h2 id=container-preparation>Container Preparation<a class=headerlink href=#container-preparation title="Permanent link">&para;</a></h2> <h3 id=1-build-container-image>1. Build Container Image<a class=headerlink href=#1-build-container-image title="Permanent link">&para;</a></h3> <div class="language-bash highlight"><pre><span></span><code><span id=__span-1-1><a id=__codelineno-1-1 name=__codelineno-1-1 href=#__codelineno-1-1></a><span class=c1># Navigate to project directory</span>
+    AI --"MCP Protocol"--&gt; Gateway
+    Gateway --&gt; NetAppClient
+    FastMCP --&gt; MCPTools
+    NetAppClient --"HTTPS API Calls"--&gt; NetAppUM</code></pre> <h3 id=key-benefits>Key Benefits<a class=headerlink href=#key-benefits title="Permanent link">&para;</a></h3> <ul> <li><strong>Auto-scaling</strong>: Scale to zero when idle, scale up on demand</li> <li><strong>Resource Efficiency</strong>: Pay only for actual usage</li> <li><strong>High Availability</strong>: Built-in redundancy and failover</li> <li><strong>Blue-Green Deployments</strong>: Zero-downtime updates</li> <li><strong>Traffic Splitting</strong>: Gradual rollout capabilities</li> </ul> <h2 id=container-preparation>Container Preparation<a class=headerlink href=#container-preparation title="Permanent link">&para;</a></h2> <h3 id=1-build-container-image>1. Build Container Image<a class=headerlink href=#1-build-container-image title="Permanent link">&para;</a></h3> <div class="language-bash highlight"><pre><span></span><code><span id=__span-1-1><a id=__codelineno-1-1 name=__codelineno-1-1 href=#__codelineno-1-1></a><span class=c1># Navigate to project directory</span>
 </span><span id=__span-1-2><a id=__codelineno-1-2 name=__codelineno-1-2 href=#__codelineno-1-2></a><span class=nb>cd</span><span class=w> </span>/Users/brun_s/Documents/veille-technologique/Professionel/donnees-d-entree/PE-AsProduct/netapp
 </span><span id=__span-1-3><a id=__codelineno-1-3 name=__codelineno-1-3 href=#__codelineno-1-3></a>
 </span><span id=__span-1-4><a id=__codelineno-1-4 name=__codelineno-1-4 href=#__codelineno-1-4></a><span class=c1># Build the container image</span>
