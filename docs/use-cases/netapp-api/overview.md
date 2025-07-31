@@ -21,13 +21,20 @@ NetApp API use cases provide structured approaches to:
 | [**Provision NFS File Share**](provision_nfs_fileshare.md) | Create and configure NFS file shares | NFS setup, export policies, permissions |
 | [**Expand a LUN**](expand_lun.md)                          | Increase LUN capacity                | Capacity expansion, space allocation    |
 
+### 🔐 Access Rights Management
+
+| Use Case                                                        | Description                               | Key Features                                               |
+| --------------------------------------------------------------- | ----------------------------------------- | ---------------------------------------------------------- |
+| [**Manage Rights on NFS Share**](manage_rights_on_nfs_share.md) | Control access permissions for NFS shares | Export policies, client access, CIDR rules                 |
+| [**Manage Rights on SMB Share**](manage_rights_on_smb_share.md) | Control access permissions for SMB shares | ACL management, domain integration, user/group permissions |
+
 ### 📸 Snapshot Management
 
-| Use Case                                                                  | Description                                 | Key Features                                        |
-| ------------------------------------------------------------------------- | ------------------------------------------- | --------------------------------------------------- |
-| [**Create Snapshot Policy**](create_snapshot_policy.md)                   | Create automated snapshot policies          | Schedule configuration, retention rules, automation |
-| [**Apply Snapshot Policy to Volume**](apply_snapshot_policy_to_volume.md) | Apply existing snapshot policies to volumes | Policy assignment, volume protection, automation    |
-| [**List Available Snapshots**](list_available_snapshots.md)               | Retrieve list of snapshots for a volume    | Snapshot discovery, filtering, pagination, monitoring |
+| Use Case                                                                  | Description                                 | Key Features                                          |
+| ------------------------------------------------------------------------- | ------------------------------------------- | ----------------------------------------------------- |
+| [**Create Snapshot Policy**](create_snapshot_policy.md)                   | Create automated snapshot policies          | Schedule configuration, retention rules, automation   |
+| [**Apply Snapshot Policy to Volume**](apply_snapshot_policy_to_volume.md) | Apply existing snapshot policies to volumes | Policy assignment, volume protection, automation      |
+| [**List Available Snapshots**](list_available_snapshots.md)               | Retrieve list of snapshots for a volume     | Snapshot discovery, filtering, pagination, monitoring |
 
 ### 🗑️ Resource Management
 
