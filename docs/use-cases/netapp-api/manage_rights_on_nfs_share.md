@@ -11,6 +11,39 @@ By managing NFS share permissions, administrators can control which hosts have a
 - **PATCH** `/api/storage/nfs-shares/{share_id}/export-policies/{policy_id}/rules/{rule_id}`
 - **Permissions**: `storage-admin`
 
+## Sequence Diagram
+
+```mermaid
+sequenceDiagram
+    participant Admin as Administrator
+    participant API as NetApp API
+    participant NFS as NFS Service
+    participant Export as Export Policy Engine
+
+    Admin->>+API: Authenticate (Basic Auth)
+    API-->>-Admin: 200 OK (Authentication Successful)
+
+    Note over Admin, API: All subsequent requests are authenticated
+
+    Admin->>+API: GET /storage/nfs-shares (Find NFS Share)
+    API-->>-Admin: 200 OK (List of NFS Shares)
+
+    Admin->>+API: GET /storage/nfs-shares/{share_id}/export-policies
+    API-->>-Admin: 200 OK (Export Policy Details)
+
+    Admin->>+API: PATCH /storage/nfs-shares/{share_id}/export-policies/{policy_id}/rules/{rule_id}
+    API->>+NFS: Update Export Policy Rule
+    NFS->>+Export: Validate Client Match Pattern
+    Export-->>-NFS: Validation Response
+    NFS->>Export: Apply New Access Rules
+    Export-->>NFS: Rules Applied Successfully
+    NFS-->>-API: Export Policy Updated
+    API-->>-Admin: 200 OK (Permissions Updated)
+
+    Admin->>+API: GET /storage/nfs-shares/{share_id}/export-policies/{policy_id}/rules
+    API-->>-Admin: 200 OK (Verify Rule Changes)
+```
+
 ## Inputs
 
 ### Authentication

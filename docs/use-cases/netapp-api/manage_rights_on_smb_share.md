@@ -73,19 +73,42 @@ sequenceDiagram
     participant API as NetApp API
     participant SMB as SMB Service
     participant AD as Active Directory
+    participant FS as File System
 
     Admin->>+API: Authenticate (Basic Auth)
     API-->>-Admin: 200 OK (Authentication Successful)
 
-    Admin->>+API: GET /storage/smb-shares (Find Share)
+    Note over Admin, API: All subsequent requests are authenticated
+
+    Admin->>+API: GET /storage/smb-shares (Find SMB Share)
     API-->>-Admin: 200 OK (List of SMB Shares)
 
+    Admin->>+API: GET /storage/smb-shares/{share_id}/acl
+    API-->>-Admin: 200 OK (Current ACL Entries)
+
     Admin->>+API: PATCH /storage/smb-shares/{share_id}/acl
-    API->>+SMB: Update ACL Permissions
-    SMB->>+AD: Validate Users/Groups
-    AD-->>-SMB: Validation Response
-    SMB-->>-API: ACL Updated
-    API-->>-Admin: 200 OK (Permissions Updated)
+    API->>+SMB: Process ACL Update Request
+
+    loop For each user/group in ACL
+        SMB->>+AD: Validate User/Group Identity
+        AD-->>-SMB: User/Group Validation Result
+    end
+
+    alt All Users/Groups Valid
+        SMB->>+FS: Apply ACL Changes to File System
+        FS-->>-SMB: ACL Applied Successfully
+        SMB-->>API: ACL Update Successful
+        API-->>-Admin: 200 OK (Permissions Updated)
+    else Invalid User/Group Found
+        SMB-->>API: Validation Failed
+        API-->>-Admin: 422 Unprocessable Entity (Invalid User/Group)
+    else Domain Connection Failed
+        SMB-->>API: Domain Unavailable
+        API-->>-Admin: 503 Service Unavailable (Domain Error)
+    end
+
+    Admin->>+API: GET /storage/smb-shares/{share_id}/acl
+    API-->>-Admin: 200 OK (Verify ACL Changes)
 ```
 
 ## Example with `curl`
