@@ -182,3 +182,59 @@ def show(ctx, fileshare_key):
     except NetAppAPIError as e:
         formatter.error(f"API Error: {e}")
         raise click.Abort()
+
+
+@fileshare.command()
+@click.argument("fileshare_key")
+@click.option("--new-size", help="New size (e.g., 2GB, 1TB)")
+@click.option("--new-export-path", help="New export path")
+@click.option("--wait", is_flag=True, help="Wait for the operation to complete")
+@click.pass_context
+def update(ctx, fileshare_key, new_size, new_export_path, wait):
+    """Update file share properties."""
+    formatter = OutputFormatter(ctx.obj["output_format"], ctx.obj["verbose"])
+    config = ctx.obj["config"]
+
+    if not config.is_configured():
+        formatter.error("No NetApp configuration found. Run 'netapp auth configure' first.")
+        raise click.Abort()
+
+    client = NetAppAPIClient(config.netapp, verbose=ctx.obj["verbose"])
+
+    try:
+        # Build update data
+        update_data = {}
+
+        if new_size:
+            from netapp_cli.commands.volume import _parse_size
+            size_bytes = _parse_size(new_size)
+            if size_bytes is None:
+                formatter.error(f"Invalid size format: {new_size}. Use formats like '1GB', '500MB', '2TB'")
+                raise click.Abort()
+            update_data["space"] = {"size": size_bytes}
+
+        if new_export_path is not None:
+            update_data["access_control"] = {"export_path": new_export_path}
+
+        if not update_data:
+            formatter.error("No update parameters provided. Use --help for available options.")
+            raise click.Abort()
+
+        formatter.info(f"Updating file share '{fileshare_key}'...")
+        result = client.patch(f"/storage-provider/file-shares/{fileshare_key}", update_data)
+
+        if wait and "job" in result and "key" in result["job"]:
+            job_key = result["job"]["key"]
+            formatter.info(f"Waiting for update job {job_key} to complete...")
+            job_result = client.wait_for_job(job_key)
+            formatter.success(f"File share '{fileshare_key}' updated successfully!")
+            if ctx.obj["output_format"] != "table":
+                formatter.format_output(job_result)
+        else:
+            formatter.success(f"File share '{fileshare_key}' update initiated!")
+            if ctx.obj["output_format"] != "table":
+                formatter.format_output(result)
+
+    except NetAppAPIError as e:
+        formatter.error(f"API Error: {e}")
+        raise click.Abort()

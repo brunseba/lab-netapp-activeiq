@@ -53,21 +53,22 @@ class Config:
             with open(self.config_file, 'r') as f:
                 self._config_data = yaml.safe_load(f) or {}
 
-        # Override with environment variables
-        env_config = {
-            "host": os.getenv("NETAPP_HOST"),
-            "username": os.getenv("NETAPP_USERNAME"),
-            "password": os.getenv("NETAPP_PASSWORD"),
-            "verify_ssl": os.getenv("NETAPP_VERIFY_SSL", "true").lower() == "true",
-            "timeout": int(os.getenv("NETAPP_TIMEOUT", "30")),
-            "api_version": os.getenv("NETAPP_API_VERSION", "v1"),
-        }
-
-        # Merge configurations
+        # Override with environment variables only if they exist
         netapp_config = self._config_data.get("netapp", {})
-        for key, value in env_config.items():
-            if value is not None:
-                netapp_config[key] = value
+
+        # Override with environment variables only if set
+        if os.getenv("NETAPP_HOST"):
+            netapp_config["host"] = os.getenv("NETAPP_HOST")
+        if os.getenv("NETAPP_USERNAME"):
+            netapp_config["username"] = os.getenv("NETAPP_USERNAME")
+        if os.getenv("NETAPP_PASSWORD"):
+            netapp_config["password"] = os.getenv("NETAPP_PASSWORD")
+        if os.getenv("NETAPP_VERIFY_SSL"):
+            netapp_config["verify_ssl"] = os.getenv("NETAPP_VERIFY_SSL").lower() == "true"
+        if os.getenv("NETAPP_TIMEOUT"):
+            netapp_config["timeout"] = int(os.getenv("NETAPP_TIMEOUT"))
+        if os.getenv("NETAPP_API_VERSION"):
+            netapp_config["api_version"] = os.getenv("NETAPP_API_VERSION")
 
         if netapp_config.get("host"):
             try:

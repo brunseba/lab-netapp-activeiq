@@ -287,3 +287,197 @@ def create_policy(ctx, policy_name, svm, comment, schedule):
     except ValueError as e:
         formatter.error(f"Invalid schedule count: {e}")
         raise click.Abort()
+
+
+@snapshot.command()
+@click.argument("policy_name")
+@click.option("--svm", help="SVM name")
+@click.option("--new-comment", help="New policy comment")
+@click.option("--schedule", multiple=True, help="Schedule in format 'name:count' (e.g., 'daily:7')")
+@click.pass_context
+def update_policy(ctx, policy_name, svm, new_comment, schedule):
+    """Update a snapshot policy.
+
+    Example:
+    netapp snapshot update-policy my_policy --svm svm1 --schedule daily:10 --schedule weekly:2
+    """
+    formatter = OutputFormatter(ctx.obj["output_format"], ctx.obj["verbose"])
+    config = ctx.obj["config"]
+
+    if not config.is_configured():
+        formatter.error("No NetApp configuration found. Run 'netapp auth configure' first.")
+        raise click.Abort()
+
+    client = NetAppAPIClient(config.netapp, verbose=ctx.obj["verbose"])
+
+    try:
+        # First find the policy
+        params = {"name": policy_name}
+        if svm:
+            params["svm.name"] = svm
+
+        formatter.info(f"Looking up snapshot policy: {policy_name}")
+        response = client.get("/api/storage/snapshot-policies", params)
+        policies = response.get("records", [])
+
+        if not policies:
+            formatter.error(f"Snapshot policy '{policy_name}' not found")
+            raise click.Abort()
+
+        policy_uuid = policies[0]["uuid"]
+
+        # Build update data
+        update_data = {}
+
+        if new_comment is not None:  # Allow empty string to clear comment
+            update_data["comment"] = new_comment
+
+        if schedule:
+            # Parse schedules
+            schedules = []
+            for sched in schedule:
+                if ":" not in sched:
+                    formatter.error(f"Invalid schedule format: {sched}. Use 'name:count' format.")
+                    raise click.Abort()
+
+                name, count = sched.split(":", 1)
+                schedules.append({
+                    "schedule": {"name": name.strip()},
+                    "count": int(count.strip())
+                })
+            update_data["schedules"] = schedules
+
+        if not update_data:
+            formatter.error("No update parameters provided. Use --help for available options.")
+            raise click.Abort()
+
+        formatter.info(f"Updating snapshot policy '{policy_name}'...")
+        result = client.patch(f"/api/storage/snapshot-policies/{policy_uuid}", update_data)
+
+        formatter.success(f"Snapshot policy '{policy_name}' updated successfully!")
+        if ctx.obj["output_format"] != "table":
+            formatter.format_output(result)
+
+    except NetAppAPIError as e:
+        formatter.error(f"API Error: {e}")
+        raise click.Abort()
+    except ValueError as e:
+        formatter.error(f"Invalid schedule count: {e}")
+        raise click.Abort()
+
+
+@snapshot.command()
+@click.argument("policy_name")
+@click.option("--svm", help="SVM name")
+@click.option("--force", is_flag=True, help="Force deletion without confirmation")
+@click.pass_context
+def delete_policy(ctx, policy_name, svm, force):
+    """Delete a snapshot policy."""
+    formatter = OutputFormatter(ctx.obj["output_format"], ctx.obj["verbose"])
+    config = ctx.obj["config"]
+
+    if not config.is_configured():
+        formatter.error("No NetApp configuration found. Run 'netapp auth configure' first.")
+        raise click.Abort()
+
+    if not force:
+        if not click.confirm(f"Are you sure you want to delete snapshot policy '{policy_name}'? This action cannot be undone."):
+            formatter.info("Deletion cancelled.")
+            return
+
+    client = NetAppAPIClient(config.netapp, verbose=ctx.obj["verbose"])
+
+    try:
+        # First find the policy
+        params = {"name": policy_name}
+        if svm:
+            params["svm.name"] = svm
+
+        formatter.info(f"Looking up snapshot policy: {policy_name}")
+        response = client.get("/api/storage/snapshot-policies", params)
+        policies = response.get("records", [])
+
+        if not policies:
+            formatter.error(f"Snapshot policy '{policy_name}' not found")
+            raise click.Abort()
+
+        policy_uuid = policies[0]["uuid"]
+
+        formatter.info(f"Deleting snapshot policy '{policy_name}'...")
+        result = client.delete(f"/api/storage/snapshot-policies/{policy_uuid}")
+
+        formatter.success(f"Snapshot policy '{policy_name}' deleted successfully!")
+        if ctx.obj["output_format"] != "table":
+            formatter.format_output(result)
+
+    except NetAppAPIError as e:
+        formatter.error(f"API Error: {e}")
+        raise click.Abort()
+
+
+@snapshot.command()
+@click.argument("volume_name")
+@click.argument("snapshot_name")
+@click.option("--svm", help="SVM name")
+@click.option("--new-comment", help="New snapshot comment")
+@click.pass_context
+def update(ctx, volume_name, snapshot_name, svm, new_comment):
+    """Update snapshot properties (like comment)."""
+    formatter = OutputFormatter(ctx.obj["output_format"], ctx.obj["verbose"])
+    config = ctx.obj["config"]
+
+    if not config.is_configured():
+        formatter.error("No NetApp configuration found. Run 'netapp auth configure' first.")
+        raise click.Abort()
+
+    client = NetAppAPIClient(config.netapp, verbose=ctx.obj["verbose"])
+
+    try:
+        # First find the volume UUID
+        params = {"name": volume_name}
+        if svm:
+            params["svm.name"] = svm
+
+        formatter.info(f"Looking up volume: {volume_name}")
+        response = client.get("/api/storage/volumes", params)
+        volumes = response.get("records", [])
+
+        if not volumes:
+            formatter.error(f"Volume '{volume_name}' not found")
+            raise click.Abort()
+
+        volume_uuid = volumes[0]["uuid"]
+
+        # Find the snapshot UUID
+        formatter.info(f"Looking up snapshot: {snapshot_name}")
+        snapshot_response = client.get(
+            f"/api/storage/volumes/{volume_uuid}/snapshots",
+            {"name": snapshot_name}
+        )
+        snapshots = snapshot_response.get("records", [])
+
+        if not snapshots:
+            formatter.error(f"Snapshot '{snapshot_name}' not found")
+            raise click.Abort()
+
+        snapshot_uuid = snapshots[0]["uuid"]
+
+        # Build update data
+        update_data = {}
+        if new_comment is not None:  # Allow empty string to clear comment
+            update_data["comment"] = new_comment
+
+        if not update_data:
+            formatter.error("No update parameters provided. Use --help for available options.")
+            raise click.Abort()
+
+        formatter.info(f"Updating snapshot '{snapshot_name}' on volume '{volume_name}'...")
+        result = client.patch(f"/api/storage/volumes/{volume_uuid}/snapshots/{snapshot_uuid}", update_data)
+
+        formatter.success(f"Snapshot '{snapshot_name}' updated successfully!")
+        if ctx.obj["output_format"] != "table":
+            formatter.format_output(result)
+
+    except NetAppAPIError as e:
+        formatter.error(f"API Error: {e}")
+        raise click.Abort()
