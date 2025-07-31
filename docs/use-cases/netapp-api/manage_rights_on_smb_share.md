@@ -78,7 +78,7 @@ sequenceDiagram
     Admin->>+API: Authenticate (Basic Auth)
     API-->>-Admin: 200 OK (Authentication Successful)
 
-    Note over Admin, API: All subsequent requests are authenticated
+    Note over Admin,API: All subsequent requests are authenticated
 
     Admin->>+API: GET /storage/smb-shares (Find SMB Share)
     API-->>-Admin: 200 OK (List of SMB Shares)
@@ -101,10 +101,10 @@ sequenceDiagram
         API-->>-Admin: 200 OK (Permissions Updated)
     else Invalid User/Group Found
         SMB-->>API: Validation Failed
-        API-->>-Admin: 422 Unprocessable Entity (Invalid User/Group)
+        API-->>Admin: 422 Unprocessable Entity Invalid User Group
     else Domain Connection Failed
         SMB-->>API: Domain Unavailable
-        API-->>-Admin: 503 Service Unavailable (Domain Error)
+        API-->>Admin: 503 Service Unavailable (Domain Error)
     end
 
     Admin->>+API: GET /storage/smb-shares/{share_id}/acl
